@@ -1,0 +1,24 @@
+{
+  "links": [
+    {
+      "name": "mastodon",
+      "url": "https://fosstodon.org/@aldo",
+      "image": "images/social/mastodon.svg"
+    },
+    {
+      "name": "github",
+      "url": "https://github.com/aldoborrero",
+      "image": "images/social/github.svg"
+    },
+    {
+      "name": "41North",
+      "url": "https://41north.dev",
+      "image": "images/social/work.svg"
+    },
+    {
+      "name": "Reserve a meeting with me",
+      "url": "https://calendar.app.google/7Rf7qem3jj9rWyqW6",
+      "image": "images/social/calendar.svg"
+    }
+  ]
+}

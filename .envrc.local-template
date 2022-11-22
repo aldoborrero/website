@@ -1,0 +1,14 @@
+## Terraform / Cloudflare Provider
+# URL: https://dash.cloudflare.com/profile/api-tokens
+#   Instructions:
+#     1) Create Token with following settings:
+#       Permissions
+#         - Zone + DNS + Edit
+#       Zone Resources:
+#         - Include + All zones
+#     2) Accept
+export CLOUDFLARE_API_TOKEN=<TODO>
+
+# Set profile for Terraform S3
+export AWS_PROFILE=<TODO>
+export AWS_S3_ENDPOINT=<TODO>

@@ -1,0 +1,19 @@
+# nix
+env/
+**/result*
+
+# direnv
+**/.direnv
+/env
+.envrc.local
+
+# terraform
+.terraform
+.terraform.lock.hcl
+.terraform.tfstate.lock.info
+
+# terragrunt
+.terragrunt-cache
+
+# qemu
+*.qcow2
