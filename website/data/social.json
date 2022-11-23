@@ -3,7 +3,8 @@
     {
       "name": "mastodon",
       "url": "https://fosstodon.org/@aldo",
-      "image": "images/social/mastodon.svg"
+      "image": "images/social/mastodon.svg",
+      "rel": "me"
     },
     {
       "name": "github",
