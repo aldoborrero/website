@@ -9,6 +9,18 @@
 #     2) Accept
 export CLOUDFLARE_API_TOKEN=<TODO>
 
-# Set profile for Terraform S3
-export AWS_PROFILE=<TODO>
-export AWS_S3_ENDPOINT=<TODO>
+# URL: https://cloud.digitalocean.com/account/api/tokens
+# Instructions:
+#   1) Generate new Spaces Access keys
+#   2) Write the following settings
+#     Name
+#       - Any you want (i.e: terraform-state)
+#   3) Click on the green tick
+#   4) Copy the Key and Access keys
+export AWS_ACCESS_KEY_ID=<TODO>
+export AWS_SECRET_ACCESS_KEY=<TODO>
+
+# SOPS
+# Instructions:
+#   1) Just specify which key you want to use to encrypt secrets
+export SOPS_AGE_KEY=<TODO>
