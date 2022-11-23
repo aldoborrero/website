@@ -1,9 +1,17 @@
+locals {
+  domain = "aldoborrero.com"
+  cf_pages_name = "aldoborrero-website"
+  git_repo_owner = "aldoborrero"
+  git_repo_name = "website"
+  hugo_version = "0.106.0"
+}
+
 # --------------------------------------------
 # Data
 # --------------------------------------------
 
 data "cloudflare_zone" "domain" {
-  name = "aldoborrero.com"
+  name = local.domain
 }
 
 # --------------------------------------------
@@ -12,14 +20,14 @@ data "cloudflare_zone" "domain" {
 
 resource "cloudflare_pages_project" "website" {
   account_id        = data.cloudflare_zone.domain.account_id
-  name              = "aldoborrero-website"
+  name              = local.cf_pages_name
   production_branch = "main"
 
   source {
     type = "github"
     config {
-      owner                         = "aldoborrero"
-      repo_name                     = "website"
+      owner                         = local.git_repo_owner
+      repo_name                     = local.git_repo_name
       production_branch             = "main"
       pr_comments_enabled           = true
       deployments_enabled           = true
@@ -38,12 +46,12 @@ resource "cloudflare_pages_project" "website" {
   deployment_configs {
     preview {
       environment_variables = {
-        HUGO_VERSION = "0.106.0"
+        HUGO_VERSION = local.hugo_version
       }
     }
     production {
       environment_variables = {
-        HUGO_VERSION = "0.106.0"
+        HUGO_VERSION = local.hugo_version
       }
     }
   }
@@ -53,8 +61,8 @@ resource "cloudflare_pages_domain" "website" {
   depends_on = [cloudflare_pages_project.website]
 
   account_id   = data.cloudflare_zone.domain.account_id
-  project_name = "aldoborrero-website"
-  domain       = "aldoborrero.com"
+  project_name = local.cf_pages_name
+  domain       = local.domain
 }
 
 # --------------------------------------------
@@ -67,5 +75,5 @@ resource "cloudflare_record" "website" {
   proxied = true
   ttl     = 1
   type    = "CNAME"
-  value   = "aldoborrero-website.pages.dev"
+  value   = "${local.cf_pages_name}.pages.dev"
 }
