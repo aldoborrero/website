@@ -1,9 +1,9 @@
 locals {
-  domain = "aldoborrero.com"
-  cf_pages_name = "aldoborrero-website"
+  domain         = "aldoborrero.com"
+  cf_pages_name  = "aldoborrero-website"
   git_repo_owner = "aldoborrero"
-  git_repo_name = "website"
-  hugo_version = "0.106.0"
+  git_repo_name  = "website"
+  hugo_version   = "0.106.0"
 }
 
 # --------------------------------------------
