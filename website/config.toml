@@ -1,12 +1,10 @@
 baseURL = "/"
 languageCode = "en-us"
-theme = "winston"
+theme = "paper"
 themesDir = "themes"
 title = "Aldo Borrero"
-paginate = 3
-pygmentsCodeFences = true
-pygmentsCodefencesGuessSyntax = true
-pygmentsUseClasses = true
+author = "Aldo Borrero"
+paginate = 10
 
 [module]
 [module.hugoVersion]
@@ -14,31 +12,19 @@ extended = true
 min = "0.55.0"
 
 [params]
-google_analytics_id = ""
-twitter_handle = "@aldoborrero"
-showAuthorOnHomepage = true
-showAuthorOnPosts = false
-showPostsOnHomepage = false
-addDot = true
-addFrame = false
-highlightColor = '#7b16ff'
-baseColor = "#ffffff"
-baseOffsetColor = "#eaeaea"
-headingColor = "#1c1b1d"
-textColor = "#4e5157"
-dotColor = "#7b16ff"
+color = 'linen' # linen, wheat, gray, light
 
-# markdown config settings https://gohugo.io/getting-started/configuration-markup/#goldmark
-[markup]
-[markup.goldmark]
-[markup.goldmark.renderer]
-hardWraps = false
-unsafe = true
-xhtml = false
+# header social icons
+twitter = 'aldoborrero'
+github = 'aldoborrero'
+mastodon = 'https://fosstodon.org/@aldo'
+rss = true
 
-[menu]
-[[menu.main]]
-identifier = 'home'
-name = 'Home'
-url = '/'
-weight = 1
+# home page profile
+avatar = 'https://pbs.twimg.com/profile_images/1227915659599843329/4TEsb3Ya_400x400.jpg'
+name = 'Aldo Borrero'
+bio = 'Writer of Software · Open Source, Ethereum & Nix passionate'
+
+# misc
+disableHLJS = false
+monoDarkIcon = true
