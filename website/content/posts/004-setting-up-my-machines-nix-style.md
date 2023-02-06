@@ -1,9 +1,12 @@
 ---
-title: 'Setting up my machines: nix style'
+author: Aldo Borrero
 date: 2023-01-15
-description: 'How to create a customizable USB image for installing your NixOS system on your machines with ease!'
-image: images/posts/setting-up-my-machines-nix-style/cover.jpeg
+title: 'Setting up my machines: nix style'
+aliases:
+  - /posts/setting-up-my-machines-nix-style/
 ---
+
+![The Technology](/images/posts/setting-up-my-machines-nix-style/cover.jpeg)
 
 A couple of weeks ago, my friend Brian wrote an excellent article called: "[Setting up my new laptop: nix style](https://bmcgee.ie/posts/2022/12/setting-up-my-new-laptop-nix-style/)" in which he explains a superb way of installing Nix with a USB stick, trying to automate the process as much as possible. He describes the following:
 

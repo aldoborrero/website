@@ -1,9 +1,12 @@
 ---
-title: Learn how to use the Nix REPL effectively
+author: Aldo Borrero
 date: 2022-12-02
-description: 'Improve your Nix knowledge with its REPL'
-image: images/posts/using-effectively-the-nix-repl/cover.jpg
+title: Learn how to use the Nix REPL effectively
+aliases:
+  - /posts/using-effectively-the-nix-repl/
 ---
+
+![The Abstract](/images/posts/using-effectively-the-nix-repl/cover.jpg)
 
 Inspecting Nix is hard! The dynamic nature of the language sometimes makes your head dizzy, especially when starting your first steps toward enlightenment in [NixOS](https://nixos.org). It is pretty common to suffer from the following issues:
 

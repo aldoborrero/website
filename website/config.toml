@@ -1,30 +1,61 @@
 baseURL = "/"
-languageCode = "en-us"
 theme = "paper"
-themesDir = "themes"
 title = "Aldo Borrero"
+
 author = "Aldo Borrero"
 paginate = 10
-
-[module]
-[module.hugoVersion]
-extended = true
-min = "0.55.0"
+languageCode = "en"
+DefaultContentLanguage = "en"
+enableInlineShortcodes = true
 
 [params]
 color = 'linen' # linen, wheat, gray, light
 
-# header social icons
 twitter = 'aldoborrero'
 github = 'aldoborrero'
 mastodon = 'https://fosstodon.org/@aldo'
 rss = true
 
-# home page profile
 avatar = 'https://pbs.twimg.com/profile_images/1227915659599843329/4TEsb3Ya_400x400.jpg'
 name = 'Aldo Borrero'
 bio = 'Writer of Software · Open Source, Ethereum & Nix passionate'
 
-# misc
 disableHLJS = false
 monoDarkIcon = true
+
+[markup]
+[markup.goldmark]
+[markup.goldmark.renderer]
+unsafe = true
+
+[taxonomies]
+category = "categories"
+tag = "tags"
+series = "series"
+
+[privacy]
+
+[privacy.vimeo]
+disabled = false
+simple = true
+
+[privacy.twitter]
+disabled = false
+enableDNT = true
+simple = true
+
+[privacy.instagram]
+disabled = false
+simple = true
+
+[privacy.youtube]
+disabled = false
+privacyEnhanced = true
+
+[permalinks]
+posts = '/posts/:year/:month/:day/:slug'
+
+[module]
+[module.hugoVersion]
+extended = true
+min = "0.55.0"

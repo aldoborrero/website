@@ -1,9 +1,12 @@
 ---
-title: Welcome to my blog
+author: Aldo Borrero
 date: 2022-11-22
-description: 'Everybody needs an introduction. Right?'
-image: images/posts/welcome-to-my-blog/bubble.jpg
+title: Welcome to my blog
+aliases:
+  - /posts/welcome-to-my-blog/
 ---
+
+![Bubble](/images/posts/welcome-to-my-blog/bubble.jpg)
 
 Hello there 👋🏻 (as Obi-Wan Kenobi would say)!
 
