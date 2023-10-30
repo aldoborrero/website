@@ -2,7 +2,8 @@
 author: Aldo Borrero
 date: 2023-01-15
 title: 'Setting up my machines: nix style'
-aliases: [/posts/setting-up-my-machines-nix-style/]
+aliases:
+  - /posts/setting-up-my-machines-nix-style/
 ---
 
 ![The Technology](/images/posts/setting-up-my-machines-nix-style/cover.jpeg)
@@ -86,30 +87,28 @@ Let's then craft a [`flake.nix`](https://github.com/aldoborrero/templates/blob/m
     # Use our custom lib enhanced with nixpkgs and hm one
     lib = import ./nix/lib {lib = nixpkgs.lib;} // nixpkgs.lib;
   in
-    (flake-parts.lib.evalFlakeModule
-      {
-        inherit inputs;
-        specialArgs = {inherit lib;};
-      }
-      {
-        debug = false;
-        imports = [
-          treefmt-nix.flakeModule
-          flake-root.flakeModule
-          mission-control.flakeModule
-          ./nix
-          ./nixos
-        ];
-        systems = ["x86-64-linux"];
-        perSystem = {inputs', ...}: {
-          # make pkgs available to all `perSystem` functions
-          -module.args.pkgs = inputs'.nixpkgs.legacyPackages;
-          # make custom lib available to all `perSystem` functions
-          -module.args.lib = lib;
-        };
-      })
-    .config
-    .flake;
+    flake-parts.lib.mkFlake
+    {
+      inherit inputs;
+      specialArgs = {inherit lib;};
+    }
+    {
+      debug = false;
+      imports = [
+        treefmt-nix.flakeModule
+        flake-root.flakeModule
+        mission-control.flakeModule
+        ./nix
+        ./nixos
+      ];
+      systems = ["x86-64-linux"];
+      perSystem = {inputs', ...}: {
+        # make pkgs available to all `perSystem` functions
+        module.args.pkgs = inputs'.nixpkgs.legacyPackages;
+        # make custom lib available to all `perSystem` functions
+        module.args.lib = lib;
+      };
+    };
 }
 ```
 
@@ -118,7 +117,8 @@ Wow, that chunk of `nix` was intense! Isn't it? Don't worry! Let's explain it st
 Let's start with the `inputs`:
 
 ```nix
-inputs = {
+{
+  inputs = {
     # packages
     nixpkgs.url = github:nixos/nixpkgs/nixpkgs-unstable;
 
@@ -141,6 +141,7 @@ inputs = {
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-hardware.url = "github:nixos/nixos-hardware";
+  };
 }
 ```
 
@@ -159,7 +160,8 @@ As you can see above, the `inputs` are divided into three main sections:
 Now let's move on to the `outputs` part:
 
 ```nix
-outputs = inputs @ {
+{
+  outputs = inputs @ {
     flake-parts,
     flake-root,
     mission-control,
@@ -170,30 +172,29 @@ outputs = inputs @ {
     # Use our custom lib enhanced with nixpkgs and hm one
     lib = import ./nix/lib {lib = nixpkgs.lib;} // nixpkgs.lib;
   in
-    (flake-parts.lib.evalFlakeModule
-      {
-        inherit inputs;
-        specialArgs = {inherit lib;};
-      }
-      {
-        debug = false;
-        imports = [
-          treefmt-nix.flakeModule
-          flake-root.flakeModule
-          mission-control.flakeModule
-          ./nix
-          ./nixos
-        ];
-        systems = ["x86-64-linux"];
-        perSystem = {inputs', ...}: {
-          # make pkgs available to all `perSystem` functions
-          -module.args.pkgs = inputs'.nixpkgs.legacyPackages;
-          # make custom lib available to all `perSystem` functions
-          -module.args.lib = lib;
-        };
-      })
-    .config
-    .flake;
+    flake-parts.lib.mkFlake
+    {
+      inherit inputs;
+      specialArgs = {inherit lib;};
+    }
+    {
+      debug = false;
+      imports = [
+        treefmt-nix.flakeModule
+        flake-root.flakeModule
+        mission-control.flakeModule
+        ./nix
+        ./nixos
+      ];
+      systems = ["x86-64-linux"];
+      perSystem = {inputs', ...}: {
+        # make pkgs available to all `perSystem` functions
+        module.args.pkgs = inputs'.nixpkgs.legacyPackages;
+        # make custom lib available to all `perSystem` functions
+        module.args.lib = lib;
+      };
+    };
+}
 ```
 
 Here we use `flake.parts` to configure and craft our `nix flake` outputs. We can mention the following:
@@ -215,20 +216,20 @@ Available commands:
 
 ## Dev Tools
 
-  , fmt  : Format the source tree
+, fmt  : Format the source tree
 
 ## Images
 
-  , flash-nuc-iso  : Flash installer-iso image for NUC-1
+, flash-nuc-iso  : Flash installer-iso image for NUC-1
 
 ## Nix
 
-  , nix-build-nuc  : Builds toplevel NixOS image for NUC-1 host
+, nix-build-nuc  : Builds toplevel NixOS image for NUC-1 host
 
 ## Utils
 
-  , clean   : Cleans any result produced by Nix or associated tools
-  , run-vm  : Executes a VM if output derivation contains one
+, clean   : Cleans any result produced by Nix or associated tools
+, run-vm  : Executes a VM if output derivation contains one
 ```
 
 As a result, I can have shortcuts for the most common things I would like to do on my `nix flake`. For example, if I type:
@@ -322,8 +323,8 @@ Following the previous section, you can now define a NixOS configuration system 
   defaultModules = [
     # make flake inputs accessible in NixOS
     {
-      -module.args.self = self;
-      -module.args.inputs = inputs;
+      module.args.self = self;
+      module.args.inputs = inputs;
     }
     # load common modules
     ({...}: {
@@ -376,7 +377,6 @@ As you can see above, there are some standard modules and utilities that I want 
 Now in the terminal, if I type `nix build .#nixosConfigurations.nuc-1.config.system.build.toplevel` it will produce the `toplevel` system closure for the `nuc-1` machine. But again, I can take advantage of `mission-control` to create another shorcut:
 
 ```nix
-
 {
   perSystem = {
     self',
@@ -421,8 +421,8 @@ The idea in this part is quite simplistic: we can take advantage of [`nixos-gene
         inputs.disko.nixosModules.disko
         ./base-iso.nix
       ];
-      -module.args.self = self;
-      -module.args.inputs = inputs;
+      module.args.self = self;
+      module.args.inputs = inputs;
     };
   in {
     packages = {
@@ -481,7 +481,7 @@ in {
     network.enable = true;
     network.networks =
       mapAttrs'
-      (num: -:
+      (num: _:
         nameValuePair "eth${num}" {
           extraConfig = ''
             [Match]
@@ -649,33 +649,35 @@ should be false on an installer image etc.
 Mmmm... 🤔 Can I somehow incorporate `disko` into my installer image? Yes, you can! If [we inspect the implementation closely](https://github.com/nix-community/disko/blob/d4ad9595432959440984b2ba33064cfe3399d0e3/module.nix#L22):
 
 ```nix
-config = lib.mkIf (cfg.devices.disk != {}) {
-  system.build.formatScript = pkgs.writers.writeDash "disko-create" ''
-    export PATH=${lib.makeBinPath (types.diskoLib.packages cfg.devices pkgs)}:$PATH
-    ${types.diskoLib.create cfg.devices}
-  '';
+{
+  config = lib.mkIf (cfg.devices.disk != {}) {
+    system.build.formatScript = pkgs.writers.writeDash "disko-create" ''
+      export PATH=${lib.makeBinPath (types.diskoLib.packages cfg.devices pkgs)}:$PATH
+      ${types.diskoLib.create cfg.devices}
+    '';
 
-  system.build.mountScript = pkgs.writers.writeDash "disko-mount" ''
-    export PATH=${lib.makeBinPath (types.diskoLib.packages cfg.devices pkgs)}:$PATH
-    ${types.diskoLib.mount cfg.devices}
-  '';
+    system.build.mountScript = pkgs.writers.writeDash "disko-mount" ''
+      export PATH=${lib.makeBinPath (types.diskoLib.packages cfg.devices pkgs)}:$PATH
+      ${types.diskoLib.mount cfg.devices}
+    '';
 
-  system.build.disko = pkgs.writers.writeBash "disko" ''
-    export PATH=${lib.makeBinPath (types.diskoLib.packages cfg.devices pkgs)}:$PATH
-    ${types.diskoLib.zapCreateMount cfg.devices}
-  '';
+    system.build.disko = pkgs.writers.writeBash "disko" ''
+      export PATH=${lib.makeBinPath (types.diskoLib.packages cfg.devices pkgs)}:$PATH
+      ${types.diskoLib.zapCreateMount cfg.devices}
+    '';
 
-  # This is useful to skip copying executables uploading a script to an in-memory installer
-  system.build.diskoNoDeps = pkgs.writeScript "disko" ''
-    #!/usr/bin/env bash
-    ${types.diskoLib.zapCreateMount cfg.devices}
-  '';
+    # This is useful to skip copying executables uploading a script to an in-memory installer
+    system.build.diskoNoDeps = pkgs.writeScript "disko" ''
+      #!/usr/bin/env bash
+      ${types.diskoLib.zapCreateMount cfg.devices}
+    '';
 
-  # Remember to add config keys here if they are added to types
-  fileSystems = lib.mkIf cfg.enableConfig (lib.mkMerge (lib.catAttrs "fileSystems" (types.diskoLib.config cfg.devices)));
-  boot = lib.mkIf cfg.enableConfig (lib.mkMerge (lib.catAttrs "boot" (types.diskoLib.config cfg.devices)));
-  swapDevices = lib.mkIf cfg.enableConfig (lib.mkMerge (lib.catAttrs "swapDevices" (types.diskoLib.config cfg.devices)));
-};
+    # Remember to add config keys here if they are added to types
+    fileSystems = lib.mkIf cfg.enableConfig (lib.mkMerge (lib.catAttrs "fileSystems" (types.diskoLib.config cfg.devices)));
+    boot = lib.mkIf cfg.enableConfig (lib.mkMerge (lib.catAttrs "boot" (types.diskoLib.config cfg.devices)));
+    swapDevices = lib.mkIf cfg.enableConfig (lib.mkMerge (lib.catAttrs "swapDevices" (types.diskoLib.config cfg.devices)));
+  };
+}
 ```
 
 That means I can incorporate `disko` into my bootable USB stick! It will also include the necessary scripts to `format` and `mount` directly my `nuc-1` machine!
@@ -785,8 +787,8 @@ If we zoom out, then my custom installer for `nuc-1` looks like this (you can fi
         inputs.disko.nixosModules.disko
         ./base-iso.nix
       ];
-      -module.args.self = self;
-      -module.args.inputs = inputs;
+      module.args.self = self;
+      module.args.inputs = inputs;
     };
   in {
     packages = {

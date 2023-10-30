@@ -1,8 +1,9 @@
 ---
-author: "Aldo Borrero"
+author: Aldo Borrero
 date: 2022-11-22
-title: "Welcome to my blog"
-aliases: [/posts/welcome-to-my-blog/]
+title: Welcome to my blog
+aliases:
+  - /posts/welcome-to-my-blog/
 ---
 
 ![Bubble](/images/posts/welcome-to-my-blog/bubble.jpg)

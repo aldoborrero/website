@@ -105,14 +105,16 @@
             p.tls
           ]);
 
-          mdformat-custom = pkgs.python3Packages.mdformat.withPlugins (with pkgs.python3Packages; [
-            mdformat-beautysh
-            mdformat-footnote
-            mdformat-frontmatter
-            mdformat-gfm
-            mdformat-nix-alejandra
-            mdformat-simple-breaks
-          ]);
+          mdformat-custom = with pkgs.python311Packages;
+            mdformat.withPlugins [
+              mdit-py-plugins # temporary fix
+              mdformat-beautysh
+              mdformat-footnote
+              mdformat-frontmatter
+              mdformat-gfm
+              mdformat-nix-alejandra
+              mdformat-simple-breaks
+            ];
         };
 
         # devshells
@@ -170,7 +172,10 @@
           };
           settings.formatter = {
             deno.excludes = ["*.md"];
-            mdformat.package = self'.packages.mdformat-custom;
+            mdformat = {
+              command = lib.mkDefault self'.packages.mdformat-custom;
+              excludes = ["default.md"];
+            };
           };
         };
 

@@ -2,7 +2,8 @@
 author: Aldo Borrero
 date: 2022-12-02
 title: Learn how to use the Nix REPL effectively
-aliases: [/posts/using-effectively-the-nix-repl/]
+aliases:
+  - /posts/using-effectively-the-nix-repl/
 ---
 
 ![The Abstract](/images/posts/using-effectively-the-nix-repl/cover.jpg)
@@ -263,7 +264,7 @@ Added 17714 variables.
 nix-repl> :b pkgs.besu
 
 This derivation produced the following outputs:
-  out -> /nix/store/kf4xshk1lp16nbxcj9ar4lbf2dv7yqmv-besu-22.7.6
+out -> /nix/store/kf4xshk1lp16nbxcj9ar4lbf2dv7yqmv-besu-22.7.6
 
 nix-repl> :log pkgs.besu
 ```
@@ -285,7 +286,7 @@ Added 14 variables.
 nix-repl> :b outputs.packages.x86-64-linux.teku
 
 This derivation produced the following outputs:
-  out -> /nix/store/1k01brqgmr93y9f428s2kpkas79y9v4k-teku-22.12.0
+out -> /nix/store/1k01brqgmr93y9f428s2kpkas79y9v4k-teku-22.12.0
 ```
 
 The same can be repeated if we have loaded `<nixpkgs>` instead:
@@ -299,7 +300,7 @@ Added 17714 variables.
 nix-repl> :b pkgs.besu
 
 This derivation produced the following outputs:
-  out -> /nix/store/kf4xshk1lp16nbxcj9ar4lbf2dv7yqmv-besu-22.7.6
+out -> /nix/store/kf4xshk1lp16nbxcj9ar4lbf2dv7yqmv-besu-22.7.6
 ```
 
 ### Inspect code quickly
@@ -355,8 +356,8 @@ We can access detailed documentation of a utility function:
 nix-repl> :doc builtins.head
 Synopsis: builtins.head list
 
-    Return the first element of a list; abort evaluation if the argument isn’t a list or is
-    an empty list. You can test whether a list is empty by comparing it with [].
+Return the first element of a list; abort evaluation if the argument isn’t a list or is
+an empty list. You can test whether a list is empty by comparing it with [].
 ```
 
 Not every single function includes documentation, though! As [we can see from the Nix REPL implementation](https://github.com/NixOS/nix/blob/master/src/libcmd/repl.cc#L704).

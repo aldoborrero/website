@@ -2,7 +2,8 @@
 author: Aldo Borrero
 date: 2022-11-25
 title: How to set up a Nix Binary cache with Terraform in DigitalOcean + Cloudflare
-aliases: [/posts/how-to-setup-a-nix-binary-cache-with-terraform-in-digitalocean-and-cloudflare/]
+aliases:
+  - /posts/how-to-setup-a-nix-binary-cache-with-terraform-in-digitalocean-and-cloudflare/
 ---
 
 ![The Future](/images/posts/how-to-setup-a-nix-binary-cache-with-terraform-in-digitalocean-and-cloudflare/future.webp)
