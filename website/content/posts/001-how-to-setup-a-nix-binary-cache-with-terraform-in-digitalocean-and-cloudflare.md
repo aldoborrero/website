@@ -2,8 +2,7 @@
 author: Aldo Borrero
 date: 2022-11-25
 title: How to set up a Nix Binary cache with Terraform in DigitalOcean + Cloudflare
-aliases:
-  - /posts/how-to-setup-a-nix-binary-cache-with-terraform-in-digitalocean-and-cloudflare/
+aliases: [/posts/how-to-setup-a-nix-binary-cache-with-terraform-in-digitalocean-and-cloudflare/]
 ---
 
 ![The Future](/images/posts/how-to-setup-a-nix-binary-cache-with-terraform-in-digitalocean-and-cloudflare/future.webp)
@@ -26,8 +25,8 @@ Even if you surpass those limits by far, it won't cost you a lung 👏🏻!
 The rest of the post will be divided into three sections:
 
 1. Setting up the S3 storage in DigitalOcean Spaces.
-2. Configuring Cloudflare to use your custom domain.
-3. Conclusions
+1. Configuring Cloudflare to use your custom domain.
+1. Conclusions
 
 Let's get our hands dirty at work 💪🏻!
 
@@ -36,15 +35,15 @@ Pst! If you want the TLDR, [go to my Gist with the complete source code ready to
 ## Setting up the S3 storage in DigitalOcean Spaces
 
 ```terraform
-resource "digitalocean_spaces_bucket" "nix_store" {
+resource "digitalocean-spaces-bucket" "nix-store" {
   name   = "nix-store"
   region = "fra1"
   acl    = "private"
 
-  lifecycle_rule {
+  lifecycle-rule {
     id                                     = "ttl"
     enabled                                = true
-    abort_incomplete_multipart_upload_days = 1
+    abort-incomplete-multipart-upload-days = 1
     expiration {
       days = 30
     }
@@ -65,9 +64,9 @@ I also enabled versioning just in case, for whatever reason, I remove something 
 Next, we need to configure the S3 bucket to allow anonymous reads [the Nix manual includes information related to this matter](https://nixos.org/manual/nix/stable/package-management/s3-substituter.html#anonymous-reads-to-your-s3-compatible-binary-cache):
 
 ```terraform
-resource "digitalocean_spaces_bucket_policy" "nix_cache_anonymous_reads" {
-  region = digitalocean_spaces_bucket.nix_store.region
-  bucket = digitalocean_spaces_bucket.nix_store.name
+resource "digitalocean-spaces-bucket-policy" "nix-cache-anonymous-reads" {
+  region = digitalocean-spaces-bucket.nix-store.region
+  bucket = digitalocean-spaces-bucket.nix-store.name
   policy = jsonencode({
     "Id" : "DirectReads",
     "Version" : "2012-10-17",
@@ -80,8 +79,8 @@ resource "digitalocean_spaces_bucket_policy" "nix_cache_anonymous_reads" {
         ],
         "Effect" : "Allow",
         "Resource" : [
-          "arn:aws:s3:::${digitalocean_spaces_bucket.nix_store.name}",
-          "arn:aws:s3:::${digitalocean_spaces_bucket.nix_store.name}/*"
+          "arn:aws:s3:::${digitalocean-spaces-bucket.nix-store.name}",
+          "arn:aws:s3:::${digitalocean-spaces-bucket.nix-store.name}/*"
         ],
         "Principal" : "*"
       }
@@ -93,10 +92,10 @@ resource "digitalocean_spaces_bucket_policy" "nix_cache_anonymous_reads" {
 And last but not least, in this section, we need to add a special entry to our Nix Binary cache:
 
 ```terraform
-resource "digitalocean_spaces_bucket_object" "nix_cache_info" {
-  region       = digitalocean_spaces_bucket.nix_store.region
-  bucket       = digitalocean_spaces_bucket.nix_store.name
-  content_type = "text/html"
+resource "digitalocean-spaces-bucket-object" "nix-cache-info" {
+  region       = digitalocean-spaces-bucket.nix-store.region
+  bucket       = digitalocean-spaces-bucket.nix-store.name
+  content-type = "text/html"
   key          = "nix-cache-info"
   content      = <<EOF
 StoreDir: /nix/store
@@ -135,20 +134,20 @@ This part is a little bit more involved (but not that much, trust me!). Here the
 First, what we want to do is to [configure Terraform to generate a custom origin certificate](https://developers.cloudflare.com/ssl/origin-configuration/origin-ca/) that Cloudflare can use to communicate directly between their serves and with the DigitalOcean Spaces. To do so, we can use the `tls` provider (bear in mind that the `tls` provider stores sensitive information in the [Terraform State](https://developer.hashicorp.com/terraform/language/state/sensitive-data) directly, so consider switching to using [Vault](https://registry.terraform.io/providers/hashicorp/vault/latest/docs) provider or even the [SOPS](https://registry.terraform.io/providers/carlpett/sops/latest/docs) one. Or modify to provision your own directly without storing private keys!):
 
 ```terraform
-resource "tls_private_key" "nix_store_origin_key" {
+resource "tls-private-key" "nix-store-origin-key" {
   algorithm = "RSA"
-  rsa_bits  = 2048
+  rsa-bits  = 2048
 }
 ```
 
-The next step is to properly craft a [certificate signing request](https://en.wikipedia.org/wiki/Certificate_signing_request), like below (modify the common name to match the domain you plan to use for the binary cache and also as well the other options):
+The next step is to properly craft a [certificate signing request](https://en.wikipedia.org/wiki/Certificate-signing-request), like below (modify the common name to match the domain you plan to use for the binary cache and also as well the other options):
 
 ```terraform
-resource "tls_cert_request" "nix_store_origin_cert" {
-  private_key_pem = tls_private_key.nix_store_origin_key.private_key_pem
+resource "tls-cert-request" "nix-store-origin-cert" {
+  private-key-pem = tls-private-key.nix-store-origin-key.private-key-pem
 
   subject {
-    common_name  = "cache.example.com"
+    common-name  = "cache.example.com"
     organization = "My Organization, LTD"
     country      = "USA"
     locality     = "Los Angeles"
@@ -159,52 +158,52 @@ resource "tls_cert_request" "nix_store_origin_cert" {
 With that, we can then ask Cloudflare to create our certificate (you can customize how long the certificate should be valid):
 
 ```terraform
-resource "cloudflare_origin_ca_certificate" "nix_store_origin_cert" {
+resource "cloudflare-origin-ca-certificate" "nix-store-origin-cert" {
   # See: https://github.com/cloudflare/terraform-provider-cloudflare/issues/1919#issuecomment-1270722657
   provider = cloudflare.cf-user-service-auth
 
-  csr                = tls_cert_request.nix_store_origin_cert.cert_request_pem
+  csr                = tls-cert-request.nix-store-origin-cert.cert-request-pem
   hostnames          = ["cache.example.com"]
-  request_type       = "origin-rsa"
-  requested_validity = 365
+  request-type       = "origin-rsa"
+  requested-validity = 365
 }
 ```
 
 We then proceed to store the certificate inside DigitalOcean:
 
 ```terraform
-resource "digitalocean_certificate" "nix_store_origin_cert" {
+resource "digitalocean-certificate" "nix-store-origin-cert" {
   name             = "cf-origin-cert"
   type             = "custom"
-  private_key      = tls_private_key.nix_store_origin_key.private_key_pem
-  leaf_certificate = cloudflare_origin_ca_certificate.nix_store_origin_cert.certificate
+  private-key      = tls-private-key.nix-store-origin-key.private-key-pem
+  leaf-certificate = cloudflare-origin-ca-certificate.nix-store-origin-cert.certificate
 }
 ```
 
 We enable the DigitalOcean CDN:
 
 ```terraform
-resource "digitalocean_cdn" "nix_store_cdn" {
-  origin           = digitalocean_spaces_bucket.nix_store.bucket_domain_name
-  certificate_name = digitalocean_certificate.nix_store_origin_cert.name
-  custom_domain    = "cache.example.com"
+resource "digitalocean-cdn" "nix-store-cdn" {
+  origin           = digitalocean-spaces-bucket.nix-store.bucket-domain-name
+  certificate-name = digitalocean-certificate.nix-store-origin-cert.name
+  custom-domain    = "cache.example.com"
 }
 ```
 
 With this, then we can proceed to register our domain within Cloudflare:
 
 ```terraform
-data "cloudflare_zone" "domain" {
+data "cloudflare-zone" "domain" {
   name = "example.com"
 }
 
-resource "cloudflare_record" "nix_store_cache" {
+resource "cloudflare-record" "nix-store-cache" {
   name    = "cache"
-  value   = digitalocean_cdn.nix_store_cdn.endpoint
+  value   = digitalocean-cdn.nix-store-cdn.endpoint
   type    = "CNAME"
   ttl     = 1 # Auto
   proxied = true
-  zone_id = data.cloudflare_zone.domain.id
+  zone-id = data.cloudflare-zone.domain.id
 }
 ```
 
@@ -221,7 +220,7 @@ If you want to expand more knowledge related to the Nix binary cache, I would re
 - [A Nix Binary Cache Specification](https://fzakaria.com/2021/08/12/a-nix-binary-cache-specification.html).
 - [Serving a Nix Store via S3](https://nixos.org/manual/nix/stable/package-management/s3-substituter.html).
 - [Setting up a private nix cache for fun and profit](https://www.channable.com/tech/setting-up-a-private-nix-cache-for-fun-and-profit).
-- [Nix Wiki: Binary Cache entry](https://nixos.wiki/wiki/Binary_Cache).
+- [Nix Wiki: Binary Cache entry](https://nixos.wiki/wiki/Binary-Cache).
 - [Nix's source code implementation of the binary cache store](https://github.com/NixOS/nix/blob/b3d2a05c59266688aa904d5fb326394cbb7e9e90/src/libstore/binary-cache-store.cc).
 
 See you in the next post 👋🏻!

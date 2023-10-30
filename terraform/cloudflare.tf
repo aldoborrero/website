@@ -3,7 +3,7 @@ locals {
   cf_pages_name  = "aldoborrero-website"
   git_repo_owner = "aldoborrero"
   git_repo_name  = "website"
-  hugo_version   = "0.106.0"
+  hugo_version   = "0.119.0"
 }
 
 # --------------------------------------------

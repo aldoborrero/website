@@ -2,8 +2,7 @@
 author: Aldo Borrero
 date: 2023-01-15
 title: 'Setting up my machines: nix style'
-aliases:
-  - /posts/setting-up-my-machines-nix-style/
+aliases: [/posts/setting-up-my-machines-nix-style/]
 ---
 
 ![The Technology](/images/posts/setting-up-my-machines-nix-style/cover.jpeg)
@@ -101,12 +100,12 @@ Let's then craft a [`flake.nix`](https://github.com/aldoborrero/templates/blob/m
           ./nix
           ./nixos
         ];
-        systems = ["x86_64-linux"];
+        systems = ["x86-64-linux"];
         perSystem = {inputs', ...}: {
           # make pkgs available to all `perSystem` functions
-          _module.args.pkgs = inputs'.nixpkgs.legacyPackages;
+          -module.args.pkgs = inputs'.nixpkgs.legacyPackages;
           # make custom lib available to all `perSystem` functions
-          _module.args.lib = lib;
+          -module.args.lib = lib;
         };
       })
     .config
@@ -185,12 +184,12 @@ outputs = inputs @ {
           ./nix
           ./nixos
         ];
-        systems = ["x86_64-linux"];
+        systems = ["x86-64-linux"];
         perSystem = {inputs', ...}: {
           # make pkgs available to all `perSystem` functions
-          _module.args.pkgs = inputs'.nixpkgs.legacyPackages;
+          -module.args.pkgs = inputs'.nixpkgs.legacyPackages;
           # make custom lib available to all `perSystem` functions
-          _module.args.lib = lib;
+          -module.args.lib = lib;
         };
       })
     .config
@@ -323,8 +322,8 @@ Following the previous section, you can now define a NixOS configuration system 
   defaultModules = [
     # make flake inputs accessible in NixOS
     {
-      _module.args.self = self;
-      _module.args.inputs = inputs;
+      -module.args.self = self;
+      -module.args.inputs = inputs;
     }
     # load common modules
     ({...}: {
@@ -343,9 +342,9 @@ Following the previous section, you can now define a NixOS configuration system 
     })
   ];
 
-  pkgs.x86_64-linux = import nixpkgs {
+  pkgs.x86-64-linux = import nixpkgs {
     inherit lib;
-    system = "x86_64-linux";
+    system = "x86-64-linux";
     config.allowUnfree = true;
   };
 in {
@@ -355,7 +354,7 @@ in {
 
   flake.nixosConfigurations = {
     nuc-1 = nixosSystem {
-      pkgs = pkgs.x86_64-linux;
+      pkgs = pkgs.x86-64-linux;
       modules =
         defaultModules
         ++ [nixos-hardware.nixosModules.intel-nuc-8i7beh]
@@ -422,8 +421,8 @@ The idea in this part is quite simplistic: we can take advantage of [`nixos-gene
         inputs.disko.nixosModules.disko
         ./base-iso.nix
       ];
-      _module.args.self = self;
-      _module.args.inputs = inputs;
+      -module.args.self = self;
+      -module.args.inputs = inputs;
     };
   in {
     packages = {
@@ -482,7 +481,7 @@ in {
     network.enable = true;
     network.networks =
       mapAttrs'
-      (num: _:
+      (num: -:
         nameValuePair "eth${num}" {
           extraConfig = ''
             [Match]
@@ -786,8 +785,8 @@ If we zoom out, then my custom installer for `nuc-1` looks like this (you can fi
         inputs.disko.nixosModules.disko
         ./base-iso.nix
       ];
-      _module.args.self = self;
-      _module.args.inputs = inputs;
+      -module.args.self = self;
+      -module.args.inputs = inputs;
     };
   in {
     packages = {

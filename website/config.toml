@@ -1,5 +1,4 @@
 baseURL = "/"
-theme = "paper"
 title = "Aldo Borrero"
 
 author = "Aldo Borrero"
@@ -9,17 +8,14 @@ DefaultContentLanguage = "en"
 enableInlineShortcodes = true
 
 [params]
-color = 'linen' # linen, wheat, gray, light
-
+color = 'linen'
 twitter = 'aldoborrero'
 github = 'aldoborrero'
 mastodon = 'https://fosstodon.org/@aldo'
 rss = true
-
 avatar = 'https://pbs.twimg.com/profile_images/1227915659599843329/4TEsb3Ya_400x400.jpg'
 name = 'Aldo Borrero'
 bio = 'Writer of Software · Open Source, Ethereum & Nix passionate'
-
 disableHLJS = false
 monoDarkIcon = true
 
@@ -59,3 +55,6 @@ posts = '/posts/:year/:month/:day/:slug'
 [module.hugoVersion]
 extended = true
 min = "0.55.0"
+
+[[module.imports]]
+path = "github.com/nanxiaobei/hugo-paper"

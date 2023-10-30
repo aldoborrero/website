@@ -2,8 +2,7 @@
 author: Aldo Borrero
 date: 2022-12-02
 title: Learn how to use the Nix REPL effectively
-aliases:
-  - /posts/using-effectively-the-nix-repl/
+aliases: [/posts/using-effectively-the-nix-repl/]
 ---
 
 ![The Abstract](/images/posts/using-effectively-the-nix-repl/cover.jpg)
@@ -11,7 +10,7 @@ aliases:
 Inspecting Nix is hard! The dynamic nature of the language sometimes makes your head dizzy, especially when starting your first steps toward enlightenment in [NixOS](https://nixos.org). It is pretty common to suffer from the following issues:
 
 - Has the infinite recursion error hit you? It happened to me.
-- Has the Nix expression spitted a weird error with a bizarre stack trace resembling [Klingon](https://en.wikipedia.org/wiki/Klingon_language)? Yep, that too.
+- Has the Nix expression spitted a weird error with a bizarre stack trace resembling [Klingon](https://en.wikipedia.org/wiki/Klingon-language)? Yep, that too.
 - Do you wonder what options/packages/nixos and home-manager modules the expression may produce? I have no idea.
 
 Discoverability could be much better in the Nix/NixOS ecosystem despite having numerous resources/manuals/blog articles. To the uninitiated, it feels vast but, at the same time, shallow. Furthermore, it only makes sense **once** you have acquired some knowledge. So, trust me, you're not alone.
@@ -20,7 +19,7 @@ While I was writing the previous paragraph, it got me thinking next on the follo
 
 > How can discoverability be improved on Nix?
 
-And suddenly remembered [this Vox's interview](https://youtu.be/K-NBcP0YUQI?t=151) with [Shigeru Miyamoto](https://en.wikipedia.org/wiki/Shigeru_Miyamoto) (creator of Super Mario Bros, Zelda, Donkey Kong, and other big Nintendo franchises). It turns out he has something to say about discoverability in video games:
+And suddenly remembered [this Vox's interview](https://youtu.be/K-NBcP0YUQI?t=151) with [Shigeru Miyamoto](https://en.wikipedia.org/wiki/Shigeru-Miyamoto) (creator of Super Mario Bros, Zelda, Donkey Kong, and other big Nintendo franchises). It turns out he has something to say about discoverability in video games:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/K-NBcP0YUQI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
@@ -34,20 +33,20 @@ The interview described Miyamoto's genius when he and his team worked on the fir
 >
 > If you look at a breakdown, there's a lot of really subtle design work going on here. Though Mario is usually at the centre of the screen, in this first scene he starts at the far left. All the empty space to the right of him gives you a sense of where to go.
 
-![How the Inventor of Mario designs a Game](/images/posts/using-effectively-the-nix-repl/How_the_inventor_of_Mario_designs_a_game.gif)
+![How the Inventor of Mario designs a Game](/images/posts/using-effectively-the-nix-repl/How-the-inventor-of-Mario-designs-a-game.gif)
 
 I recommend seeing the whole interview as it's very insightful and entertaining (especially if you love video games, as I do!). But going back to Nix, I think those principles could be better enforced in the ecosystem.
 
 I remember discussing with [Jonas Chevalier](https://twitter.com/zimbatm) in August the ideal path to learn Nix effectively, and during our interaction, I shared with him the following notes:
 
 1. Learn the basics of the Nix language.
-2. **Play around with the Nix REPL.**
-3. Create your first flake, utils, and libs.
-4. Use nix as a package manager first.
-5. Learn how to solve your upstream Linux issues.
-6. Move slowly towards NixOS.
+1. **Play around with the Nix REPL.**
+1. Create your first flake, utils, and libs.
+1. Use nix as a package manager first.
+1. Learn how to solve your upstream Linux issues.
+1. Move slowly towards NixOS.
 
-There was a before and an after to understanding Nix in my particular case: the **REPL** (an acronym for [Read Eval Loop](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop)). Unfortunately, the REPL is presented in the [NixOS Manual](https://nixos.org/manual/nixos/stable/#sec-modularity) in the Modularity section, a thing that, for the beginner, is too hidden to be understood as a valuable tool to use almost immediately. I know there are other places like [nix.wiki](https://nixos.wiki/wiki/Nix_command/repl), where there's a shy mention of the REPL and its benefits, but nothing more than a glorified summarized version of the [official docs for the command](https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-repl.html).
+There was a before and an after to understanding Nix in my particular case: the **REPL** (an acronym for [Read Eval Loop](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print-loop)). Unfortunately, the REPL is presented in the [NixOS Manual](https://nixos.org/manual/nixos/stable/#sec-modularity) in the Modularity section, a thing that, for the beginner, is too hidden to be understood as a valuable tool to use almost immediately. I know there are other places like [nix.wiki](https://nixos.wiki/wiki/Nix-command/repl), where there's a shy mention of the REPL and its benefits, but nothing more than a glorified summarized version of the [official docs for the command](https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-repl.html).
 
 How can you teach the basics without having a safe playground? It's also a thing [I was jokingly discussing on Mastodon](https://fosstodon.org/@aldo/109404422650458768):
 
@@ -195,7 +194,7 @@ nix-repl> :l <nixpkgs>
 **Note**: Do you know how Nix knows where to load those `<nixpkgs>`?
 
 ```bash
-$ echo $NIX_PATH
+$ echo $NIX-PATH
 nixpkgs=/nix/store/j5a7i3dvxslg2ychfy53wdhg1m3xfrwm-source:home-manager=/nix/store/xg2ijnl5x1g64dv2hn23g39k6r5fn3sx-source
 
 $ nix repl -f '<nixpkgs>'
@@ -205,21 +204,21 @@ Loading installable ''...
 Added 17714 variables.
 nix-repl> :q
 
-$ NIX_PATH=
+$ NIX-PATH=
 
 $ nix repl -f '<nixpkgs>'
-error: file 'nixpkgs' was not found in the Nix search path (add it using $NIX_PATH or -I)
+error: file 'nixpkgs' was not found in the Nix search path (add it using $NIX-PATH or -I)
 ```
 
-The particular `$NIX_PATH` environment variable tells the Nix REPL to load the path specified in the expression `<nixpkgs>`! Furthermore, can we try to create our custom `<mynixpkgs>` and load that instead? Let's try it out!
+The particular `$NIX-PATH` environment variable tells the Nix REPL to load the path specified in the expression `<nixpkgs>`! Furthermore, can we try to create our custom `<mynixpkgs>` and load that instead? Let's try it out!
 
 ```bash
 $ git clone git@github.com:NixOS/nixpkgs.git
 # Cloning...
 
-$ NIX_PATH=mynixpkgs=/home/aldo/nixpkgs
+$ NIX-PATH=mynixpkgs=/home/aldo/nixpkgs
 
-$ echo $NIX_PATH
+$ echo $NIX-PATH
 mynixpkgs=/home/aldo/nixpkgs
 
 $ nix repl -f '<mynixpkgs>'
@@ -239,7 +238,7 @@ It works!
 Another alternative approach is to load `nixpkgs` directly from a `gz` tarball (previous to Flakes, this was one the most used methods):
 
 ```bash
-nix repl --expr 'import (builtins.fetchTarball https://github.com/NixOS/nixpkgs/archive/6bc6f77cb171a74001033d94f17f49043a9f1804.tar.gz) {system = "x86_64-linux";}'
+nix repl --expr 'import (builtins.fetchTarball https://github.com/NixOS/nixpkgs/archive/6bc6f77cb171a74001033d94f17f49043a9f1804.tar.gz) {system = "x86-64-linux";}'
 Welcome to Nix 2.11.1. Type :? for help.
 
 Loading installable ''...
@@ -249,7 +248,7 @@ nix-repl>
 
 If you want to see the latest versions of the tarballs, you can navigate to [status.nixos.org](https://status.nixos.org) and see the different channels there. From there, it's just easy as copying the commit hash and importing it directly, as shown above.
 
-**Note**: Also, notice how, in this particular case, I'm specifying arguments like `system = "x86_64-linux"` to customize how the `nixpkgs` are imported. You can also add other supported options like `config.allowUnfree = true`!
+**Note**: Also, notice how, in this particular case, I'm specifying arguments like `system = "x86-64-linux"` to customize how the `nixpkgs` are imported. You can also add other supported options like `config.allowUnfree = true`!
 
 ### Display build logs
 
@@ -283,7 +282,7 @@ Welcome to Nix 2.11.0. Type :? for help.
 
 Loading installable ''...
 Added 14 variables.
-nix-repl> :b outputs.packages.x86_64-linux.teku
+nix-repl> :b outputs.packages.x86-64-linux.teku
 
 This derivation produced the following outputs:
   out -> /nix/store/1k01brqgmr93y9f428s2kpkas79y9v4k-teku-22.12.0
@@ -313,7 +312,7 @@ Welcome to Nix 2.11.0. Type :? for help.
 
 Loading installable ''...
 Added 17708 variables.
-nix-repl> :e packages.x86_64-linux.lighthouse
+nix-repl> :e packages.x86-64-linux.lighthouse
 ```
 
 Bear in mind, though it will always open in read-only mode! But for reference and exploration, it's convenient!

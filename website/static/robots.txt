@@ -1,4 +1,3 @@
 User-Agent: *
 Allow: /
-
 Sitemap: https://aldoborrero.com/sitemap.xml
