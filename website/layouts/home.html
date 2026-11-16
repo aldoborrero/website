@@ -1,0 +1,24 @@
+{{ define "main" }}
+<div class="intro row">
+  <div class="who">
+    <img src="/images/author.jpg" alt="Portrait of {{ site.Params.author }}" width="96" height="96">
+  </div>
+  <div>
+    {{ .Content }}
+    <ul class="links">
+      <li><a href="/cv/">CV</a></li>
+      <li><a href="https://github.com/{{ site.Params.github }}">GitHub</a></li>
+      <li><a href="{{ site.Params.mastodon }}">Mastodon</a></li>
+    </ul>
+  </div>
+</div>
+
+{{- $posts := where site.RegularPages "Section" "posts" }}
+<section class="block row" aria-labelledby="writing-h">
+  <h2 class="label" id="writing-h">Latest writing</h2>
+  <div>
+    {{ partial "entries.html" (first 3 $posts) }}
+    <a class="more" href="/posts/">All {{ len $posts }} posts</a>
+  </div>
+</section>
+{{ end }}

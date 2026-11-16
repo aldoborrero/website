@@ -1,0 +1,11 @@
+{{- $src := .Destination }}
+{{- $dims := "" }}
+{{- if and (hasPrefix $src "/") (fileExists (path.Join "static" $src)) }}
+  {{- with images.Config (path.Join "static" $src) }}{{ $dims = printf ` width="%d" height="%d"` .Width .Height }}{{ end }}
+{{- end }}
+{{- $img := printf `<img src="%s" alt="%s"%s loading="%s" decoding="async">` $src .PlainText $dims (cond (eq .Ordinal 0) "eager" "lazy") }}
+{{- if .IsBlock -}}
+<figure class="figure">{{ $img | safeHTML }}{{ with .Title }}<figcaption>{{ . }}</figcaption>{{ end }}</figure>
+{{- else -}}
+{{ $img | safeHTML }}
+{{- end -}}

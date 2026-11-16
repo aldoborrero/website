@@ -1,0 +1,58 @@
+{{ define "main" }}
+<article>
+  <header class="post-head row">
+    <div class="post-meta">
+      <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 January 2006" }}</time>
+      <span>{{ .ReadingTime }} minute read</span>
+    </div>
+    <div>
+      <h1>{{ .Title }}</h1>
+      {{ with .Description }}<p class="dek">{{ . }}</p>{{ end }}
+    </div>
+  </header>
+
+  {{- /* A post that opens with an image gets it as a full-width hero. */}}
+  {{- $content := .Content }}
+  {{- $hero := index (findRE `(?s)^\s*<figure class="figure">.*?</figure>` $content 1) 0 }}
+  {{- with $hero }}
+  {{- $content = replace $content . "" 1 }}
+  <div class="hero">{{ . | replaceRE `^\s*<figure class="figure">|</figure>$` "" | safeHTML }}</div>
+  {{- end }}
+
+  {{- $toc := .Fragments.Headings }}
+  {{- $h2 := 0 }}{{ range .Fragments.HeadingsMap }}{{ if eq .Level 2 }}{{ $h2 = add $h2 1 }}{{ end }}{{ end }}
+  <div class="post-body row">
+    <aside class="margin">
+      {{- if ge $h2 2 }}
+      <nav class="toc" aria-labelledby="toc-h">
+        <h2 id="toc-h">Contents</h2>
+        {{ .TableOfContents | replaceRE `^<nav id="TableOfContents">\s*|\s*</nav>$` "" | safeHTML }}
+      </nav>
+      {{- end }}
+    </aside>
+    <div class="prose">
+      {{- if ge $h2 2 }}
+      <details class="toc-mobile">
+        <summary>Contents</summary>
+        {{ .TableOfContents | replaceRE `^<nav id="TableOfContents">\s*|\s*</nav>$` "" | safeHTML }}
+      </details>
+      {{- end }}
+      {{ $content | safeHTML }}
+      <footer class="sign">
+        <img src="/images/author.jpg" alt="" width="48" height="48" loading="lazy">
+        <p>Written by {{ site.Params.author }}. Replies welcome on <a href="{{ site.Params.mastodon }}">Mastodon</a>.</p>
+      </footer>
+    </div>
+  </div>
+
+  {{- with or .NextInSection .PrevInSection }}
+  <nav class="pager row" aria-label="More posts">
+    <div></div>
+    <ul>
+      {{- with $.PrevInSection }}<li><span>Older</span><a href="{{ .RelPermalink }}" rel="prev">{{ .Title }}</a></li>{{ end }}
+      {{- with $.NextInSection }}<li><span>Newer</span><a href="{{ .RelPermalink }}" rel="next">{{ .Title }}</a></li>{{ end }}
+    </ul>
+  </nav>
+  {{- end }}
+</article>
+{{ end }}

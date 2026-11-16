@@ -1,0 +1,12 @@
+{{- $here := . }}
+<header class="site-head">
+  <div class="row">
+    <a class="brand" href="/">{{ site.Title }}</a>
+    <nav class="site-nav" aria-label="Main">
+      {{- $writing := or (eq .Section "posts") (eq .RelPermalink "/posts/") }}
+      <a href="/posts/"{{ if eq .RelPermalink "/posts/" }} aria-current="page"{{ else if $writing }} aria-current="true"{{ end }}>Writing</a>
+      <a href="/cv/"{{ if eq .RelPermalink "/cv/" }} aria-current="page"{{ end }}>CV</a>
+      <a href="/index.xml">Feed</a>
+    </nav>
+  </div>
+</header>

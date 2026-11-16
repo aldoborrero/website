@@ -1,0 +1,15 @@
+{{ define "main" }}
+<header class="archive-head row">
+  <div></div>
+  <div>
+    <h1>{{ .Title }}</h1>
+    {{ with .Description }}<p>{{ . }}</p>{{ end }}
+  </div>
+</header>
+{{- range .Pages.GroupByDate "2006" }}
+<section class="year row" aria-labelledby="y{{ .Key }}">
+  <h2 id="y{{ .Key }}">{{ .Key }}</h2>
+  {{ partial "entries.html" .Pages }}
+</section>
+{{- end }}
+{{ end }}

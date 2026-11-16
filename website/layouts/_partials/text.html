@@ -1,0 +1,3 @@
+{{/* Inline text from data files: Markdown, with [[...]] marking a placeholder
+     that still needs a confirmed fact. */}}
+{{- . | replaceRE `\[\[(.+?)\]\]` `<span class="todo">$1</span>` | markdownify -}}

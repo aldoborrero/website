@@ -1,0 +1,82 @@
+/* Colour tokens: the only file to edit to change the palette.
+   Dark is the default; light follows prefers-color-scheme or data-theme="light".
+   theme.css never uses a literal colour, only these variables.
+
+   --bg       page ground                --mark     highlight ground (placeholders, hover)
+   --ink      body text                  --code-bg  code block ground
+   --muted    secondary text, rules      --kw       code: keywords
+   --line     hairlines, borders         --str      code: strings, literals
+   --accent   links, focus, selection
+
+   Palette: Medianoche (WCAG AA checked for text on --bg and --code-bg). */
+
+:root {
+  --bg: #121a26;
+  --ink: #dfe6f0;
+  --muted: #93a0b4;
+  --line: #263247;
+  --accent: #82bdf0;
+  --mark: #1c2839;
+  --code-bg: #0c121b;
+  --kw: #a9c7ff;
+  --str: #a3d4c3;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f4f7fb;
+    --ink: #142033;
+    --muted: #526075;
+    --line: #d9e0ea;
+    --accent: #2c5a96;
+    --mark: #e3ebf6;
+    --code-bg: #e9eef5;
+    --kw: #2c5a96;
+    --str: #2f6b5a;
+    color-scheme: light;
+  }
+}
+
+:root[data-theme="light"] {
+  --bg: #f4f7fb;
+  --ink: #142033;
+  --muted: #526075;
+  --line: #d9e0ea;
+  --accent: #2c5a96;
+  --mark: #e3ebf6;
+  --code-bg: #e9eef5;
+  --kw: #2c5a96;
+  --str: #2f6b5a;
+  color-scheme: light;
+}
+
+/* Paper: printing (for example the CV to PDF) always uses black on white. */
+@media print {
+  :root,
+  :root:not([data-theme="dark"]),
+  :root[data-theme="light"] {
+    --bg: #ffffff;
+    --ink: #000000;
+    --muted: #444444;
+    --line: #bbbbbb;
+    --accent: #1f3f6e;
+    --mark: #ffffff;
+    --code-bg: #f2f2f2;
+    --kw: #1f3f6e;
+    --str: #2f5a4a;
+    color-scheme: light;
+  }
+}
+
+/* Candidate palettes (dark values; replace the :root block above to try one).
+   Light companions for these two are not defined yet.
+
+   Ámbar:
+     --bg: #1a1713; --ink: #ece4d6; --muted: #ab9f8c; --line: #342d24; --accent: #f0b65c;
+     --mark: #2b2317; --code-bg: #12100c; --kw: #f0b65c; --str: #c3cf98;
+
+   Índigo y oro:
+     --bg: #161a33; --ink: #e6e8f5; --muted: #a2a8ca; --line: #2c3254; --accent: #e8c274;
+     --mark: #232a4c; --code-bg: #10132a; --kw: #e8c274; --str: #9fd3c8;
+*/
