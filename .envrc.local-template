@@ -1,26 +1,21 @@
-## Terraform / Cloudflare Provider
+# shellcheck shell=bash
+# Copy to .envrc.local (gitignored) for per-machine overrides.
+# Normally these come from secrets/secrets.yaml (see WEBSITE_LOAD_SECRETS below).
+
+## OpenTofu / Cloudflare provider and wrangler
 # URL: https://dash.cloudflare.com/profile/api-tokens
-#   Instructions:
-#     1) Create Token with following settings:
-#       Permissions
-#         - Zone + DNS + Edit
-#       Zone Resources:
-#         - Include + All zones
-#     2) Accept
-export CLOUDFLARE_API_TOKEN=<TODO>
+#   Account token with: Workers Scripts:Edit, Zone:Read, Workers Routes:Edit (zone),
+#   DNS:Edit (zone, needed by Workers custom domains)
+export CLOUDFLARE_API_TOKEN=TODO
+export CLOUDFLARE_ACCOUNT_ID=TODO
 
-# URL: https://cloud.digitalocean.com/account/api/tokens
-# Instructions:
-#   1) Generate new Spaces Access keys
-#   2) Write the following settings
-#     Name
-#       - Any you want (i.e: terraform-state)
-#   3) Click on the green tick
-#   4) Copy the Key and Access keys
-export AWS_ACCESS_KEY_ID=<TODO>
-export AWS_SECRET_ACCESS_KEY=<TODO>
+## OpenTofu state backend (Cloudflare R2, bucket aldoborrero-tfstate)
+# URL: https://dash.cloudflare.com/?to=/:account/r2/api-tokens
+#   R2 API token with Object Read & Write on the state bucket
+export AWS_ACCESS_KEY_ID=TODO
+export AWS_SECRET_ACCESS_KEY=TODO
+export AWS_ENDPOINT_URL_S3="https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com"
 
-# SOPS
-# Instructions:
-#   1) Just specify which key you want to use to encrypt secrets
-export SOPS_AGE_KEY=<TODO>
+# Decrypt secrets/secrets.yaml into the environment on every direnv load
+# (needed for `just tf-*` / `just deploy`; prompts for the YubiKey).
+export WEBSITE_LOAD_SECRETS=1

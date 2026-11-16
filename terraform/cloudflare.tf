@@ -1,79 +1,45 @@
-locals {
-  domain         = "aldoborrero.com"
-  cf_pages_name  = "aldoborrero-website"
-  git_repo_owner = "aldoborrero"
-  git_repo_name  = "website"
-  hugo_version   = "0.119.0"
-}
+# Cloudflare infrastructure for aldoborrero.com.
+#
+# Ownership split (as recommended in Cloudflare's Workers IaC docs):
+#   - tofu owns the Worker itself and the domains it serves.
+#   - wrangler (CI, wrangler.jsonc) uploads versions with the static assets
+#     and deploys them.
 
-# --------------------------------------------
-# Data
-# --------------------------------------------
+locals {
+  domain      = "aldoborrero.com"
+  worker_name = "aldoborrero-website"
+  account_id  = data.cloudflare_zone.domain.account.id
+}
 
 data "cloudflare_zone" "domain" {
-  name = local.domain
-}
-
-# --------------------------------------------
-# Cloudflare Pages: Website
-# --------------------------------------------
-
-resource "cloudflare_pages_project" "website" {
-  account_id        = data.cloudflare_zone.domain.account_id
-  name              = local.cf_pages_name
-  production_branch = "main"
-
-  source {
-    type = "github"
-    config {
-      owner                         = local.git_repo_owner
-      repo_name                     = local.git_repo_name
-      production_branch             = "main"
-      pr_comments_enabled           = true
-      deployments_enabled           = true
-      production_deployment_enabled = true
-      preview_deployment_setting    = "custom"
-      preview_branch_includes       = ["develop"]
-      preview_branch_excludes       = ["main"]
-    }
-  }
-
-  build_config {
-    build_command   = "hugo --minify --source ./website"
-    destination_dir = "website/public"
-  }
-
-  deployment_configs {
-    preview {
-      environment_variables = {
-        HUGO_VERSION = local.hugo_version
-      }
-    }
-    production {
-      environment_variables = {
-        HUGO_VERSION = local.hugo_version
-      }
-    }
+  filter = {
+    name = local.domain
   }
 }
 
-resource "cloudflare_pages_domain" "website" {
-  depends_on = [cloudflare_pages_project.website]
+# --------------------------------------------
+# Worker serving the static site
+# --------------------------------------------
 
-  account_id   = data.cloudflare_zone.domain.account_id
-  project_name = local.cf_pages_name
-  domain       = local.domain
+resource "cloudflare_worker" "website" {
+  account_id = local.account_id
+  name       = local.worker_name
+
+  observability = {
+    enabled = true
+  }
+
+  # Served only on the custom domain; *.workers.dev stays off, but preview
+  # URLs for pull requests are enabled.
+  subdomain = {
+    enabled          = false
+    previews_enabled = true
+  }
 }
 
-# --------------------------------------------
-# Cloudflare Records
-# --------------------------------------------
-
-resource "cloudflare_record" "website" {
-  zone_id = data.cloudflare_zone.domain.zone_id
-  name    = "@"
-  proxied = true
-  ttl     = 1
-  type    = "CNAME"
-  value   = "${local.cf_pages_name}.pages.dev"
+resource "cloudflare_workers_custom_domain" "website" {
+  account_id = local.account_id
+  zone_id    = data.cloudflare_zone.domain.id
+  hostname   = local.domain
+  service    = cloudflare_worker.website.name
 }
