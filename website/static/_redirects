@@ -1,0 +1,10 @@
+# Workers Static Assets redirects. The old theme published taxonomy pages;
+# there are no tags or categories any more, so send them to the archive.
+/categories /posts/ 301
+/categories/* /posts/ 301
+/tags /posts/ 301
+/tags/* /posts/ 301
+/series /posts/ 301
+/series/* /posts/ 301
+/page/1/ / 301
+/posts/page/1/ /posts/ 301

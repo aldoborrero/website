@@ -2,6 +2,7 @@
 author: Aldo Borrero
 date: 2022-12-02
 title: Learn how to use the Nix REPL effectively
+slug: learn-how-to-use-the-nix-repl-effectively
 aliases:
   - /posts/using-effectively-the-nix-repl/
 ---

@@ -1,0 +1,46 @@
+# aldoborrero.com: Hugo with the theme in this directory (layouts/, assets/),
+# no Go modules, so a build needs nothing but the hugo binary.
+baseURL = "https://aldoborrero.com/"
+title = "Aldo Borrero"
+locale = "en"
+enableInlineShortcodes = true
+enableRobotsTXT = false
+disableKinds = ["taxonomy", "term"]
+
+[params]
+author = "Aldo Borrero"
+description = "Aldo Borrero's blog: long posts about Nix and reproducible infrastructure."
+github = "aldoborrero"
+mastodon = "https://fosstodon.org/@aldo"
+twitter = "aldoborrero"
+
+[permalinks]
+# Production URLs. Each post freezes :slug in its front matter.
+posts = "/posts/:year/:month/:day/:slug/"
+
+[pagination]
+pagerSize = 100
+
+[outputs]
+home = ["html", "rss"]
+section = ["html", "rss"]
+page = ["html"]
+
+[markup.goldmark.renderer]
+unsafe = true
+
+[markup.goldmark.parser]
+# Lets the image render hook see a standalone image and emit a <figure>.
+wrapStandAloneImageWithinParagraph = false
+
+[markup.highlight]
+# Chroma CSS classes instead of inline styles, so colours come from the tokens.
+noClasses = false
+
+[markup.tableOfContents]
+startLevel = 2
+endLevel = 3
+
+[sitemap]
+changeFreq = ""
+priority = -1
