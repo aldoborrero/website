@@ -5,8 +5,8 @@
 {{- with .Description }}{{ $desc = . }}{{ else }}{{ if .IsPage }}{{ with .Summary }}{{ $desc = . | plainify | htmlUnescape | strings.TrimSpace | truncate 160 }}{{ end }}{{ end }}{{ end }}
 <meta name="description" content="{{ $desc }}">
 <meta name="author" content="{{ site.Params.author }}">
-<meta name="color-scheme" content="dark light">
-<meta name="theme-color" content="#121a26">
+<meta name="theme-color" content="">
+<script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
 <link rel="canonical" href="{{ .Permalink }}">
 <link rel="icon" href="/favicon.ico" sizes="any">
 {{- with site.Home.OutputFormats.Get "rss" }}

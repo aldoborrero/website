@@ -12,7 +12,7 @@ Personal website and blog. Static site, served from a Cloudflare Worker (Workers
 | `nix/packages/tofu/` | OpenTofu with the Cloudflare provider baked in |
 | `nix/packages/site/` | the site: `hugo --minify --panicOnWarning` in the sandbox, plus self-hosted fonts (`.#site.fonts`); also `checks.<sys>.pkgs-site` |
 | `nix/checks/tfsec.nix` | tfsec over `terraform/` |
-| `website/` | Hugo site with its own theme: `layouts/`, `assets/css/` (`tokens.css` holds every colour), `data/cv.toml` (the career page at `/about/`), `content/`, `static/` |
+| `website/` | Hugo site with its own theme: `layouts/`, `assets/css/` (`tokens.css` holds every colour; light by default, dark through the header toggle), `data/cv.toml` (the career page at `/about/`), `content/`, `static/` |
 | `terraform/` | OpenTofu: the Worker and its custom domain; state in R2 |
 | `wrangler.jsonc` | Worker static-assets config used by `wrangler deploy` |
 | `secrets/secrets.yaml` | sops (age + YubiKey) dotenv with Cloudflare / R2 credentials |

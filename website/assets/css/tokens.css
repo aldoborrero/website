@@ -1,5 +1,6 @@
 /* Colour tokens: the only file to edit to change the palette.
-   Dark is the default; light follows prefers-color-scheme or data-theme="light".
+   Light is the default; dark applies when <html data-theme="dark">, which the
+   header toggle sets (stored in localStorage). The system preference is ignored.
    theme.css never uses a literal colour, only these variables.
 
    --bg       page ground                --mark     highlight ground (placeholders, hover)
@@ -11,34 +12,6 @@
    Palette: Medianoche (WCAG AA checked for text on --bg and --code-bg). */
 
 :root {
-  --bg: #121a26;
-  --ink: #dfe6f0;
-  --muted: #93a0b4;
-  --line: #263247;
-  --accent: #82bdf0;
-  --mark: #1c2839;
-  --code-bg: #0c121b;
-  --kw: #a9c7ff;
-  --str: #a3d4c3;
-  color-scheme: dark;
-}
-
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
-    --bg: #f4f7fb;
-    --ink: #142033;
-    --muted: #526075;
-    --line: #d9e0ea;
-    --accent: #2c5a96;
-    --mark: #e3ebf6;
-    --code-bg: #e9eef5;
-    --kw: #2c5a96;
-    --str: #2f6b5a;
-    color-scheme: light;
-  }
-}
-
-:root[data-theme="light"] {
   --bg: #f4f7fb;
   --ink: #142033;
   --muted: #526075;
@@ -51,11 +24,23 @@
   color-scheme: light;
 }
 
+:root[data-theme="dark"] {
+  --bg: #121a26;
+  --ink: #dfe6f0;
+  --muted: #93a0b4;
+  --line: #263247;
+  --accent: #82bdf0;
+  --mark: #1c2839;
+  --code-bg: #0c121b;
+  --kw: #a9c7ff;
+  --str: #a3d4c3;
+  color-scheme: dark;
+}
+
 /* Paper: printing (for example the CV to PDF) always uses black on white. */
 @media print {
   :root,
-  :root:not([data-theme="dark"]),
-  :root[data-theme="light"] {
+  :root[data-theme="dark"] {
     --bg: #ffffff;
     --ink: #000000;
     --muted: #444444;
@@ -69,7 +54,7 @@
   }
 }
 
-/* Candidate palettes (dark values; replace the :root block above to try one).
+/* Candidate palettes (dark values; replace the [data-theme="dark"] block above to try one).
    Light companions for these two are not defined yet.
 
    Ámbar:

@@ -165,6 +165,9 @@ img {
   align-items: baseline;
 }
 .brand {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
   font: 600 1rem var(--font-ui);
   color: var(--ink);
   text-decoration: none;
@@ -187,6 +190,44 @@ img {
   color: var(--ink);
   text-decoration: underline;
   text-decoration-color: var(--accent);
+}
+
+/* The toggle shares the nav's cell (and the brand's on narrow screens). */
+.site-head .row > .site-nav {
+  grid-column: 2;
+  grid-row: 1;
+  padding-right: 3rem;
+}
+.theme-toggle {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+  justify-self: end;
+  display: inline-grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin: -0.75rem -0.75rem -0.75rem 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+.theme-toggle[hidden] {
+  display: none;
+}
+.theme-toggle:hover {
+  color: var(--accent);
+  background: var(--mark);
+}
+.theme-toggle .icon-sun,
+:root[data-theme="dark"] .theme-toggle .icon-moon {
+  display: none;
+}
+:root[data-theme="dark"] .theme-toggle .icon-sun {
+  display: block;
 }
 
 .site-foot {
@@ -870,6 +911,14 @@ pre code {
   .site-head .row {
     gap: 0.6rem;
   }
+  .site-head .row > .site-nav {
+    grid-column: 1;
+    grid-row: 2;
+    padding-right: 0;
+  }
+  .theme-toggle {
+    grid-column: 1;
+  }
   .label {
     line-height: 1.6;
     margin-bottom: 0.75rem;
@@ -976,6 +1025,7 @@ pre code {
     font-size: 10.5pt;
   }
   .site-head nav,
+  .theme-toggle,
   .site-foot,
   .skip,
   .toc,
