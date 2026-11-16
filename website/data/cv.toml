@@ -69,6 +69,13 @@ title = "Lorem ipsum"
 org = "**ING**"
 text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."
 
+# placeholder: organisation, project, description
+[[experience]]
+when = "2009"
+title = "Student developer"
+org = "[Google Summer of Code](https://summerofcode.withgoogle.com), lorem ipsum"
+text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+
 [[selected]]
 name = "hashi-homelab"
 url = "https://github.com/aldoborrero/hashi-homelab"
