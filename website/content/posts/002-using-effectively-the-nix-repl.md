@@ -23,7 +23,7 @@ While I was writing the previous paragraph, it got me thinking next on the follo
 
 And suddenly remembered [this Vox's interview](https://youtu.be/K-NBcP0YUQI?t=151) with [Shigeru Miyamoto](https://en.wikipedia.org/wiki/Shigeru-Miyamoto) (creator of Super Mario Bros, Zelda, Donkey Kong, and other big Nintendo franchises). It turns out he has something to say about discoverability in video games:
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/K-NBcP0YUQI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/K-NBcP0YUQI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 > When I design my games, I have to think about how I'm showing a situation to a player, conveying to them what they're supposed to do.
 >
@@ -171,7 +171,7 @@ With this, you can quickly explore other Flakes and see their `inputs` and `outp
 
 **Note**: Are you aware that [Nix includes some useful `builtins` functions](https://nixos.org/manual/nix/stable/language/builtins.html) baked into the language? Feel free to explore those in the REPL!
 
-### Load nixpkgs from <nixpkgs> shortcut
+### Load nixpkgs from `<nixpkgs>` shortcut
 
 If we want, we can load our configured `<nixpkgs>` and import all of our packages:
 
