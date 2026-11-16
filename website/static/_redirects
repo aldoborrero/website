@@ -8,6 +8,3 @@
 /series/* /posts/ 301
 /page/1/ / 301
 /posts/page/1/ /posts/ 301
-# The career page lived at /cv/ on the theme branch; it is /about/ now.
-/cv /about/ 301
-/cv/ /about/ 301
