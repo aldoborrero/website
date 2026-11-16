@@ -14,11 +14,19 @@ serve *args: fonts
 build:
     nix build .#site -o result-site
 
-# Copy the self-hosted fonts into website/static/fonts for `hugo server`
+# Copy the self-hosted fonts for `hugo server`: woff2 for pages, TTF for share images
 fonts:
     nix build .#site.fonts -o result-fonts
-    mkdir -p {{ site }}/static/fonts
+    mkdir -p {{ site }}/static/fonts {{ site }}/assets/fonts
     install -m 644 result-fonts/*.woff2 {{ site }}/static/fonts/
+    install -m 644 result-fonts/*.ttf {{ site }}/assets/fonts/
+
+# New draft entry: just new <posts|til|notes|links|quotes> <slug>
+new type slug:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    case "{{ type }}" in posts|til|notes|links|quotes) ;; *) echo "type must be posts, til, notes, links or quotes" >&2; exit 1 ;; esac
+    hugo new content --source {{ site }} --kind {{ type }} "{{ type }}/$(date +%Y-%m-%d)-{{ slug }}.md"
 
 # Format everything (nix, markdown, shell, yaml, toml, json, hcl)
 fmt:

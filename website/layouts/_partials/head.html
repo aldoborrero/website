@@ -1,28 +1,68 @@
+{{- $k := partial "kind.html" . }}
+{{- $title := $k.title }}
+{{- if eq .Kind "term" }}{{ $title = printf "#%s" .LinkTitle }}{{ else if eq .Kind "taxonomy" }}{{ $title = "Tags" }}{{ end }}
+{{- $isEntry := and .IsPage (in (slice "posts" "til" "notes" "links" "quotes") .Section) }}
+{{- $desc := site.Params.description }}
+{{- with .Description }}{{ $desc = . }}{{ else }}{{ if .IsPage }}
+  {{- $src := .Summary }}{{ if eq .Section "quotes" }}{{ $src = .Params.quote | default "" }}{{ end }}
+  {{- with $src | plainify | htmlUnescape | strings.TrimSpace }}{{ $desc = . | replaceRE `\s+` " " | truncate 160 }}{{ end }}
+{{- end }}{{ end }}
+{{- if eq .Kind "term" }}{{ $desc = printf "Everything %s has written tagged %s." site.Params.author .LinkTitle }}{{ end }}
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
-{{- $desc := site.Params.description }}
-{{- with .Description }}{{ $desc = . }}{{ else }}{{ if .IsPage }}{{ with .Summary }}{{ $desc = . | plainify | htmlUnescape | strings.TrimSpace | truncate 160 }}{{ end }}{{ end }}{{ end }}
+<title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ $title }} · {{ site.Title }}{{ end }}</title>
 <meta name="description" content="{{ $desc }}">
 <meta name="author" content="{{ site.Params.author }}">
 <meta name="theme-color" content="">
 <script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
 <link rel="canonical" href="{{ .Permalink }}">
 <link rel="icon" href="/favicon.ico" sizes="any">
-{{- with site.Home.OutputFormats.Get "rss" }}
-<link rel="alternate" type="application/rss+xml" href="{{ .Permalink }}" title="{{ site.Title }}">
-{{- end }}
+{{- /* Feeds: everything, plus this page's own when it has one. */}}
+<link rel="alternate" type="application/atom+xml" href="{{ site.Home.Permalink }}atom.xml" title="{{ site.Title }}">
+<link rel="alternate" type="application/rss+xml" href="{{ site.Home.Permalink }}index.xml" title="{{ site.Title }} (RSS)">
+{{- if not .IsHome }}{{ with .OutputFormats.Get "atom" }}
+<link rel="alternate" type="application/atom+xml" href="{{ .Permalink }}" title="{{ site.Title }}: {{ $title }}">
+{{- end }}{{ end }}
 <link rel="preload" href="/fonts/newsreader-roman.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/hanken-grotesk.woff2" as="font" type="font/woff2" crossorigin>
 {{- $css := slice (resources.Get "css/tokens.css") (resources.Get "css/theme.css") | resources.Concat "css/site.css" }}
 {{- if hugo.IsProduction }}{{ $css = $css | minify | fingerprint }}{{ end }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}"{{ with $css.Data.Integrity }} integrity="{{ . }}"{{ end }}>
+{{- /* Share previews: Open Graph, read by Mastodon, Bluesky, LinkedIn, Slack;
+       twitter:* for X. The image is drawn at build time (og-image.html). */}}
+{{- $ogTitle := cond .IsHome site.Title $title }}
 <meta property="og:site_name" content="{{ site.Title }}">
-<meta property="og:title" content="{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }}{{ end }}">
+<meta property="og:locale" content="en_GB">
+<meta property="og:title" content="{{ $ogTitle }}">
 <meta property="og:description" content="{{ $desc }}">
 <meta property="og:url" content="{{ .Permalink }}">
-<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}">
-{{- if and .IsPage (eq .Section "posts") }}
+<meta property="og:type" content="{{ if $isEntry }}article{{ else }}website{{ end }}">
+{{- if $isEntry }}
 <meta property="article:published_time" content="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+{{- if ne .Lastmod .Date }}
+<meta property="article:modified_time" content="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">
+{{- end }}
+<meta property="article:author" content="{{ site.Home.Permalink }}about/">
+{{- range .GetTerms "tags" }}
+<meta property="article:tag" content="{{ .LinkTitle }}">
+{{- end }}
+{{- end }}
+{{- with partial "og-image.html" (dict "page" . "title" $ogTitle "label" (cond $isEntry $k.label "")) }}
+<meta property="og:image" content="{{ .Permalink }}">
+<meta property="og:image:width" content="{{ .Width }}">
+<meta property="og:image:height" content="{{ .Height }}">
+<meta property="og:image:alt" content="{{ if $.IsHome }}{{ site.Title }}{{ else }}{{ $ogTitle }}, by {{ site.Params.author }}{{ end }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="{{ .Permalink }}">
+{{- else }}
+<meta name="twitter:card" content="summary">
+{{- end }}
+<meta name="twitter:title" content="{{ $ogTitle }}">
+<meta name="twitter:description" content="{{ $desc }}">
+{{- with site.Params.twitter }}
+<meta name="twitter:creator" content="@{{ . }}">
 {{- end }}
 <link rel="me" href="{{ site.Params.mastodon }}">
+{{- with urls.Parse site.Params.mastodon }}
+<meta name="fediverse:creator" content="{{ path.Base .Path }}@{{ .Host }}">
+{{- end }}

@@ -33,7 +33,8 @@ let
   # Basic Latin, Latin-1, Latin Extended-A, typographic punctuation, arrows.
   unicodes = "U+0000-00FF,U+0100-017F,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2190-2193,U+2212,U+2215,U+FEFF,U+FFFD";
 
-  # Variable woff2 files subset to Latin, served from /fonts/.
+  # Variable woff2 files subset to Latin, served from /fonts/, plus two static
+  # TTFs that only the share-image generator reads.
   fonts = stdenvNoCC.mkDerivation {
     pname = "aldoborrero-site-fonts";
     version = "1";
@@ -53,6 +54,16 @@ let
       subset ${newsreader.italic} newsreader-italic
       subset '${hanken-grotesk}/share/fonts/variable/HankenGrotesk[wght].ttf' hanken-grotesk
       subset '${plexMono}/share/fonts/woff2/IBM Plex Mono Var-Roman.woff2' plex-mono
+
+      # Static TTF instances for the share images Hugo draws (og-image.html):
+      # Hugo's text filter reads TrueType, not woff2, and no variable axes.
+      og() {
+        fonttools varLib.instancer "$1" $3 -o instance.ttf
+        pyftsubset instance.ttf --output-file="$out/$2.ttf" \
+          --unicodes='${unicodes}' --layout-features='*' --no-hinting
+      }
+      og ${newsreader.roman} og-serif "wght=500 opsz=72"
+      og '${hanken-grotesk}/share/fonts/variable/HankenGrotesk[wght].ttf' og-sans "wght=600"
       runHook postBuild
     '';
     dontInstall = true;
@@ -76,6 +87,8 @@ stdenvNoCC.mkDerivation {
     runHook preBuild
     mkdir -p static/fonts
     cp ${fonts}/*.woff2 static/fonts/
+    mkdir -p assets/fonts
+    cp ${fonts}/*.ttf assets/fonts/
     hugo --minify --panicOnWarning --destination $out
     runHook postBuild
   '';
