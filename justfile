@@ -57,3 +57,7 @@ deploy:
 # Upload a preview version (prints its preview URL) without deploying it
 preview alias:
     wrangler versions upload --preview-alias {{ alias }}
+
+# Restore the agent skills pinned in skills-lock.json into .claude/skills
+skills:
+    nix shell nixpkgs#nodejs --command npx -y skills experimental_install --agent claude-code

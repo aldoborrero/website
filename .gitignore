@@ -18,3 +18,6 @@ website/public/
 .terraform/
 .terraform.lock.hcl
 .terraform.tfstate.lock.info
+
+# agent skills: restored from skills-lock.json with `just skills`
+.claude/skills/
