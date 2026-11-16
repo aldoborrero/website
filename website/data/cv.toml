@@ -24,7 +24,7 @@ contact = [
 
 [[experience]]
 current = true
-when = "2023 – now"
+when = "2022 – now"
 title = "Consultant"
 org = "[Numtide](https://numtide.com), Nix consultancy"
 text = "Nix, blockchain and AI work for Numtide's clients."
@@ -33,13 +33,6 @@ notes = [
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
   "Sed do eiusmod tempor incididunt ut labore.",
 ]
-
-[[experience]]
-when = "2022"
-title = "Consultant, through 41North"
-org = "[Numtide](https://numtide.com)"
-# placeholder: what Aldo worked on
-text = "First year with Numtide, contracted through 41North. Lorem ipsum dolor sit amet."
 
 # placeholder: confirm description
 [[experience]]
