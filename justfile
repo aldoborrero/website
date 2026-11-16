@@ -6,17 +6,19 @@ tf := "terraform"
 default:
     @just --list
 
-# Run the hugo dev server with drafts
-serve *args:
+# Run the hugo dev server with drafts (fonts come from the nix build)
+serve *args: fonts
     hugo server --source {{ site }} --buildDrafts {{ args }}
 
-# Build the site into website/public, as Cloudflare Pages does
+# Build the site with nix into ./result-site (what wrangler deploys)
 build:
-    hugo --minify --source {{ site }}
+    nix build .#site -o result-site
 
-# Update the hugo theme module
-update-theme:
-    cd {{ site }} && hugo mod get -u && hugo mod tidy
+# Copy the self-hosted fonts into website/static/fonts for `hugo server`
+fonts:
+    nix build .#site.fonts -o result-fonts
+    mkdir -p {{ site }}/static/fonts
+    install -m 644 result-fonts/*.woff2 {{ site }}/static/fonts/
 
 # Format everything (nix, markdown, shell, yaml, toml, json, hcl)
 fmt:
@@ -50,7 +52,7 @@ secrets-edit:
 secrets-updatekeys:
     sops updatekeys --yes secrets/secrets.yaml
 
-# Deploy website/public to the Worker (run `just build` first)
+# Deploy ./result-site to the Worker (run `just build` first)
 deploy:
     wrangler deploy
 

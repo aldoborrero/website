@@ -4,10 +4,8 @@ pkgs.mkShellNoCC {
     just
     perSystem.self.formatter
 
-    # site: hugo resolves its theme as a Go module, so it needs go + git
+    # site: `just serve` runs hugo directly; builds go through `nix build .#site`
     hugo
-    go
-    git
 
     # infrastructure: Cloudflare Worker + domain (terraform/), deploys (wrangler)
     perSystem.self.tofu
@@ -26,10 +24,7 @@ pkgs.mkShellNoCC {
     export PRJ_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
     export NIX_DIR="$PRJ_ROOT/nix"
 
-    # Keep the toolchain caches in the project rather than $HOME.
-    # GOMODCACHE is set explicitly: a global one would otherwise win over GOPATH.
-    export GOPATH="$PRJ_ROOT/.go"
-    export GOMODCACHE="$GOPATH/pkg/mod"
+    # Keep the hugo cache in the project rather than $HOME.
     export HUGO_CACHEDIR="$PRJ_ROOT/.cache/hugo"
   '';
 }

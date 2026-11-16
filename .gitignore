@@ -7,11 +7,11 @@ result-*
 .envrc.local
 
 # toolchain caches (see nix/devshell.nix)
-.go/
 .cache/
 
 # hugo
 website/public/
+website/static/fonts/
 .hugo_build.lock
 
 # terraform / opentofu
