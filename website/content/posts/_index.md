@@ -1,4 +1,4 @@
 ---
 title: Writing
-description: Long posts about Nix and the tools around it, newest first.
+description: Writing about what I build, what I learn, and what happens along the way.
 ---
