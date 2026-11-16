@@ -1,0 +1,91 @@
+# Data for /cv/. Text is Markdown; [[...]] marks a placeholder that still
+# needs a confirmed fact from Aldo and renders highlighted until replaced.
+
+name = "Aldo Borrero"
+role = "Consultant at Numtide: Nix, blockchain and AI"
+summary = "I build infrastructure and tooling with Nix. My background is in banking and Ethereum, and before Numtide I co-founded the consultancy 41North."
+clients = "Clients have included ING, AVG, WorldReader, MyEtherWallet, Golem Base (Arkiv) and PortalDeFi."
+next = "[[One sentence on what you want to be hired for next, or remove.]]"
+
+contact = [
+  "[[City, country]]",
+  "[[Email]]",
+  "[github.com/aldoborrero](https://github.com/aldoborrero)",
+  "[@aldo@fosstodon.org](https://fosstodon.org/@aldo)",
+]
+
+[[experience]]
+current = true
+when = "2023 – now"
+title = "Consultant"
+org = "[Numtide](https://numtide.com), Nix consultancy"
+text = "Nix, blockchain and AI work for Numtide's clients."
+notes = [
+  "[[An earlier Numtide project you can describe publicly.]]",
+  "[[Another, or remove.]]",
+]
+
+[[experience]]
+when = "2022"
+title = "Consultant, through 41North"
+org = "[Numtide](https://numtide.com)"
+text = "First year with Numtide, contracted through 41North. [[What you worked on.]]"
+
+[[experience]]
+when = "[[20xx]] – [[20xx]]"
+title = "Co-founder"
+org = "[41North](https://41north.dev), a consultancy founded with one partner [[name Brian McGee here?]]"
+text = "Ethereum infrastructure. Closed in [[year]]."
+clients = "Clients: **MyEtherWallet**, **Golem Base (Arkiv)**, **PortalDeFi** [[confirm these were 41North clients; one line on each]]"
+links = [
+  "[github.com/41north](https://github.com/41north)",
+  "[ethw](https://github.com/aldoborrero/ethw)",
+]
+
+[[experience]]
+when = "c. 2015 – [[20xx]]"
+title = "Independent consultant"
+org = "Freelance"
+clients = "Clients: **AVG**, **WorldReader** [[confirm the period; role and one line on each]]"
+
+[[experience]]
+when = "[[20xx]] – [[20xx]]"
+title = "Banking"
+org = "**ING** [[employee or consultant; your role]]"
+text = "[[What you built. Earlier startup jobs, if you want them listed.]]"
+
+[[selected]]
+name = "hashi-homelab"
+url = "https://github.com/aldoborrero/hashi-homelab"
+text = "Nomad, Consul and Vault recipes for a home cluster."
+
+[[selected]]
+name = "ccq"
+url = "https://github.com/aldoborrero/ccq"
+text = "Search Claude Code conversation history from the terminal. Rust, 2026."
+
+[[selected]]
+name = "Learn how to use the Nix REPL effectively"
+url = "/posts/2022/12/02/learn-how-to-use-the-nix-repl-effectively/"
+text = "Blog post on inspecting Nix expressions with the REPL, 2022."
+
+[[selected]]
+name = "wsl-fido-bridge"
+url = "https://github.com/aldoborrero/wsl-fido-bridge"
+text = "SSH signing with FIDO keys through Windows WebAuthn. Rust, 2026."
+
+[[facts]]
+term = "Education"
+text = "[[Degree, university, year. Your final-year project is from 2013.]]"
+
+[[facts]]
+term = "Languages"
+text = "[[Spoken languages and level.]]"
+
+[[facts]]
+term = "Tools"
+text = "Nix and NixOS, Rust, Go, Python, Kotlin and Java on Android [[confirm and order]]"
+
+[[facts]]
+term = "Talks"
+text = "[[Any, or remove this line.]]"
