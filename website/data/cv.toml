@@ -48,25 +48,32 @@ title = "Co-founder"
 org = "[41North](https://41north.dev), a consultancy founded with one partner"
 text = "Ethereum infrastructure. Closed in 2022."
 # placeholder: confirm these were 41North clients
-clients = "Clients: **MyEtherWallet**, **Golem Base (Arkiv)**, **PortalDeFi**"
+clients = "Clients: **Golem Base (Arkiv)**, **PortalDeFi**"
 links = [
   "[github.com/41north](https://github.com/41north)",
   "[ethw](https://github.com/aldoborrero/ethw)",
 ]
 
-# placeholder: end date, description
+# placeholder: role, description
 [[experience]]
-when = "c. 2015 – lorem"
-title = "Independent consultant"
-org = "Freelance"
+when = "2018 – 2019"
+title = "Lorem ipsum"
+org = "[MyEtherWallet](https://www.myetherwallet.com)"
+text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+
+# placeholder: role, description; confirm AVG and WorldReader belong here
+[[experience]]
+when = "2015 – 2018"
+title = "Lorem ipsum"
+org = "[Mobile Jazz](https://mobilejazz.com)"
 text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 clients = "Clients: **AVG**, **WorldReader**"
 
-# placeholder: dates, role, description
+# placeholder: role, description
 [[experience]]
-when = "2020 – 2022"
-title = "Banking"
-org = "**ING**, lorem ipsum"
+when = "2014 – 2015"
+title = "Lorem ipsum"
+org = "**ING**"
 text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."
 
 [[selected]]
