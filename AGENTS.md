@@ -10,9 +10,9 @@ Personal website and blog. Static site, served from a Cloudflare Worker (Workers
 | `nix/devshell.nix` | `mkShellNoCC`: just, treefmt, hugo, tofu, wrangler, sops/age |
 | `nix/formatter.nix` | treefmt-nix (`nix fmt`) + format check wired into `nix flake check` |
 | `nix/packages/tofu/` | OpenTofu with the Cloudflare provider baked in |
-| `nix/packages/site/` | the site: `hugo --minify --panicOnWarning` in the sandbox, plus self-hosted fonts (`.#site.fonts`); also `checks.<sys>.pkgs-site` |
+| `nix/packages/site/` | the site: `hugo --minify --panicOnWarning` in the sandbox, plus self-hosted fonts (`.#site.fonts`: woff2 for pages, two static TTFs for share images); also `checks.<sys>.pkgs-site` |
 | `nix/checks/tfsec.nix` | tfsec over `terraform/` |
-| `website/` | Hugo site with its own theme: `layouts/`, `assets/css/` (`tokens.css` holds every colour; light by default, dark through the header toggle), `data/cv.toml` (the career page at `/about/`), `content/`, `static/` |
+| `website/` | Hugo site with its own theme: `layouts/`, `assets/css/` (`tokens.css` holds every colour; light by default, dark through the header toggle), `data/cv.toml` (the career page at `/about/`), `content/`, `archetypes/`, `static/` |
 | `terraform/` | OpenTofu: the Worker and its custom domain; state in R2 |
 | `wrangler.jsonc` | Worker static-assets config used by `wrangler deploy` |
 | `secrets/secrets.yaml` | sops (age + YubiKey) dotenv with Cloudflare / R2 credentials |
@@ -23,11 +23,29 @@ Personal website and blog. Static site, served from a Cloudflare Worker (Workers
 | Command | Does |
 | --- | --- |
 | `just` | list recipes |
-| `just serve` / `just build` | hugo dev server (copies the fonts in first) / `nix build .#site -o result-site` |
+| `just serve` / `just build` | hugo dev server with drafts (copies the fonts in first) / `nix build .#site -o result-site` |
+| `just new <type> <slug>` | new draft `website/content/<type>/YYYY-MM-DD-<slug>.md` from its archetype; type is `posts`, `til`, `notes`, `links` or `quotes` |
 | `just fmt` / `just check` | `nix fmt` / `nix flake check` (formatting, tfsec, devshell, site) |
 | `just tf-init` / `tf-plan` / `tf-apply` | OpenTofu in `terraform/` |
 | `just deploy` / `just preview <alias>` | wrangler deploy / upload a preview version |
 | `just secrets-edit` | edit the sops secrets |
+
+## Content types
+
+Five sections, all in one stream on the home page (newest first, 15 per page) and in `/atom.xml` and `/index.xml`. Each has its own index and feeds (`/<type>/atom.xml`, `/<type>/index.xml`).
+
+| Type | For | Front matter beyond `title`, `slug`, `date`, `tags` |
+| --- | --- | --- |
+| `posts` | long form: project write-ups, stories, retrospectives | `description` (optional dek) |
+| `til` | one problem solved; `/til/` groups them by topic | `topic` (one, lowercase) |
+| `notes` | a short thought, a few paragraphs | `title` may be empty ("Note, <date>") |
+| `links` | someone else's work plus commentary; the heading links out | `link`, `by`, optional `via` / `viaUrl` |
+| `quotes` | a quotation, optional comment as the body | `quote`, `source`, `sourceUrl`, optional `context`; `title` stays empty |
+
+- Tags work across every type: `/tags/`, `/tags/<tag>/` and per-tag feeds at `/tags/<tag>/atom.xml` and `index.xml`.
+- Every page gets Open Graph and Twitter tags (`_partials/head.html`) and a 1200×630 share image drawn at build time from the light tokens (`_partials/og-image.html`). Locally, `just fonts` must have run, or pages fall back to a small card.
+- Follow links (feed, Mastodon, GitHub) come from `_partials/follow.html`; Bluesky and LinkedIn appear once `params.bluesky` / `params.linkedin` are set in `hugo.toml`.
+- Samples in each new section are `draft: true` lorem ipsum: visible with `just serve`, never in `just build`.
 
 ## Invariants
 
@@ -36,7 +54,7 @@ Personal website and blog. Static site, served from a Cloudflare Worker (Workers
 - Secrets are only loaded by direnv when `WEBSITE_LOAD_SECRETS=1` (see `.envrc.local-template` for the variables they provide).
 - The CI deploy job is gated by the repository variable `DEPLOY_ENABLED`.
 - The site build has no network access and fails on any Hugo warning; after a nixpkgs bump, fix deprecations in `website/layouts/` before merging.
-- Post URLs are `/posts/:year/:month/:day/:slug/` with `slug:` frozen in each post; keep `aliases:` and `website/static/_redirects` when moving anything.
+- Entry URLs are `/<type>/:year/:month/:day/:slug/` with `slug:` frozen in each entry's front matter (`just new` writes it); keep `aliases:` and `website/static/_redirects` when moving anything. `/index.xml` and `/posts/index.xml` have subscribers: never move them.
 - `wrangler.jsonc` deploys `./result-site`, so run `just build` before `just deploy` or `just preview`.
 
 ## Pending: cutover from Cloudflare Pages
