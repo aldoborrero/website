@@ -1,0 +1,6 @@
+{{- /* A list of entries in compact form. Context: a page collection. */ -}}
+<div class="stream">
+{{- range . }}
+  {{ partial "item.html" . }}
+{{- end }}
+</div>

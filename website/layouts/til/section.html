@@ -1,0 +1,34 @@
+{{ define "main" }}
+{{- /* TILs grouped by topic, like til.simonwillison.net: recent first, then
+       every topic with its count. */}}
+{{- $byTopic := .RegularPages.GroupByParam "topic" }}
+<header class="archive-head row">
+  <div></div>
+  <div>
+    <h1>{{ .Title }}</h1>
+    {{ with .Description }}<p>{{ . }}</p>{{ end }}
+    {{ partial "feeds.html" . }}
+    {{- with $byTopic }}
+    <ul class="topics" aria-label="Topics">
+      {{- range sort . "Key" }}<li><a href="#topic-{{ .Key | urlize }}">{{ .Key }}</a> <span>{{ len .Pages }}</span></li>{{ end }}
+    </ul>
+    {{- end }}
+  </div>
+</header>
+{{- with .RegularPages }}
+<section class="year row" aria-labelledby="recent-h">
+  <h2 id="recent-h">Recent</h2>
+  {{ partial "entries.html" (first 5 .) }}
+</section>
+{{- range sort $byTopic "Key" }}
+<section class="year row" aria-labelledby="topic-{{ .Key | urlize }}">
+  <h2 id="topic-{{ .Key | urlize }}">{{ .Key }}</h2>
+  <ul class="til-list">
+    {{- range .Pages }}<li><a href="{{ .RelPermalink }}">{{ .Title }}</a> <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 Jan 2006" }}</time></li>{{ end }}
+  </ul>
+</section>
+{{- end }}
+{{- else }}
+<div class="row"><div></div><p class="empty">Nothing here yet.</p></div>
+{{- end }}
+{{ end }}

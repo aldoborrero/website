@@ -5,7 +5,8 @@ title = "Aldo Borrero"
 locale = "en"
 enableInlineShortcodes = true
 enableRobotsTXT = false
-disableKinds = ["taxonomy", "term"]
+# Tag pages keep the tag as written (#nix, not #Nix).
+capitalizeListTitles = false
 
 [params]
 author = "Aldo Borrero"
@@ -13,17 +14,41 @@ description = "Aldo Borrero's blog: long posts about Nix and reproducible infras
 github = "aldoborrero"
 mastodon = "https://fosstodon.org/@aldo"
 twitter = "aldoborrero"
+# Follow links, shown in the follow list once set (undecided):
+# bluesky = "https://bsky.app/profile/<handle>"
+# linkedin = "https://www.linkedin.com/in/<handle>"
 
-[permalinks]
-# Production URLs. Each post freezes :slug in its front matter.
+[taxonomies]
+tag = "tags"
+
+[permalinks.page]
+# Production URLs. Each entry freezes :slug in its front matter, so renaming
+# the file never moves the page. Every type uses the same dated shape.
 posts = "/posts/:year/:month/:day/:slug/"
+til = "/til/:year/:month/:day/:slug/"
+notes = "/notes/:year/:month/:day/:slug/"
+links = "/links/:year/:month/:day/:slug/"
+quotes = "/quotes/:year/:month/:day/:slug/"
 
 [pagination]
 pagerSize = 100
 
+# RSS stays at every index.xml existing readers use; Atom sits beside it at
+# atom.xml. Both carry full text.
+[mediaTypes."application/atom+xml"]
+suffixes = ["xml"]
+
+[outputFormats.atom]
+mediaType = "application/atom+xml"
+baseName = "atom"
+rel = "alternate"
+isPlainText = false
+
 [outputs]
-home = ["html", "rss"]
-section = ["html", "rss"]
+home = ["html", "rss", "atom"]
+section = ["html", "rss", "atom"]
+taxonomy = ["html"]
+term = ["html", "rss", "atom"]
 page = ["html"]
 
 [markup.goldmark.renderer]

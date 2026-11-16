@@ -667,6 +667,240 @@ pre code {
   background: var(--mark);
 }
 
+/* ---------- stream: every type in compact form (home, sections, tags) ---------- */
+
+.stream {
+  display: grid;
+  gap: 2.25rem;
+}
+.item {
+  min-width: 0;
+}
+.item-kind {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.35rem;
+  margin: 0 0 0.35rem;
+  font: 600 0.78rem/1.6 var(--font-ui);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.item-kind a {
+  color: var(--accent);
+  text-decoration: none;
+}
+.item-kind a:hover {
+  text-decoration: underline;
+}
+.item-kind span::before {
+  content: "· ";
+}
+.item h3 {
+  margin: 0;
+  font: 500 1.35rem/1.3 var(--font-read);
+  text-wrap: balance;
+}
+.item h3 a {
+  color: var(--ink);
+  text-decoration: none;
+}
+.item h3 a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}
+.item h3 .by {
+  font: 500 0.9rem var(--font-ui);
+  color: var(--muted);
+}
+.item > p {
+  margin: 0.3rem 0 0;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.item .prose {
+  margin-top: 0.4rem;
+  font-size: 1.05rem;
+}
+.item .prose > :last-child,
+.item .quote {
+  margin-bottom: 0;
+}
+.item-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1rem;
+  margin-top: 0.6rem;
+  font: 500 0.85rem/1.6 var(--font-ui);
+  color: var(--muted);
+}
+.item-foot .permalink {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.item-foot .permalink:hover {
+  color: var(--accent);
+}
+
+/* quotations, in the stream and on their own page */
+.quote {
+  margin: 0 0 1.35rem;
+}
+.quote blockquote {
+  margin: 0;
+  padding-left: 1.25rem;
+  border-left: 2px solid var(--accent);
+  font: 400 1.2rem/1.55 var(--font-read);
+  color: var(--ink);
+}
+.quote blockquote p {
+  margin: 0 0 0.75rem;
+}
+.quote blockquote > :last-child {
+  margin-bottom: 0;
+}
+.quote figcaption {
+  margin-top: 0.6rem;
+  padding-left: 1.25rem;
+  font: 500 0.92rem/1.5 var(--font-ui);
+  color: var(--muted);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: 500 0.85rem/1.6 var(--font-ui);
+}
+.tags a {
+  color: var(--muted);
+  text-decoration: none;
+}
+.tags a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* ways to follow: home intro and the end of every entry */
+.follow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  font: 500 0.95rem var(--font-ui);
+}
+.follow .alt {
+  color: var(--muted);
+}
+.entry-foot {
+  display: grid;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+.entry-foot .follow {
+  margin: 0;
+}
+.entry-foot .follow::before {
+  content: "Follow:";
+  color: var(--muted);
+}
+.sign + .entry-foot {
+  margin-top: 1.25rem;
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* list pages: feed links, topic and tag indexes, pagination */
+.feeds,
+.archive-head .feeds {
+  margin: 0.75rem 0 0;
+  font: 500 0.9rem/1.6 var(--font-ui);
+  color: var(--muted);
+}
+.topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.25rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  font: 500 0.95rem/1.6 var(--font-ui);
+}
+.topics span {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.pager-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1.5rem;
+  margin-top: 2.5rem;
+  font: 500 0.95rem var(--font-ui);
+  color: var(--muted);
+}
+.empty {
+  color: var(--muted);
+}
+.post-meta .kind {
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.link-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.5rem;
+  font: 500 0.95rem/1.6 var(--font-ui);
+  font-style: normal;
+}
+.link-meta span + span::before {
+  content: "· ";
+}
+.prose .tags,
+.prose .follow {
+  margin: 0;
+  padding: 0;
+}
+.til-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+.til-list a {
+  font: 500 1.15rem/1.35 var(--font-read);
+  color: var(--ink);
+  text-decoration: none;
+}
+.til-list a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.til-list time {
+  margin-left: 0.4rem;
+  font: 500 0.85rem var(--font-ui);
+  color: var(--muted);
+  white-space: nowrap;
+}
+.post-head h1 a {
+  color: var(--ink);
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px;
+}
+
 /* end of post */
 .sign {
   display: flex;
@@ -1026,6 +1260,8 @@ pre code {
   }
   .site-head nav,
   .theme-toggle,
+  .follow,
+  .pager-list,
   .site-foot,
   .skip,
   .toc,

@@ -1,0 +1,13 @@
+{{- /* Type label and display title for any page. Notes may have no title and
+       quotes usually don't; both get one built from the front matter. */ -}}
+{{- $labels := dict "posts" "Post" "til" "TIL" "notes" "Note" "links" "Link" "quotes" "Quote" -}}
+{{- $label := index $labels .Section | default "" -}}
+{{- $title := .Title -}}
+{{- if not $title -}}
+  {{- if eq .Section "quotes" -}}
+    {{- $title = printf "A quote from %s" (.Params.source | default "someone") -}}
+  {{- else if .IsPage -}}
+    {{- $title = printf "%s, %s" ($label | default "Page") (.Date.Format "2 January 2006") -}}
+  {{- end -}}
+{{- end -}}
+{{- return dict "label" $label "title" $title -}}

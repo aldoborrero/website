@@ -42,6 +42,10 @@
         <img src="/images/author.jpg" alt="" width="48" height="48" loading="lazy">
         <p>Written by {{ site.Params.author }}. Replies welcome on <a href="{{ site.Params.mastodon }}">Mastodon</a>.</p>
       </footer>
+      <footer class="entry-foot">
+        {{ partial "tags.html" . }}
+        {{ partial "follow.html" . }}
+      </footer>
     </div>
   </div>
 

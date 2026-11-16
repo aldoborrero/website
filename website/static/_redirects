@@ -1,9 +1,9 @@
-# Workers Static Assets redirects. The old theme published taxonomy pages;
-# there are no tags or categories any more, so send them to the archive.
+# Workers Static Assets redirects. The old theme published taxonomy pages.
+# Categories are gone, so send them to the archive. Tags are back and served
+# from /tags/ (a tag that no longer exists gets the 404 page, which links to
+# /tags/), so they are not redirected.
 /categories /posts/ 301
 /categories/* /posts/ 301
-/tags /posts/ 301
-/tags/* /posts/ 301
 /series /posts/ 301
 /series/* /posts/ 301
 /page/1/ / 301

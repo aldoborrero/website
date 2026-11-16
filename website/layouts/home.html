@@ -5,20 +5,17 @@
   </div>
   <div>
     {{ .Content }}
-    <ul class="links">
-      <li><a href="/about/">About</a></li>
-      <li><a href="https://github.com/{{ site.Params.github }}">GitHub</a></li>
-      <li><a href="{{ site.Params.mastodon }}">Mastodon</a></li>
-    </ul>
+    {{ partial "follow.html" . }}
   </div>
 </div>
 
-{{- $posts := where site.RegularPages "Section" "posts" }}
-<section class="block row" aria-labelledby="writing-h">
-  <h2 class="label" id="writing-h">Latest writing</h2>
+{{- /* Everything, newest first, each entry in its compact form. */}}
+{{- $pager := .Paginate (partial "stream-pages.html" .) 15 }}
+<section class="block row" aria-labelledby="stream-h">
+  <h2 class="label" id="stream-h">{{ if eq $pager.PageNumber 1 }}Latest{{ else }}Page {{ $pager.PageNumber }}{{ end }}</h2>
   <div>
-    {{ partial "entries.html" (first 3 $posts) }}
-    <a class="more" href="/posts/">All {{ len $posts }} posts</a>
+    {{ partial "stream.html" $pager.Pages }}
+    {{ partial "pager.html" $pager }}
   </div>
 </section>
 {{ end }}

@@ -1,0 +1,6 @@
+{{- /* Tag links for a page. */ -}}
+{{- with .GetTerms "tags" }}
+<ul class="tags" aria-label="Tags">
+  {{- range . }}<li><a href="{{ .RelPermalink }}" rel="tag">#{{ .LinkTitle }}</a></li>{{ end }}
+</ul>
+{{- end }}

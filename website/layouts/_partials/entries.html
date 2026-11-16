@@ -4,7 +4,7 @@
   <li>
     <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 January 2006" }}</time>
     <h3><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
-    {{- with .Description }}<p>{{ . }}</p>{{ else }}{{ with .Summary | plainify | htmlUnescape | strings.TrimSpace }}<p>{{ . | truncate 150 }}</p>{{ end }}{{ end }}
+    {{- with .Description }}<p>{{ . }}</p>{{ else }}{{ with index (findRE `(?s)<p>.*?</p>` .Content 1) 0 | plainify | htmlUnescape | strings.TrimSpace }}<p>{{ . | truncate 150 }}</p>{{ end }}{{ end }}
   </li>
 {{- end }}
 </ol>

@@ -4,12 +4,15 @@
   <div>
     <h1>{{ .Title }}</h1>
     {{ with .Description }}<p>{{ . }}</p>{{ end }}
+    {{ partial "feeds.html" . }}
   </div>
 </header>
-{{- range .Pages.GroupByDate "2006" }}
-<section class="year row" aria-labelledby="y{{ .Key }}">
-  <h2 id="y{{ .Key }}">{{ .Key }}</h2>
-  {{ partial "entries.html" .Pages }}
-</section>
-{{- end }}
+{{- $pager := .Paginate .RegularPages 20 }}
+<div class="row">
+  <div></div>
+  <div>
+    {{- with $pager.Pages }}{{ partial "stream.html" . }}{{ else }}<p class="empty">Nothing here yet.</p>{{ end }}
+    {{ partial "pager.html" $pager }}
+  </div>
+</div>
 {{ end }}

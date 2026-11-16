@@ -1,10 +1,47 @@
 {{ define "main" }}
-<header class="page-head row">
-  <div></div>
-  <h1>{{ .Title }}</h1>
-</header>
-<div class="row">
-  <div></div>
-  <div class="prose">{{ .Content }}</div>
-</div>
+{{- /* TILs, notes, links and quotes: one entry with its own permalink. */}}
+{{- $k := partial "kind.html" . }}
+<article class="entry entry-{{ .Section }}">
+  <header class="post-head row">
+    <div class="post-meta">
+      {{- with site.GetPage .Section }}<a class="kind" href="{{ .RelPermalink }}">{{ $k.label }}</a>{{ end }}
+      {{- with and (eq .Section "til") .Params.topic }}<span>{{ . }}</span>{{ end }}
+      <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 January 2006" }}</time>
+      {{- if gt (.Lastmod.Sub .Date).Hours 24 }}<span>Updated <time datetime="{{ .Lastmod.Format "2006-01-02" }}">{{ .Lastmod.Format "2 January 2006" }}</time></span>{{ end }}
+    </div>
+    <div>
+      {{- if eq .Section "links" }}
+      <h1><a href="{{ .Params.link }}">{{ .Title }}</a></h1>
+      <p class="dek link-meta">
+        {{- with .Params.by }}<span>By {{ . }}</span>{{ end }}
+        {{- with .Params.link }}<span class="host">{{ (urls.Parse .).Host }}</span>{{ end }}
+        {{- with .Params.via }}<span>via {{ with $.Params.viaUrl }}<a href="{{ . }}">{{ $.Params.via }}</a>{{ else }}{{ $.Params.via }}{{ end }}</span>{{ end -}}
+      </p>
+      {{- else }}
+      <h1>{{ $k.title }}</h1>
+      {{- with .Description }}<p class="dek">{{ . }}</p>{{ end }}
+      {{- end }}
+    </div>
+  </header>
+  <div class="post-body row">
+    <aside class="margin"></aside>
+    <div class="prose">
+      {{- if eq .Section "quotes" }}{{ partial "quote.html" . }}{{ end }}
+      {{ .Content }}
+      <footer class="entry-foot">
+        {{ partial "tags.html" . }}
+        {{ partial "follow.html" . }}
+      </footer>
+    </div>
+  </div>
+  {{- with or .NextInSection .PrevInSection }}
+  <nav class="pager row" aria-label="More">
+    <div></div>
+    <ul>
+      {{- with $.PrevInSection }}<li><span>Older</span><a href="{{ .RelPermalink }}" rel="prev">{{ (partial "kind.html" .).title }}</a></li>{{ end }}
+      {{- with $.NextInSection }}<li><span>Newer</span><a href="{{ .RelPermalink }}" rel="next">{{ (partial "kind.html" .).title }}</a></li>{{ end }}
+    </ul>
+  </nav>
+  {{- end }}
+</article>
 {{ end }}

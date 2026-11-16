@@ -1,0 +1,9 @@
+{{- /* Full HTML of an entry for the feeds: what the page shows, without the
+       site chrome. Returns a string. */ -}}
+{{- $out := "" -}}
+{{- if eq .Section "quotes" -}}
+  {{- $out = partial "quote.html" . -}}
+{{- else if eq .Section "links" -}}
+  {{- $out = printf `<p><a href="%s">%s</a>%s</p>` .Params.link .Title (cond (isset .Params "by") (printf " by %s" .Params.by) "") -}}
+{{- end -}}
+{{- return (printf "%s%s" $out .Content) -}}

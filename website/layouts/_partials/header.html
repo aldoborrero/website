@@ -5,8 +5,10 @@
     <nav class="site-nav" aria-label="Main">
       {{- $writing := or (eq .Section "posts") (eq .RelPermalink "/posts/") }}
       <a href="/posts/"{{ if eq .RelPermalink "/posts/" }} aria-current="page"{{ else if $writing }} aria-current="true"{{ end }}>Writing</a>
+      {{- with site.GetPage "/til" }}{{ if .RegularPages }}
+      <a href="/til/"{{ if eq $here.Section "til" }} aria-current="{{ if eq $here.RelPermalink "/til/" }}page{{ else }}true{{ end }}"{{ end }}>TIL</a>{{ end }}{{ end }}
       <a href="/about/"{{ if eq .RelPermalink "/about/" }} aria-current="page"{{ end }}>About</a>
-      <a href="/index.xml">Feed</a>
+      <a href="/atom.xml">Feed</a>
     </nav>
     <button type="button" class="theme-toggle" hidden>
       <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>

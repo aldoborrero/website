@@ -1,0 +1,18 @@
+{{ define "main" }}
+<header class="archive-head row">
+  <div></div>
+  <div>
+    <h1>#{{ .LinkTitle }}</h1>
+    <p>{{ len .Pages }} {{ cond (eq (len .Pages) 1) "entry" "entries" }} tagged {{ .LinkTitle }}. <a href="/tags/">All tags</a>.</p>
+    {{ partial "feeds.html" . }}
+  </div>
+</header>
+{{- $pager := .Paginate .Pages 20 }}
+<div class="row">
+  <div></div>
+  <div>
+    {{ partial "stream.html" $pager.Pages }}
+    {{ partial "pager.html" $pager }}
+  </div>
+</div>
+{{ end }}
