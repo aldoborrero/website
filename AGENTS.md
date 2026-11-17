@@ -45,6 +45,7 @@ Five sections, all in one stream on the home page (newest first, 15 per page) an
 | `quotes` | a quotation, optional comment as the body | `quote`, `source`, `sourceUrl`, optional `context`; `title` stays empty |
 
 - Tags work across every type: `/tags/`, `/tags/<tag>/` and per-tag feeds at `/tags/<tag>/atom.xml` and `index.xml`.
+- Every feed (RSS and Atom, including the language and tag feeds) carries an `xml-stylesheet` instruction to `/feed.<hash>.xsl` (`assets/feed/feed.xsl`, built by `_partials/feed-xsl.html` with the site's CSS filled in). A browser that opens a feed shows a page in the site's look (light mode): what a feed is, the address to copy, reader apps, the latest entries. Feed readers ignore the instruction. Chromium shows a warning banner on these pages because browsers are removing XSLT; once it is gone, a browser shows the raw XML again, and readers are unaffected either way.
 - Every page gets Open Graph and Twitter tags (`_partials/head.html`) and a 1200×630 share image drawn at build time from the light tokens (`_partials/og-image.html`). Locally, `just fonts` must have run, or pages fall back to a small card.
 - Follow links (feed, Mastodon, GitHub) come from `_partials/follow.html`; Bluesky and LinkedIn appear once `params.bluesky` / `params.linkedin` are set in `hugo.toml`.
 - Samples in each new section are `draft: true` lorem ipsum: visible with `just serve`, never in `just build`.

@@ -4,6 +4,7 @@
 {{- $p := .page -}}
 {{- $pages := partial "feed-pages.html" . -}}
 {{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+{{ printf "<?xml-stylesheet href=%q type=\"text/xsl\"?>" (partialCached "feed-xsl.html" .).RelPermalink | safeHTML }}
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>{{ partial "feed-title.html" . }}</title>

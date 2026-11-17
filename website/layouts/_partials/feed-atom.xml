@@ -3,6 +3,7 @@
 {{- $p := .page -}}
 {{- $pages := partial "feed-pages.html" . -}}
 {{- printf "<?xml version=\"1.0\" encoding=\"utf-8\"?>" | safeHTML }}
+{{ printf "<?xml-stylesheet href=%q type=\"text/xsl\"?>" (partialCached "feed-xsl.html" .).RelPermalink | safeHTML }}
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="{{ .lang | default site.Language.Lang }}">
   <title>{{ partial "feed-title.html" . }}</title>
   <subtitle>{{ $p.Description | default site.Params.description }}</subtitle>

@@ -41,8 +41,7 @@
 {{- end }}{{ end }}
 <link rel="preload" href="/fonts/newsreader-roman.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fonts/hanken-grotesk.woff2" as="font" type="font/woff2" crossorigin>
-{{- $css := slice (resources.Get "css/tokens.css") (resources.Get "css/theme.css") | resources.Concat "css/site.css" }}
-{{- if hugo.IsProduction }}{{ $css = $css | minify | fingerprint }}{{ end }}
+{{- $css := partialCached "site-css.html" . }}
 <link rel="stylesheet" href="{{ $css.RelPermalink }}"{{ with $css.Data.Integrity }} integrity="{{ . }}"{{ end }}>
 {{- /* Share previews: Open Graph, read by Mastodon, Bluesky, LinkedIn, Slack;
        twitter:* for X. The image is drawn at build time (og-image.html). */}}
