@@ -7,7 +7,7 @@
   <div></div>
   <div>
     <h1>{{ .Title }}</h1>
-    {{ partial "search-form.html" (dict "id" "q" "autofocus" true) }}
+    {{ partial "search-form.html" (dict "id" "q" "autofocus" false) }}
     <p class="search-status" role="status"></p>
   </div>
 </header>
@@ -100,6 +100,9 @@
   form.addEventListener("submit", (e) => { e.preventDefault(); run(); });
   input.addEventListener("input", run);
   input.addEventListener("focus", () => load().catch(() => {}), { once: true });
+  // Focus the box on desktop (the "/" shortcut lands here); not on touch
+  // screens, where focusing pops up the keyboard over the page.
+  if (matchMedia("(pointer: fine)").matches) input.focus();
   const q = new URLSearchParams(location.search).get("q");
   if (q) { input.value = q; run(); }
 </script>
