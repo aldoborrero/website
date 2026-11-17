@@ -4,10 +4,9 @@
 <article class="entry entry-{{ .Section }}">
   <header class="post-head row">
     <div class="post-meta">
-      {{- with site.GetPage .Section }}<a class="kind" href="{{ .RelPermalink }}">{{ $k.label }}</a>{{ end }}
+      {{- with site.GetPage .Section }}<a class="kind" href="{{ .RelPermalink }}" {{ partial "chrome-lang.html" $ }}>{{ $k.label }}</a>{{ end }}
       {{- with and (eq .Section "til") .Params.topic }}<span>{{ . }}</span>{{ end }}
-      <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 January 2006" }}</time>
-      {{- if gt (.Lastmod.Sub .Date).Hours 24 }}<span>Updated <time datetime="{{ .Lastmod.Format "2006-01-02" }}">{{ .Lastmod.Format "2 January 2006" }}</time></span>{{ end }}
+      {{ partial "entry-meta.html" (dict "page" . "reading" false) }}
     </div>
     <div>
       {{- if eq .Section "links" }}
@@ -26,6 +25,7 @@
   <div class="post-body row">
     <aside class="margin"></aside>
     <div class="prose">
+      {{ partial "notices.html" . }}
       {{- if eq .Section "quotes" }}{{ partial "quote.html" . }}{{ end }}
       {{ partial "sidenotes.html" (string .Content) | safeHTML }}
       <footer class="entry-foot">
@@ -35,11 +35,11 @@
     </div>
   </div>
   {{- with or .NextInSection .PrevInSection }}
-  <nav class="pager row" aria-label="More">
+  <nav class="pager row" aria-label="More" {{ partial "chrome-lang.html" $ }}>
     <div></div>
     <ul>
-      {{- with $.PrevInSection }}<li><span>Older</span><a href="{{ .RelPermalink }}" rel="prev">{{ (partial "kind.html" .).title }}</a></li>{{ end }}
-      {{- with $.NextInSection }}<li><span>Newer</span><a href="{{ .RelPermalink }}" rel="next">{{ (partial "kind.html" .).title }}</a></li>{{ end }}
+      {{- with $.PrevInSection }}<li><span>Older</span><a href="{{ .RelPermalink }}" rel="prev" {{ partial "lang-attr.html" . }}>{{ (partial "kind.html" .).title }}</a></li>{{ end }}
+      {{- with $.NextInSection }}<li><span>Newer</span><a href="{{ .RelPermalink }}" rel="next" {{ partial "lang-attr.html" . }}>{{ (partial "kind.html" .).title }}</a></li>{{ end }}
     </ul>
   </nav>
   {{- end }}

@@ -1,6 +1,6 @@
 {{- /* Ways to follow, on the home page and at the end of every entry.
        Bluesky and LinkedIn appear once their params are set in hugo.toml. */ -}}
-<ul class="follow" aria-label="Follow">
+<ul class="follow" aria-label="Follow" {{ partial "chrome-lang.html" . }}>
   {{- if .IsHome }}<li><a href="/about/">About</a></li>{{ end }}
   <li><a href="/atom.xml" type="application/atom+xml">Feed</a> <a class="alt" href="/index.xml" type="application/rss+xml">(RSS)</a></li>
   <li><a rel="me" href="{{ site.Params.mastodon }}">Mastodon</a></li>

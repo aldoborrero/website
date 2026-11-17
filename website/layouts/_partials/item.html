@@ -2,27 +2,31 @@
        tag pages. Short notes and links show in full; long ones show a summary. */ -}}
 {{- $k := partial "kind.html" . }}
 {{- $short := le .WordCount 250 }}
-<article class="item item-{{ .Section }}">
-  <p class="item-kind">
+{{- $l := partial "lang.html" . }}
+{{- /* An entry in another language carries its lang (dates and strings in it
+       follow) and an "ES" tag; the type label stays site chrome. */}}
+<article class="item item-{{ .Section }}" {{ partial "lang-attr.html" . }}>
+  <p class="item-kind" {{ partial "chrome-lang.html" . }}>
     {{- with site.GetPage .Section }}<a href="{{ .RelPermalink }}">{{ $k.label }}</a>{{ else }}{{ $k.label }}{{ end }}
-    {{- if and (eq .Section "til") .Params.topic }}<span>{{ .Params.topic }}</span>{{ end -}}
+    {{- if and (eq .Section "til") .Params.topic }}<span>{{ .Params.topic }}</span>{{ end }}
+    {{- partial "lang-tag.html" . -}}
   </p>
   {{- if eq .Section "quotes" }}
   {{ partial "quote.html" . }}
   {{- with .Content }}<div class="prose">{{ . }}</div>{{ end }}
   {{- else if eq .Section "links" }}
   <h3><a href="{{ .Params.link }}">{{ .Title }}</a>{{ with .Params.by }} <span class="by">by {{ . }}</span>{{ end }}</h3>
-  {{- if $short }}<div class="prose">{{ .Content }}</div>{{ else }}<p>{{ .Summary | plainify | htmlUnescape | truncate 240 }} <a href="{{ .RelPermalink }}">Read more</a></p>{{ end }}
+  {{- if $short }}<div class="prose">{{ .Content }}</div>{{ else }}<p>{{ .Summary | plainify | htmlUnescape | truncate 240 }} <a href="{{ .RelPermalink }}">{{ $l.t.readMore }}</a></p>{{ end }}
   {{- else if eq .Section "notes" }}
   {{- with .Title }}<h3><a href="{{ $.RelPermalink }}">{{ . }}</a></h3>{{ end }}
-  {{- if $short }}<div class="prose">{{ .Content }}</div>{{ else }}<p>{{ .Summary | plainify | htmlUnescape | truncate 240 }} <a href="{{ .RelPermalink }}">Read more</a></p>{{ end }}
+  {{- if $short }}<div class="prose">{{ .Content }}</div>{{ else }}<p>{{ .Summary | plainify | htmlUnescape | truncate 240 }} <a href="{{ .RelPermalink }}">{{ $l.t.readMore }}</a></p>{{ end }}
   {{- else }}
   <h3><a href="{{ .RelPermalink }}">{{ $k.title }}</a></h3>
   {{- /* The description, or else the first paragraph, so code never leaks in. */}}
   {{- with .Description }}<p>{{ . }}</p>{{ else }}{{ with index (findRE `(?s)<p>.*?</p>` .Content 1) 0 | plainify | htmlUnescape | strings.TrimSpace }}<p>{{ . | truncate 180 }}</p>{{ end }}{{ end }}
   {{- end }}
   <footer class="item-foot">
-    <a class="permalink" href="{{ .RelPermalink }}" title="Permalink"><time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 January 2006" }}</time></a>
+    <a class="permalink" href="{{ .RelPermalink }}" title="Permalink"><time datetime="{{ .Date.Format "2006-01-02" }}">{{ partial "date.html" (dict "date" .Date "l" $l) }}</time></a>
     {{- partial "tags.html" . }}
   </footer>
 </article>

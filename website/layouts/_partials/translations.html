@@ -1,0 +1,14 @@
+{{- /* Other-language versions of an entry: the pages sharing its
+       translationKey (front matter), each with its language. Context: page.
+       Returns a slice of dict "page" "lang" "t" (the target's strings). */ -}}
+{{- $out := slice }}
+{{- $self := . }}
+{{- with .Params.translationKey }}
+  {{- range where site.RegularPages "Params.translationKey" . }}
+    {{- if ne .RelPermalink $self.RelPermalink }}
+      {{- $l := partial "lang.html" . }}
+      {{- $out = $out | append (dict "page" . "lang" $l.lang "t" $l.t) }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- return $out }}

@@ -24,7 +24,7 @@
 <section class="year row" aria-labelledby="topic-{{ .Key | urlize }}">
   <h2 id="topic-{{ .Key | urlize }}">{{ .Key }}</h2>
   <ul class="til-list">
-    {{- range .Pages }}<li><a href="{{ .RelPermalink }}">{{ .Title }}</a> <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 Jan 2006" }}</time></li>{{ end }}
+    {{- range .Pages }}<li {{ partial "lang-attr.html" . }}><a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ partial "lang-tag.html" . }} <time datetime="{{ .Date.Format "2006-01-02" }}">{{ partial "date.html" (dict "date" .Date "l" (partial "lang.html" .) "short" true) }}</time></li>{{ end }}
   </ul>
 </section>
 {{- end }}

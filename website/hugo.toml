@@ -47,8 +47,42 @@ baseName = "atom"
 rel = "alternate"
 isPlainText = false
 
+# Language feeds: the home page also writes /en/ and /es/ copies of both
+# feeds with only the entries in that language (layouts/feed*.xml).
+[outputFormats.feedrssen]
+mediaType = "application/rss+xml"
+baseName = "index"
+path = "en"
+rel = "alternate"
+
+[outputFormats.feedatomen]
+mediaType = "application/atom+xml"
+baseName = "atom"
+path = "en"
+rel = "alternate"
+
+[outputFormats.feedrsses]
+mediaType = "application/rss+xml"
+baseName = "index"
+path = "es"
+rel = "alternate"
+
+[outputFormats.feedatomes]
+mediaType = "application/atom+xml"
+baseName = "atom"
+path = "es"
+rel = "alternate"
+
 [outputs]
-home = ["html", "rss", "atom"]
+home = [
+  "html",
+  "rss",
+  "atom",
+  "feedrssen",
+  "feedatomen",
+  "feedrsses",
+  "feedatomes",
+]
 section = ["html", "rss", "atom"]
 taxonomy = ["html"]
 term = ["html", "rss", "atom"]

@@ -1,0 +1,6 @@
+{{- /* A date written out in a language. Context: dict "date" (time), "l"
+       (from lang.html), optional "short" (abbreviated month). */ -}}
+{{- $t := .l.t }}
+{{- $months := split (cond (.short | default false) $t.monthsShort $t.months) " " }}
+{{- $m := index $months (sub (.date.Format "1" | int) 1) }}
+{{- return printf (cond (.short | default false) $t.dateFormatShort $t.dateFormat) (.date.Format "2" | int) $m (.date.Format "2006" | int) }}

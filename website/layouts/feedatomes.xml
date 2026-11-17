@@ -1,0 +1,2 @@
+{{- /* /es/atom.xml: only the entries in this language. */ -}}
+{{- partial "feed-atom.xml" (dict "page" . "lang" "es" "format" "feedatomes") -}}

@@ -1,0 +1,37 @@
+{{- /* Atom 1.0 with full text. Context: as feed-rss.xml. Each entry carries
+       its language in xml:lang. */ -}}
+{{- $p := .page -}}
+{{- $pages := partial "feed-pages.html" . -}}
+{{- printf "<?xml version=\"1.0\" encoding=\"utf-8\"?>" | safeHTML }}
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="{{ .lang | default site.Language.Lang }}">
+  <title>{{ partial "feed-title.html" . }}</title>
+  <subtitle>{{ $p.Description | default site.Params.description }}</subtitle>
+  {{- with $p.OutputFormats.Get .format }}
+  <link href="{{ .Permalink }}" rel="self" type="application/atom+xml"/>
+  {{- end }}
+  <link href="{{ $p.Permalink }}" rel="alternate" type="text/html"/>
+  {{- /* The everything feeds keep the id they always had; a language feed is
+         identified by its own URL. */}}
+  <id>{{ if .lang }}{{ with $p.OutputFormats.Get .format }}{{ .Permalink }}{{ end }}{{ else }}{{ $p.Permalink }}{{ end }}</id>
+  <updated>{{ with $pages }}{{ (index . 0).Lastmod.Format "2006-01-02T15:04:05Z07:00" }}{{ else }}{{ now.Format "2006-01-02T15:04:05Z07:00" }}{{ end }}</updated>
+  <author>
+    <name>{{ site.Params.author }}</name>
+    <uri>{{ site.Home.Permalink }}</uri>
+  </author>
+  {{- range $pages }}
+  <entry xml:lang="{{ (partial "lang.html" .).lang }}">
+    <title>{{ (partial "kind.html" .).title }}</title>
+    <link href="{{ .Permalink }}" rel="alternate" type="text/html"/>
+    {{- with .Params.link }}
+    <link href="{{ . }}" rel="related"/>
+    {{- end }}
+    <id>{{ .Permalink }}</id>
+    <published>{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}</published>
+    <updated>{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}</updated>
+    {{- range .GetTerms "tags" }}
+    <category term="{{ .LinkTitle }}"/>
+    {{- end }}
+    <content type="html">{{ partial "feed-body.html" . | transform.XMLEscape | safeHTML }}</content>
+  </entry>
+  {{- end }}
+</feed>

@@ -1,0 +1,5 @@
+{{- /* A feed's title. Context: dict "page" and "lang" (as feed-pages.html). */ -}}
+{{- $p := .page }}
+{{- $title := site.Title }}{{ if not $p.IsHome }}{{ $title = printf "%s: %s" site.Title (cond (eq $p.Kind "term") (printf "#%s" $p.LinkTitle) $p.Title) }}{{ end -}}
+{{- with .lang }}{{ $title = printf "%s (%s)" $title (index (dict "en" "in English" "es" "en castellano") . | default .) }}{{ end }}
+{{- return $title }}

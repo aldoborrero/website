@@ -37,7 +37,7 @@
 {{- $img := partial "inline/zoom-img.html" (dict "src" $show "srcset" $srcset "alt" .PlainText "w" $w "h" $h "eager" (eq .Ordinal 0)) }}
 {{- if .IsBlock -}}
 <figure class="figure">
-  {{- if $zoom }}<a class="zoom" href="{{ $full }}" data-zoom aria-label="Open image{{ with .PlainText }}: {{ . }}{{ end }}">{{ $img }}</a>{{ else }}{{ $img }}{{ end }}
+  {{- if $zoom }}<a class="zoom" href="{{ $full }}" data-zoom aria-label="{{ (partial "lang.html" .Page).t.openImage }}{{ with .PlainText }}: {{ . }}{{ end }}">{{ $img }}</a>{{ else }}{{ $img }}{{ end }}
   {{- /* The title is the caption; inline Markdown (links, emphasis) works. */}}
   {{- with .Title }}<figcaption>{{ $.Page.RenderString . }}</figcaption>{{ end -}}
 </figure>

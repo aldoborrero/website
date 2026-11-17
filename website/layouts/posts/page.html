@@ -1,9 +1,9 @@
 {{ define "main" }}
+{{- $t := (partial "lang.html" .).t }}
 <article>
   <header class="post-head row">
     <div class="post-meta">
-      <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2 January 2006" }}</time>
-      <span>{{ .ReadingTime }} minute read</span>
+      {{ partial "entry-meta.html" (dict "page" . "reading" true) }}
     </div>
     <div>
       <h1>{{ .Title }}</h1>
@@ -25,7 +25,7 @@
     <aside class="margin">
       {{- if ge $h2 2 }}
       <nav class="toc" aria-labelledby="toc-h">
-        <h2 id="toc-h">Contents</h2>
+        <h2 id="toc-h">{{ $t.contents }}</h2>
         {{ .TableOfContents | replaceRE `^<nav id="TableOfContents">\s*|\s*</nav>$` "" | safeHTML }}
       </nav>
       {{- /* Marks the section being read (aria-current="location") in both
@@ -62,16 +62,17 @@
              opens the list as a sheet from any scroll position (popover; no
              JS needed). Where popovers are unsupported, the sheet simply
              shows inline here and the button stays hidden. */}}
-      <button type="button" class="toc-button" popovertarget="toc-sheet">Contents</button>
+      <button type="button" class="toc-button" popovertarget="toc-sheet">{{ $t.contents }}</button>
       <nav id="toc-sheet" class="toc-sheet" popover aria-labelledby="toc-sheet-h">
-        <h2 id="toc-sheet-h">Contents</h2>
+        <h2 id="toc-sheet-h">{{ $t.contents }}</h2>
         {{ .TableOfContents | replaceRE `^<nav id="TableOfContents">\s*|\s*</nav>$` "" | safeHTML }}
       </nav>
       {{- end }}
+      {{ partial "notices.html" . }}
       {{ partial "sidenotes.html" (string $content) | safeHTML }}
       <footer class="sign">
         <img src="/images/author.jpg" alt="" width="48" height="48" loading="lazy">
-        <p>Written by {{ site.Params.author }}. Replies welcome on <a href="{{ site.Params.mastodon }}">Mastodon</a>.</p>
+        <p>{{ printf $t.sign site.Params.author (printf `<a href="%s">Mastodon</a>` site.Params.mastodon) | safeHTML }}</p>
       </footer>
       <footer class="entry-foot">
         {{ partial "tags.html" . }}
@@ -81,11 +82,11 @@
   </div>
 
   {{- with or .NextInSection .PrevInSection }}
-  <nav class="pager row" aria-label="More posts">
+  <nav class="pager row" aria-label="More posts" {{ partial "chrome-lang.html" $ }}>
     <div></div>
     <ul>
-      {{- with $.PrevInSection }}<li><span>Older</span><a href="{{ .RelPermalink }}" rel="prev">{{ .Title }}</a></li>{{ end }}
-      {{- with $.NextInSection }}<li><span>Newer</span><a href="{{ .RelPermalink }}" rel="next">{{ .Title }}</a></li>{{ end }}
+      {{- with $.PrevInSection }}<li><span>Older</span><a href="{{ .RelPermalink }}" rel="prev" {{ partial "lang-attr.html" . }}>{{ .Title }}</a></li>{{ end }}
+      {{- with $.NextInSection }}<li><span>Newer</span><a href="{{ .RelPermalink }}" rel="next" {{ partial "lang-attr.html" . }}>{{ .Title }}</a></li>{{ end }}
     </ul>
   </nav>
   {{- end }}

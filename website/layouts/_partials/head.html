@@ -20,10 +20,22 @@
 <script>(function(d,ok){try{var s=localStorage,p=s.getItem("palette");if(s.getItem("theme")==="dark")d.dataset.theme="dark";if(ok.indexOf(p)>=0)d.dataset.palette=p;p=s.getItem("size");if(p==="s"||p==="l")d.dataset.size=p;if(s.getItem("font")==="sans")d.dataset.font="sans"}catch(e){}})(document.documentElement,{{ $ids }})</script>
 
 <link rel="canonical" href="{{ .Permalink }}">
+{{- /* Translations (entries sharing translationKey): each version lists all
+       of them, itself included. */}}
+{{- with partial "translations.html" . }}
+<link rel="alternate" hreflang="{{ (partial "lang.html" $).lang }}" href="{{ $.Permalink }}">
+{{- range . }}
+<link rel="alternate" hreflang="{{ .lang }}" href="{{ .page.Permalink }}">
+{{- end }}
+{{- end }}
 <link rel="icon" href="/favicon.ico" sizes="any">
 {{- /* Feeds: everything, plus this page's own when it has one. */}}
 <link rel="alternate" type="application/atom+xml" href="{{ site.Home.Permalink }}atom.xml" title="{{ site.Title }}">
 <link rel="alternate" type="application/rss+xml" href="{{ site.Home.Permalink }}index.xml" title="{{ site.Title }} (RSS)">
+{{- /* The home page also points to the feeds per language. */}}
+{{- if .IsHome }}{{ range $lang := slice "en" "es" }}{{ with $.OutputFormats.Get (printf "feedatom%s" $lang) }}
+<link rel="alternate" type="application/atom+xml" hreflang="{{ $lang }}" href="{{ .Permalink }}" title="{{ partial "feed-title.html" (dict "page" $ "lang" $lang) }}">
+{{- end }}{{ end }}{{ end }}
 {{- if not .IsHome }}{{ with .OutputFormats.Get "atom" }}
 <link rel="alternate" type="application/atom+xml" href="{{ .Permalink }}" title="{{ site.Title }}: {{ $title }}">
 {{- end }}{{ end }}
@@ -36,7 +48,12 @@
        twitter:* for X. The image is drawn at build time (og-image.html). */}}
 {{- $ogTitle := cond .IsHome site.Title $title }}
 <meta property="og:site_name" content="{{ site.Title }}">
-<meta property="og:locale" content="en_GB">
+{{- $l := partial "lang.html" . }}
+{{- $tr := partial "translations.html" . }}
+<meta property="og:locale" content="{{ $l.t.ogLocale }}">
+{{- range $tr }}
+<meta property="og:locale:alternate" content="{{ .t.ogLocale }}">
+{{- end }}
 <meta property="og:title" content="{{ $ogTitle }}">
 <meta property="og:description" content="{{ $desc }}">
 <meta property="og:url" content="{{ .Permalink }}">

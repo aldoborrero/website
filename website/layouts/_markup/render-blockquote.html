@@ -31,7 +31,8 @@
     "warning" `<path d="M12 4 21 19.5H3z"/><path d="M12 10v4.5M12 16.9v.1"/>`
     "caution" `<path d="M8.5 3.5h7l5 5v7l-5 5h-7l-5-5v-7z"/><path d="M12 8v4.8M12 15.6v.1"/>`
 }}
-{{- $title := .AlertTitle | default (index (dict "note" "Note" "tip" "Tip" "important" "Important" "warning" "Warning" "caution" "Caution") $type) | default ($type | title) }}
+{{- /* Default titles come in the entry's language (i18n/<lang>.toml). */}}
+{{- $title := .AlertTitle | default (index (partial "lang.html" .Page).t $type) | default ($type | title) }}
 <div class="callout callout-{{ $type }}" role="note">
 <p class="callout-title"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">{{ index $icons $type | default $icons.note | safeHTML }}</g></svg>{{ $title }}</p>
 {{ .Text }}

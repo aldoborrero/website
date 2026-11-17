@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="{{ site.Language.Locale | default "en" }}" data-palette="{{ site.Params.palette }}">
+<html lang="{{ (partial "lang.html" .).lang }}" data-palette="{{ site.Params.palette }}">
 <head>
 {{ partial "head.html" . }}
 </head>
 <body>
-<a class="skip" href="#main">Skip to content</a>
+<a class="skip" href="#main" {{ partial "chrome-lang.html" . }}>Skip to content</a>
 <div class="page">
 {{ partial "header.html" . }}
 <main id="main">

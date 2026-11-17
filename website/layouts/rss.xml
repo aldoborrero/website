@@ -1,35 +1,4 @@
 {{- /* RSS 2.0 with full text. /index.xml carries every entry of every type,
-       each section's index.xml its own entries, each tag's index.xml its tag. */ -}}
-{{- $pages := .RegularPages -}}
-{{- if .IsHome }}{{ $pages = partial "stream-pages.html" . }}{{ else if eq .Kind "term" }}{{ $pages = .Pages }}{{ end -}}
-{{- $limit := site.Config.Services.RSS.Limit -}}
-{{- if ge $limit 1 }}{{ $pages = first $limit $pages }}{{ end -}}
-{{- $title := site.Title }}{{ if not .IsHome }}{{ $title = printf "%s: %s" site.Title (cond (eq .Kind "term") (printf "#%s" .LinkTitle) .Title) }}{{ end -}}
-{{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>{{ $title }}</title>
-    <link>{{ .Permalink }}</link>
-    <description>{{ .Description | default site.Params.description }}</description>
-    <language>{{ site.Language.Locale }}</language>
-    {{- with $pages }}
-    <lastBuildDate>{{ (index . 0).Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</lastBuildDate>
-    {{- end }}
-    {{- with .OutputFormats.Get "RSS" }}
-    {{ printf "<atom:link href=%q rel=\"self\" type=%q />" .Permalink .MediaType | safeHTML }}
-    {{- end }}
-    {{- range $pages }}
-    <item>
-      <title>{{ (partial "kind.html" .).title }}</title>
-      <link>{{ .Permalink }}</link>
-      <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</pubDate>
-      <author>{{ site.Params.author }}</author>
-      <guid>{{ .Permalink }}</guid>
-      {{- range .GetTerms "tags" }}
-      <category>{{ .LinkTitle }}</category>
-      {{- end }}
-      <description>{{ partial "feed-body.html" . | transform.XMLEscape | safeHTML }}</description>
-    </item>
-    {{- end }}
-  </channel>
-</rss>
+       each section's index.xml its own entries, each tag's index.xml its tag.
+       The language feeds (/en/index.xml, /es/index.xml) are feedrss*.xml. */ -}}
+{{- partial "feed-rss.xml" (dict "page" . "lang" "" "format" "rss") -}}

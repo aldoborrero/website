@@ -1,11 +1,16 @@
 {{- /* Type label and display title for any page. Notes may have no title and
-       quotes usually don't; both get one built from the front matter. */ -}}
+       quotes usually don't; both get one built from the front matter, in the
+       entry's language. The type label stays English (it names the section,
+       site chrome). */ -}}
 {{- $labels := dict "posts" "Post" "til" "TIL" "notes" "Note" "links" "Link" "quotes" "Quote" -}}
 {{- $label := index $labels .Section | default "" -}}
 {{- $title := .Title -}}
 {{- if not $title -}}
+  {{- $l := partial "lang.html" . -}}
   {{- if eq .Section "quotes" -}}
-    {{- $title = printf "A quote from %s" (.Params.source | default "someone") -}}
+    {{- $title = printf $l.t.untitledQuote (.Params.source | default $l.t.someone) -}}
+  {{- else if eq .Section "notes" -}}
+    {{- $title = printf $l.t.untitledNote (partial "date.html" (dict "date" .Date "l" $l)) -}}
   {{- else if .IsPage -}}
     {{- $title = printf "%s, %s" ($label | default "Page") (.Date.Format "2 January 2006") -}}
   {{- end -}}

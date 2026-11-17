@@ -5,5 +5,5 @@
 <h{{ .Level }} id="{{ .Anchor }}"
   {{- range $k, $v := .Attributes }}{{ if ne $k "id" }}{{ printf " %s=%q" $k (string $v) | safeHTMLAttr }}{{ end }}{{ end }}>
   {{- .Text }}
-  {{- if in (slice 2 3) .Level }}<a class="anchor" href="{{ .Page.RelPermalink }}#{{ .Anchor }}" aria-label="Link to this section"></a>{{ end -}}
+  {{- if in (slice 2 3) .Level }}<a class="anchor" href="{{ .Page.RelPermalink }}#{{ .Anchor }}" aria-label="{{ (partial "lang.html" .Page).t.anchor }}"></a>{{ end -}}
 </h{{ .Level }}>

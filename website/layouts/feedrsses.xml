@@ -1,0 +1,2 @@
+{{- /* /es/index.xml: only the entries in this language. */ -}}
+{{- partial "feed-rss.xml" (dict "page" . "lang" "es" "format" "feedrsses") -}}

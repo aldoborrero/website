@@ -1,14 +1,19 @@
 {{- /* Copy buttons for code blocks (.code, from _markup/render-codeblock.html).
        Shell prompts (Chroma's .gp, "$ ") are left out of what is copied. The
        button says "Copied" for two seconds; its text is a live region, so
-       screen readers hear it too. */ -}}
+       screen readers hear it too. Its words come from i18n/<lang>.toml, in
+       the language of the entry around the block. */ -}}
+{{- $s := dict }}
+{{- range os.ReadDir "i18n" }}{{ $code := path.BaseName .Name }}{{ $t := partialCached "i18n-strings.html" $code $code }}{{ $s = merge $s (dict $code (slice $t.copy $t.copied $t.cantCopy)) }}{{ end }}
 <script type="module">
+const L = {{ $s }};
 for (const box of document.querySelectorAll(".code")) {
+  const [copy, copied, failed] = L[box.closest("[lang]")?.lang] || L.en;
   const b = document.createElement("button");
   b.type = "button";
   b.className = "copy";
   b.setAttribute("aria-live", "polite");
-  b.textContent = "Copy";
+  b.textContent = copy;
   let timer = 0;
   b.addEventListener("click", async () => {
     const code = box.querySelector("code").cloneNode(true);
@@ -19,12 +24,12 @@ for (const box of document.querySelectorAll(".code")) {
     }
     try {
       await navigator.clipboard.writeText(code.textContent.replace(/\n$/, ""));
-      b.textContent = "Copied";
+      b.textContent = copied;
     } catch {
-      b.textContent = "Can't copy";
+      b.textContent = failed;
     }
     clearTimeout(timer);
-    timer = setTimeout(() => { b.textContent = "Copy"; }, 2000);
+    timer = setTimeout(() => { b.textContent = copy; }, 2000);
   });
   box.append(b);
 }
