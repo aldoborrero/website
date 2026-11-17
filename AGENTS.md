@@ -12,7 +12,7 @@ Personal website and blog. Static site, served from a Cloudflare Worker (Workers
 | `nix/packages/tofu/` | OpenTofu with the Cloudflare provider baked in |
 | `nix/packages/site/` | the site: `hugo --minify --panicOnWarning` in the sandbox, plus self-hosted fonts (`.#site.fonts`: woff2 for pages, two static TTFs for share images); also `checks.<sys>.pkgs-site` |
 | `nix/checks/tfsec.nix` | tfsec over `terraform/` |
-| `website/` | Hugo site with its own theme: `layouts/`, `assets/css/` (`tokens.css` holds every colour; light by default, dark through the header toggle), `assets/js/zoom.js` (the image viewer), `data/cv.toml` (the career page at `/about/`), `content/`, `archetypes/`, `static/` |
+| `website/` | Hugo site with its own theme: `layouts/`, `assets/css/` (`tokens.css` holds every colour: five palettes, each light and dark), `assets/js/zoom.js` (the image viewer), `data/cv.toml` (the career page at `/about/`), `content/`, `archetypes/`, `static/` |
 | `terraform/` | OpenTofu: the Worker and its custom domain; state in R2 |
 | `wrangler.jsonc` | Worker static-assets config used by `wrangler deploy` |
 | `secrets/secrets.yaml` | sops (age + YubiKey) dotenv with Cloudflare / R2 credentials |
@@ -56,7 +56,7 @@ Five sections, all in one stream on the home page (newest first, 15 per page) an
 - Alt text is the accessible name of the link ("Open image: <alt>"), so always write one.
 - Captions (the image title) take inline Markdown, so they can link: `![Alt](file.webp "The films are the [Blender open movies](https://studio.blender.org/films/).")`.
 
-## Quotes and footnotes
+## Quotes, callouts and footnotes
 
 - A blockquote can carry its source as block attributes on the line right after it; it then gets an attribution line and `cite` (`_markup/render-blockquote.html`). `source` takes inline Markdown; `url` alone shows the host name (`nix fmt` may rewrite it as `url="<https://…>"`, which works too).
 
@@ -66,6 +66,13 @@ Five sections, all in one stream on the home page (newest first, 15 per page) an
   ```
 
 - Footnotes (`text[^1]` … `[^1]: The note.`) show as sidenotes right of the text from 1216 px up, and as endnotes below that (`_partials/sidenotes.html`). Keep notes to inline text and links: a note with a list or code stays an endnote only.
+
+- Callouts use GitHub's alert syntax and get an icon and a title line (same hook). Types: `NOTE`, `TIP`, `IMPORTANT` (accent hairline), `WARNING` and `CAUTION` (in `--warn`; caution with a hairline). A title of your own goes after the marker; a `{source=… url=…}` line works here too and shows as the callout's last line.
+
+  ```markdown
+  > [!WARNING] Back up first
+  > The migration rewrites the database in place.
+  ```
 
 ## Two perspectives
 
@@ -85,6 +92,25 @@ Type the parent code and add 15 minutes.
 
 - `title` is optional and renders as an h3 in raw HTML, so it stays out of the contents list. `label` is required on each side.
 - A side holds text and zero to two images. Wide screens show the sides next to each other, widened up to 60rem into the right margin from 64rem; under 48rem they stack, first side first. The first label's marker is `--accent`, the second's `--ink`.
+
+## Code blocks and headings
+
+- Fenced code goes through `_markup/render-codeblock.html`: Chroma highlighting as before, a copy button (`_partials/code-copy.html`, added by JS, so feeds never show it; shell prompts from `console` blocks are not copied), and optional attributes on the fence:
+
+  ````markdown
+  ```nix {file="flake.nix" hl_lines=[3,4]}
+  ````
+
+  `file` shows a file-name bar above the code; `hl_lines` (Hugo's own option, 1-based lines or ranges like `"2-4"`) marks lines with `--mark`. Other Hugo highlighting options (`linenos`, `linenostart`) work as usual.
+- h2 and h3 get a `#` link to themselves (`_markup/render-heading.html`), visible on hover and keyboard focus, named "Link to this section". Feeds drop it.
+
+## Reading settings and palettes
+
+- The "Aa" button in the header opens the reading settings (`_partials/header.html`, a popover): palette, light/dark, text size (S/M/L scales the reading text, not the UI) and font (Newsreader or Hanken Grotesk). Choices are kept in `localStorage` (`palette`, `theme`, `size`, `font`) and set as `data-*` on `<html>` by the pre-paint script in `head.html`, so nothing flashes. Without JS the button stays hidden and the page uses the defaults.
+- `params.palette` in `hugo.toml` is the default palette, and also the one share images are drawn in (light mode). The build fails if it names a palette that `tokens.css` doesn't define.
+- To add or change a palette, edit only `assets/css/tokens.css`: one block `[data-palette="id"]` (light, with `--palette-name: "Shown name"`) and one `[data-theme="dark"][data-palette="id"], [data-theme="dark"] [data-palette="id"]` (dark), each with every token. The panel and the pre-paint script read the list from that file (`_partials/palettes.html`).
+- Every palette and mode must pass WCAG AA (4.5:1) for: ink, muted, accent and warn on `--bg` and `--mark`; ink, muted, accent, kw and str on `--code-bg`; kw and str on `--mark` (highlighted lines); and bg on ink (the selected option in the panel).
+- On narrow screens, posts with a contents list get a "Contents" button fixed at the bottom that opens the list as a sheet (`posts/page.html`, popover, works without JS).
 
 ## Invariants
 
