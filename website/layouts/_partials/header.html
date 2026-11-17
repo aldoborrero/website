@@ -45,6 +45,13 @@
           <label class="sans"><input type="radio" name="font" value="sans">Sans</label>
         </div>
       </fieldset>
+      <fieldset class="seg">
+        <legend>Keyboard shortcuts</legend>
+        <div>
+          <label><input type="radio" name="keys" value="on">On</label>
+          <label><input type="radio" name="keys" value="off">Off</label>
+        </div>
+      </fieldset>
     </div>
     <a class="search-link" href="/search/" aria-label="Search"{{ if eq .RelPermalink "/search/" }} aria-current="page"{{ end }}><svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.25"/><path d="m12.5 12.5 4.5 4.5"/></svg></a>
     <script>
@@ -55,7 +62,7 @@
         if (!panel.showPopover) return;
         var meta = document.querySelector('meta[name="theme-color"]');
         // Each setting: its <html> data attribute and the value that means "no attribute".
-        var keys = { palette: null, theme: "light", size: "m", font: "serif" };
+        var keys = { palette: null, theme: "light", size: "m", font: "serif", keys: "on" };
         function current(k) { return root.dataset[k] || keys[k]; }
         function sync() {
           for (var k in keys) {

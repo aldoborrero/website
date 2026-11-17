@@ -21,6 +21,8 @@
 {{- /* Copy buttons: on pages with a code block, and on lists, where entries
        may carry one (the script finds nothing otherwise). */}}
 {{- if or (.Store.Get "code") (not .IsPage) }}{{ partial "code-copy.html" . }}{{ end }}
+{{- /* Keyboard shortcuts and their help dialog ("?"). */}}
+{{ partial "keys-help.html" . }}
 {{- /* Cloudflare Web Analytics: no cookies and nothing stored on the device,
        so no consent banner. Only in production builds (`just build`, CI) and
        only once params.cfAnalyticsToken is set: `just serve`, builds without

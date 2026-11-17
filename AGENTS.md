@@ -120,6 +120,27 @@ One site, one stream: most entries are English, some are Spanish. An entry decla
 - No cookies, no local storage and no fingerprinting, so no consent banner is needed.
 - Not owned by tofu yet: `terraform/` could manage the site as a `cloudflare_web_analytics_site` and output its token, but the hermetic build can't read tofu state, so the token would still be copied into `hugo.toml` by hand.
 
+## Keyboard shortcuts
+
+`assets/js/keys.js` (2.3 KB minified, 1.3 KB gzipped, no dependency) on every page; the help dialog sits in a `<template>` in `_partials/keys-help.html` and is cloned on first use.
+
+| Key | Does |
+| --- | --- |
+| `/` | focus the search box on `/search/`; elsewhere open `/search/` (focused on desktop) |
+| `?` | open or close the help dialog (native modal `<dialog>`, a table of `<kbd>`; Esc closes it and focus returns) |
+| `j` / `k` | next / previous entry in a list: home stream, sections, `/til/`, tags, search results, series pages. Focuses the entry's link (visible focus ring) and scrolls it to the middle; from nothing focused it starts at what is on screen |
+| `n` / `p` | on an entry: the pager's newer (`rel=next`) / older (`rel=prev`) entry |
+| `c` | contents of a long post: the list in the margin (focus its first link) on wide screens, the sheet on narrow ones |
+| `a` | open or close the "Aa" panel, focus on the current choice |
+| `t` | light / dark (through the panel's radios, so it is saved like a click) |
+| `g` then `h` / `p` / `t` / `a` | go to home / Writing / TIL / About (within 1.5 s) |
+| `Esc` | close what is open (native for the dialogs, popovers and the image viewer) |
+
+- Never fire while typing in a text field, select or contenteditable (radios and checkboxes don't count), with Ctrl, Alt or Meta held, or while a modal dialog is open (the image viewer keeps its own keys; in the help, only `?` and Esc). Shift is allowed, since `?` needs it and `/` needs it on a Spanish keyboard.
+- Off switch: "Keyboard shortcuts" in the "Aa" panel. While on, the controls carry `aria-keyshortcuts` (search link, Aa, Contents button, pager links, the hint); off removes them.
+- Discoverability: "Keyboard shortcuts ?" at the end of the footer, a button that opens the help, shown only with a fine pointer (not on touch screens) and only while shortcuts are on. The dialog is site chrome, so English.
+- Adding one: an entry in `actions` in `keys.js`, a row in `keys-help.html`, and `aria-keyshortcuts` in `labels` if a control does the same.
+
 ## Search
 
 - `/search/` (`layouts/search/page.html`, content `search.md`) searches every published entry in the browser with [Pagefind](https://pagefind.app/). The index is built in `nix build .#site` after Hugo (`nix/packages/site/package.nix`) and served from `/pagefind/`; the bundled Pagefind UI files are deleted, the page draws its own results from the tokens.
@@ -189,6 +210,7 @@ Type the parent code and add 15 minutes.
 ## Reading settings and palettes
 
 - The "Aa" button in the header opens the reading settings (`_partials/header.html`, a popover): palette, light/dark, text size (S/M/L scales the reading text, not the UI) and font (Newsreader or Hanken Grotesk). Choices are kept in `localStorage` (`palette`, `theme`, `size`, `font`) and set as `data-*` on `<html>` by the pre-paint script in `head.html`, so nothing flashes. Without JS the button stays hidden and the page uses the defaults.
+- The panel's last group, "Keyboard shortcuts" On/Off (`keys` in `localStorage`, `data-keys="off"` on `<html>`), turns the single-key shortcuts off (WCAG 2.1.4); see Keyboard shortcuts.
 - `params.palette` in `hugo.toml` is the default palette, and also the one share images are drawn in (light mode). The build fails if it names a palette that `tokens.css` doesn't define.
 - To add or change a palette, edit only `assets/css/tokens.css`: one block `[data-palette="id"]` (light, with `--palette-name: "Shown name"`) and one `[data-theme="dark"][data-palette="id"], [data-theme="dark"] [data-palette="id"]` (dark), each with every token. The panel and the pre-paint script read the list from that file (`_partials/palettes.html`).
 - Every palette and mode must pass WCAG AA (4.5:1) for: ink, muted, accent and warn on `--bg` and `--mark`; ink, muted, accent, kw and str on `--code-bg`; kw and str on `--mark` (highlighted lines); and bg on ink (the selected option in the panel).
