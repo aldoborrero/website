@@ -5,7 +5,7 @@
 {{- $p := .page }}
 {{- $l := partial "lang.html" $p }}
 {{- partial "lang-tag.html" $p }}
-<time datetime="{{ $p.Date.Format "2006-01-02" }}">{{ partial "date.html" (dict "date" $p.Date "l" $l) }}</time>
+<time datetime="{{ $p.Date.Format "2006-01-02" }}" data-pagefind-meta="date">{{ partial "date.html" (dict "date" $p.Date "l" $l) }}</time>
 {{- if .reading }}<span>{{ printf $l.t.readingTime $p.ReadingTime }}</span>{{ end }}
 {{- if gt ($p.Lastmod.Sub $p.Date).Hours 24 }}<span>{{ $l.t.updated }} <time datetime="{{ $p.Lastmod.Format "2006-01-02" }}">{{ partial "date.html" (dict "date" $p.Lastmod "l" $l) }}</time></span>{{ end }}
 {{- range partial "translations.html" $p }}<a class="translation" href="{{ .page.RelPermalink }}" hreflang="{{ .lang }}" lang="{{ .lang }}">{{ .t.readIn }}</a>{{ end }}

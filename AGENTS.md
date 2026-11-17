@@ -7,10 +7,10 @@ Personal website and blog. Static site, served from a Cloudflare Worker (Workers
 | Path | What |
 | --- | --- |
 | `flake.nix` | numtide/blueprint flake, `prefix = "nix"`; outputs come from files under `nix/` |
-| `nix/devshell.nix` | `mkShellNoCC`: just, treefmt, hugo, tofu, wrangler, sops/age |
+| `nix/devshell.nix` | `mkShellNoCC`: just, treefmt, hugo, pagefind, tofu, wrangler, sops/age |
 | `nix/formatter.nix` | treefmt-nix (`nix fmt`) + format check wired into `nix flake check` |
 | `nix/packages/tofu/` | OpenTofu with the Cloudflare provider baked in |
-| `nix/packages/site/` | the site: `hugo --minify --panicOnWarning` in the sandbox, plus self-hosted fonts (`.#site.fonts`: woff2 for pages, two static TTFs for share images); also `checks.<sys>.pkgs-site` |
+| `nix/packages/site/` | the site: `hugo --minify --panicOnWarning` in the sandbox, then `pagefind` for the search index, plus self-hosted fonts (`.#site.fonts`: woff2 for pages, two static TTFs for share images); also `checks.<sys>.pkgs-site` |
 | `nix/checks/tfsec.nix` | tfsec over `terraform/` |
 | `website/` | Hugo site with its own theme: `layouts/`, `assets/css/` (`tokens.css` holds every colour: five palettes, each light and dark), `assets/js/zoom.js` (the image viewer), `data/cv.toml` (the career page at `/about/`), `i18n/` (strings the theme writes inside an entry, per language), `content/`, `archetypes/`, `static/` |
 | `terraform/` | OpenTofu: the Worker and its custom domain; state in R2 |
@@ -24,6 +24,7 @@ Personal website and blog. Static site, served from a Cloudflare Worker (Workers
 | --- | --- |
 | `just` | list recipes |
 | `just serve` / `just build` | hugo dev server with drafts (copies the fonts in first) / `nix build .#site -o result-site` |
+| `just search` | drafts build with the search index, served by pagefind at <http://localhost:1414> (`just serve` has no index, so /search/ only works here and in `just build`) |
 | `just new <type> <slug> [--lang es]` | new draft `website/content/<type>/YYYY-MM-DD-<slug>.md` from its archetype; type is `posts`, `til`, `notes`, `links` or `quotes`; `--lang es` writes `lang: es` |
 | `just touch <file>` | set `lastmod:` to today in an entry (path from the current directory or from `website/content/`); "Updated <date>" shows once lastmod is more than a day after date |
 | `just fmt` / `just check` | `nix fmt` / `nix flake check` (formatting, tfsec, devshell, site) |
@@ -84,6 +85,15 @@ One site, one stream: most entries are English, some are Spanish. An entry decla
 - Translations: give an entry and its translation the same `translationKey`. Each shows a link to the other at the top of its header, worded in the target language ("Leer en castellano", "Read in English"), and gets `<link rel="alternate" hreflang>` for both plus `og:locale` / `og:locale:alternate`.
 - Feeds: `/atom.xml` and `/index.xml` (and every section and tag feed) carry every language; each item says its own (`xml:lang` on Atom entries, `dc:language` in RSS). `/en/atom.xml`, `/en/index.xml`, `/es/atom.xml` and `/es/index.xml` carry one language each (output formats `feed*` in `hugo.toml`, templates `layouts/feed*.xml`); the home page links them with `hreflang`.
 - New Spanish entry: `just new posts <slug> --lang es`. Another language needs its own `i18n/<lang>.toml` with every key of `en.toml`, and a feed pair in `hugo.toml` and `layouts/` if it should have feeds.
+
+## Search
+
+- `/search/` (`layouts/search/page.html`, content `search.md`) searches every published entry in the browser with [Pagefind](https://pagefind.app/). The index is built in `nix build .#site` after Hugo (`nix/packages/site/package.nix`) and served from `/pagefind/`; the bundled Pagefind UI files are deleted, the page draws its own results from the tokens.
+- The magnifier in the header (beside "Aa") links to `/search/`; the 404 page has a search box that opens `/search/?q=…`. `/search/?q=<words>` runs a search on load.
+- What is indexed: only entries (`data-pagefind-body` on the `<article>` in `posts/page.html` and `page.html`), without their date line, contents list, sign-off, tags, follow links and pager (`data-pagefind-ignore`). Metadata: `title` (the h1), `date` (the shown date), `type` (Post, TIL, …) and `lang`.
+- Languages: Pagefind writes one index per `<html lang>`; the page loads the English one and merges every other language from `pagefind-entry.json`, so one search covers both. Results in another language carry the "ES" tag.
+- Pagefind 1.6 also returns loose matches (a query that only shares a few letters with a word); the page keeps a result only when a highlighted word starts like a word of the query.
+- Nothing from Pagefind loads on other pages; on `/search/` it loads when the box gets focus or a query arrives. Without JS the page says search needs it and points to Writing and Tags.
 
 ## Images
 

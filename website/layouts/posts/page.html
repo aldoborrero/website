@@ -1,12 +1,12 @@
 {{ define "main" }}
 {{- $t := (partial "lang.html" .).t }}
-<article>
+<article data-pagefind-body data-pagefind-meta="lang:{{ (partial "lang.html" .).lang }}">
   <header class="post-head row">
-    <div class="post-meta">
+    <div class="post-meta" data-pagefind-ignore data-pagefind-meta="type:Post">
       {{ partial "entry-meta.html" (dict "page" . "reading" true) }}
     </div>
     <div>
-      <h1>{{ .Title }}</h1>
+      <h1 data-pagefind-meta="title">{{ .Title }}</h1>
       {{ with .Description }}<p class="dek">{{ . }}</p>{{ end }}
     </div>
   </header>
@@ -22,7 +22,7 @@
   {{- $toc := .Fragments.Headings }}
   {{- $h2 := 0 }}{{ range .Fragments.HeadingsMap }}{{ if eq .Level 2 }}{{ $h2 = add $h2 1 }}{{ end }}{{ end }}
   <div class="post-body row">
-    <aside class="margin">
+    <aside class="margin" data-pagefind-ignore>
       {{- if ge $h2 2 }}
       <nav class="toc" aria-labelledby="toc-h">
         <h2 id="toc-h">{{ $t.contents }}</h2>
@@ -62,19 +62,19 @@
              opens the list as a sheet from any scroll position (popover; no
              JS needed). Where popovers are unsupported, the sheet simply
              shows inline here and the button stays hidden. */}}
-      <button type="button" class="toc-button" popovertarget="toc-sheet">{{ $t.contents }}</button>
-      <nav id="toc-sheet" class="toc-sheet" popover aria-labelledby="toc-sheet-h">
+      <button type="button" class="toc-button" data-pagefind-ignore popovertarget="toc-sheet">{{ $t.contents }}</button>
+      <nav id="toc-sheet" class="toc-sheet" data-pagefind-ignore popover aria-labelledby="toc-sheet-h">
         <h2 id="toc-sheet-h">{{ $t.contents }}</h2>
         {{ .TableOfContents | replaceRE `^<nav id="TableOfContents">\s*|\s*</nav>$` "" | safeHTML }}
       </nav>
       {{- end }}
       {{ partial "notices.html" . }}
       {{ partial "sidenotes.html" (string $content) | safeHTML }}
-      <footer class="sign">
+      <footer class="sign" data-pagefind-ignore>
         <img src="/images/author.jpg" alt="" width="48" height="48" loading="lazy">
         <p>{{ printf $t.sign site.Params.author (printf `<a href="%s">Mastodon</a>` site.Params.mastodon) | safeHTML }}</p>
       </footer>
-      <footer class="entry-foot">
+      <footer class="entry-foot" data-pagefind-ignore>
         {{ partial "tags.html" . }}
         {{ partial "follow.html" . }}
       </footer>
@@ -82,7 +82,7 @@
   </div>
 
   {{- with or .NextInSection .PrevInSection }}
-  <nav class="pager row" aria-label="More posts" {{ partial "chrome-lang.html" $ }}>
+  <nav class="pager row" data-pagefind-ignore aria-label="More posts" {{ partial "chrome-lang.html" $ }}>
     <div></div>
     <ul>
       {{- with $.PrevInSection }}<li><span>Older</span><a href="{{ .RelPermalink }}" rel="prev" {{ partial "lang-attr.html" . }}>{{ .Title }}</a></li>{{ end }}

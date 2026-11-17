@@ -10,6 +10,13 @@ default:
 serve *args: fonts
     hugo server --source {{ site }} --buildDrafts {{ args }}
 
+# Drafts build with the search index, served by pagefind at http://localhost:1414
+# (`just serve` has no index, so /search/ only works here and in `just build`)
+search: fonts
+    rm -rf .cache/search-site
+    hugo --source {{ site }} --buildDrafts --quiet --destination "{{ justfile_directory() }}/.cache/search-site"
+    pagefind --site .cache/search-site --serve
+
 # Build the site with nix into ./result-site (what wrangler deploys)
 build:
     nix build .#site -o result-site

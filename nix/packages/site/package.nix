@@ -1,12 +1,14 @@
-# aldoborrero.com, built hermetically: the only inputs are hugo, the theme in
-# website/ and self-hosted fonts. Nothing is fetched at build time, and
-# --panicOnWarning turns Hugo deprecations into build failures, so a nixpkgs
-# bump that breaks a template fails `nix flake check` instead of production.
+# aldoborrero.com, built hermetically: the only inputs are hugo, pagefind (the
+# search index), the theme in website/ and self-hosted fonts. Nothing is
+# fetched at build time, and --panicOnWarning turns Hugo deprecations into
+# build failures, so a nixpkgs bump that breaks a template fails
+# `nix flake check` instead of production.
 {
   lib,
   stdenvNoCC,
   fetchurl,
   hugo,
+  pagefind,
   python3Packages,
   hanken-grotesk,
   ibm-plex,
@@ -81,7 +83,10 @@ stdenvNoCC.mkDerivation {
     );
   };
 
-  nativeBuildInputs = [ hugo ];
+  nativeBuildInputs = [
+    hugo
+    pagefind
+  ];
 
   buildPhase = ''
     runHook preBuild
@@ -90,6 +95,12 @@ stdenvNoCC.mkDerivation {
     mkdir -p assets/fonts
     cp ${fonts}/*.ttf assets/fonts/
     hugo --minify --panicOnWarning --destination $out
+
+    # Search index for /search/: entries only (data-pagefind-body), one index
+    # per language. The site uses Pagefind's JS API with its own UI, so the
+    # bundled UI kits are dropped.
+    pagefind --site $out --quiet
+    rm $out/pagefind/pagefind-{ui,modular-ui,component-ui}.{js,css} $out/pagefind/pagefind-highlight.js
     runHook postBuild
   '';
   dontInstall = true;

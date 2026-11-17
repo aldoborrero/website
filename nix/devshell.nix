@@ -6,6 +6,7 @@ pkgs.mkShellNoCC {
 
     # site: `just serve` runs hugo directly; builds go through `nix build .#site`
     hugo
+    pagefind # the search index: `just search` serves a drafts build with one
 
     # infrastructure: Cloudflare Worker + domain (terraform/), deploys (wrangler)
     perSystem.self.tofu
