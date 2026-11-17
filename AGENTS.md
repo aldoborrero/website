@@ -72,6 +72,7 @@ Every key the theme reads, for all five types unless the type is named:
 | `statusNote` | with `status: outdated`, a sentence of your own after that standard text (inline Markdown) |
 | `supersededBy` | content path of the entry that replaces this one (`/posts/2026-11-16-lorem-ipsum-new`): a "There's a newer version of this post" callout linking it, with its date |
 | `supersedes` | content path of the entry this one replaces: a line "This replaces my <year> post, <title>." at the top |
+| `mastodon` | URL of the toot that announces the entry (`https://fosstodon.org/@aldo/<id>`): a "Replies" block at the end with "Reply on Mastodon" and "Load replies" (see Mastodon replies); a post's sign-off links the toot instead of the profile. The build fails if it isn't a toot URL |
 
 - Notices come from `_partials/notices.html`, in the entry's language, above the text (after a post's hero image) and at the top of the entry in the feeds. They are Markdown callouts underneath, so they look like any other.
 - The build fails if `supersededBy` or `supersedes` doesn't resolve (also when it points to a draft, in `just build`), on a `status` other than `outdated`, or on a `statusNote` without it.
@@ -85,6 +86,13 @@ One site, one stream: most entries are English, some are Spanish. An entry decla
 - Translations: give an entry and its translation the same `translationKey`. Each shows a link to the other at the top of its header, worded in the target language ("Leer en castellano", "Read in English"), and gets `<link rel="alternate" hreflang>` for both plus `og:locale` / `og:locale:alternate`.
 - Feeds: `/atom.xml` and `/index.xml` (and every section and tag feed) carry every language; each item says its own (`xml:lang` on Atom entries, `dc:language` in RSS). `/en/atom.xml`, `/en/index.xml`, `/es/atom.xml` and `/es/index.xml` carry one language each (output formats `feed*` in `hugo.toml`, templates `layouts/feed*.xml`); the home page links them with `hreflang`.
 - New Spanish entry: `just new posts <slug> --lang es`. Another language needs its own `i18n/<lang>.toml` with every key of `en.toml`, and a feed pair in `hugo.toml` and `layouts/` if it should have feeds.
+
+## Mastodon replies
+
+- Set `mastodon:` on an entry once its toot is out. The end of the entry gets "Replies" (`_partials/replies.html`, strings in the entry's language): a "Reply on Mastodon" link, and with JS a "Load replies" button.
+- Privacy: nothing is requested from the Mastodon server until the button is clicked. Then `assets/js/replies.js` fetches `https://<server>/api/v1/statuses/<id>/context` (public, no login) and lists the public and unlisted replies: avatar, name, handle, date (linking the reply), content; replies to replies are indented up to three levels; content warnings stay folded.
+- Reply HTML is rebuilt node by node from an allow-list (p, br, a, span, strong, b, em, i, code, pre, blockquote, lists, del, s): no attributes except an http(s) `href` on links, scripts, iframes, images and styles dropped. Nothing from the server goes through `innerHTML`.
+- Errors (server down, toot deleted) say the replies are still on Mastodon and leave the button to retry; no replies says so.
 
 ## Search
 

@@ -76,3 +76,22 @@ other = "Sustituye a mi entrada de %s, %s."
 
 [readMore]
 other = "Seguir leyendo"
+
+[replies]
+other = "Respuestas"
+[replyOnMastodon]
+other = "Responder en Mastodon"
+[loadReplies]
+other = "Cargar respuestas"
+[loadingReplies]
+other = "Cargando respuestas…"
+[repliesNote]
+other = "Las respuestas vienen de %s y solo se cargan si lo pides."
+[noReplies]
+other = "Todavía no hay respuestas."
+[repliesError]
+other = "No se pudieron cargar las respuestas. Siguen en Mastodon."
+[oneReply]
+other = "1 respuesta"
+[manyReplies]
+other = "%d respuestas"

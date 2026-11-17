@@ -72,8 +72,9 @@
       {{ partial "sidenotes.html" (string $content) | safeHTML }}
       <footer class="sign" data-pagefind-ignore>
         <img src="/images/author.jpg" alt="" width="48" height="48" loading="lazy">
-        <p>{{ printf $t.sign site.Params.author (printf `<a href="%s">Mastodon</a>` site.Params.mastodon) | safeHTML }}</p>
+        <p>{{ printf $t.sign site.Params.author (printf `<a href="%s">Mastodon</a>` (.Params.mastodon | default site.Params.mastodon)) | safeHTML }}</p>
       </footer>
+      {{ partial "replies.html" . }}
       <footer class="entry-foot" data-pagefind-ignore>
         {{ partial "tags.html" . }}
         {{ partial "follow.html" . }}

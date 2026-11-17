@@ -1,0 +1,29 @@
+{{- /* Replies from Mastodon at the end of an entry with `mastodon: <toot URL>`
+       in front matter. Without JS: a link to reply on Mastodon. With JS, a
+       "Load replies" button fetches the toot's public context from its server
+       (/api/v1/statuses/<id>/context) and lists the replies; nothing is
+       requested from that server before the click (assets/js/replies.js).
+       Strings are in the entry's language. Context: page. */ -}}
+{{- with .Params.mastodon }}
+{{- $u := urls.Parse . }}
+{{- $id := path.Base $u.Path }}
+{{- if not (and (eq $u.Scheme "https") $u.Host (findRE `^\d+$` $id)) }}
+  {{- errorf "%s: mastodon %q is not a toot URL (https://<server>/@<user>/<id>)" $.File.Path . }}
+{{- end }}
+{{- $t := (partial "lang.html" $).t }}
+{{- $js := resources.Get "js/replies.js" | js.Build (dict "minify" true "format" "esm" "target" "es2020") | fingerprint }}
+<section class="replies" aria-labelledby="replies-h" data-pagefind-ignore
+  data-context="https://{{ $u.Host }}/api/v1/statuses/{{ $id }}/context" data-toot="{{ $id }}"
+  data-loading="{{ $t.loadingReplies }}" data-none="{{ $t.noReplies }}" data-error="{{ $t.repliesError }}"
+  data-one="{{ $t.oneReply }}" data-many="{{ $t.manyReplies }}">
+  <h2 id="replies-h">{{ $t.replies }}</h2>
+  <p class="replies-actions">
+    <a class="replies-reply" href="{{ . }}">{{ $t.replyOnMastodon }}</a>
+    <button type="button" class="replies-load" hidden>{{ $t.loadReplies }}</button>
+  </p>
+  <p class="replies-note" hidden>{{ printf $t.repliesNote $u.Host }}</p>
+  <p class="replies-status" role="status"></p>
+  <ol class="reply-list"></ol>
+</section>
+<script type="module" src="{{ $js.RelPermalink }}"></script>
+{{- end }}

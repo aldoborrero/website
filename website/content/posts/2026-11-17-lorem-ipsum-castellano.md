@@ -10,6 +10,8 @@ lang: es
 draft: true
 description: "Un borrador de prueba para las entradas en castellano: fechas, índice, avisos y bloques de código."
 tags: [lorem]
+# Sample toot URL (not a real toot): shows the replies block in Spanish.
+mastodon: https://fosstodon.org/@aldo/100000000000000002
 ---
 
 Lorem ipsum dolor sit amet, «consectetur adipiscing» elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua, con una nota al pie[^1] y otra más[^2].

@@ -90,3 +90,24 @@ other = "This replaces my %s entry, %s."
 # Lists: link after a shortened entry.
 [readMore]
 other = "Read more"
+
+# Mastodon replies at the end of an entry with `mastodon:` (_partials/replies.html).
+[replies]
+other = "Replies"
+[replyOnMastodon]
+other = "Reply on Mastodon"
+[loadReplies]
+other = "Load replies"
+[loadingReplies]
+other = "Loading replies…"
+# "%s" is the Mastodon server, e.g. fosstodon.org.
+[repliesNote]
+other = "Replies come from %s and load only when you ask."
+[noReplies]
+other = "No replies yet."
+[repliesError]
+other = "Couldn't load the replies. They're still on Mastodon."
+[oneReply]
+other = "1 reply"
+[manyReplies]
+other = "%d replies"

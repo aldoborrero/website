@@ -1826,6 +1826,125 @@ a.zoom:focus-visible::after {
   color: var(--muted);
 }
 
+/* ---------- Mastodon replies (_partials/replies.html, assets/js/replies.js) ---------- */
+
+.replies {
+  margin-top: 2.5rem;
+  hyphens: manual;
+  font: 400 0.95rem/1.55 var(--font-ui);
+}
+.prose .replies h2 {
+  margin: 0 0 0.6rem;
+  font: 600 1.15rem/1.3 var(--font-read);
+}
+.replies-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.25rem;
+  margin: 0;
+}
+.replies-reply {
+  font-weight: 500;
+}
+.replies-load {
+  min-height: 2.5rem;
+  padding: 0 0.9rem;
+  border: 0;
+  border-radius: 6px;
+  background: var(--mark);
+  color: var(--ink);
+  font: 500 0.92rem var(--font-ui);
+  cursor: pointer;
+}
+.replies-load:hover {
+  background: var(--ink);
+  color: var(--bg);
+}
+.replies-load:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+.replies-load[hidden] {
+  display: none;
+}
+.prose .replies-note,
+.prose .replies-status {
+  margin: 0.5rem 0 0;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+.replies-status:empty {
+  display: none;
+}
+.prose .reply-list {
+  list-style: none;
+  margin: 1.25rem 0 0;
+  padding: 0;
+}
+.prose .reply {
+  margin: 0;
+  padding: 1rem 0;
+  border-top: 1px solid var(--line);
+}
+.reply[data-depth="1"] {
+  margin-left: 1.25rem;
+}
+.reply[data-depth="2"] {
+  margin-left: 2.5rem;
+}
+.reply[data-depth="3"] {
+  margin-left: 3.75rem;
+}
+.prose .reply-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+}
+.reply-avatar {
+  display: block;
+  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--mark);
+}
+.reply-author {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.4rem;
+  min-width: 0;
+  color: var(--ink);
+  text-decoration: none;
+}
+.reply-author span {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.reply-author:hover strong {
+  color: var(--accent);
+}
+.reply-date {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+.reply-body {
+  margin: 0.4rem 0 0 3.25rem;
+  overflow-wrap: anywhere;
+}
+.prose .reply-body p {
+  margin: 0 0 0.5rem;
+}
+.reply-body summary {
+  cursor: pointer;
+  color: var(--muted);
+}
+
 /* ---------- search (/search/ and the 404 page) ---------- */
 
 .search-link svg,
