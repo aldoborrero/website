@@ -1,0 +1,31 @@
+{{- /* Copy buttons for code blocks (.code, from _markup/render-codeblock.html).
+       Shell prompts (Chroma's .gp, "$ ") are left out of what is copied. The
+       button says "Copied" for two seconds; its text is a live region, so
+       screen readers hear it too. */ -}}
+<script type="module">
+for (const box of document.querySelectorAll(".code")) {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "copy";
+  b.setAttribute("aria-live", "polite");
+  b.textContent = "Copy";
+  let timer = 0;
+  b.addEventListener("click", async () => {
+    const code = box.querySelector("code").cloneNode(true);
+    for (const p of code.querySelectorAll(".gp")) {
+      const next = p.nextSibling;
+      if (next && next.nodeType === 3) next.data = next.data.replace(/^ /, "");
+      p.remove();
+    }
+    try {
+      await navigator.clipboard.writeText(code.textContent.replace(/\n$/, ""));
+      b.textContent = "Copied";
+    } catch {
+      b.textContent = "Can't copy";
+    }
+    clearTimeout(timer);
+    timer = setTimeout(() => { b.textContent = "Copy"; }, 2000);
+  });
+  box.append(b);
+}
+</script>

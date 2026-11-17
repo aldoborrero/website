@@ -1,17 +1,26 @@
-/* Colour tokens: the only file to edit to change the palette.
-   Light is the default; dark applies when <html data-theme="dark">, which the
-   header toggle sets (stored in localStorage). The system preference is ignored.
+/* Colour tokens: the only file to edit to change or add a palette.
    theme.css never uses a literal colour, only these variables.
 
-   --bg       page ground                --mark     highlight ground (placeholders, hover)
+   <html data-palette="…"> picks the palette (default: params.palette in
+   hugo.toml; readers can change it in the "Aa" panel), and data-theme="dark"
+   its dark mode. Light is the default; the system preference is ignored.
+   The selectors also match any element, which is how the panel's swatches
+   show each palette's own colours.
+
+   To add a palette, copy one pair of blocks, change the id in both selectors
+   and --palette-name (shown in the panel), and check AA for every pair (the
+   pairs are listed in AGENTS.md). Nothing else needs editing: the panel and
+   the pre-paint script read the list of palettes from this file.
+
+   --bg       page ground                --mark     highlight ground (callouts, hover, marked lines)
    --ink      body text                  --code-bg  code block ground
-   --muted    secondary text, rules      --kw       code: keywords
+   --muted    secondary text             --kw       code: keywords
    --line     hairlines, borders         --str      code: strings, literals
-   --accent   links, focus, selection
+   --accent   links, focus, selection    --warn     warning and caution callouts */
 
-   Palette: Medianoche (WCAG AA checked for text on --bg and --code-bg). */
-
-:root {
+/* Medianoche: night blue and the light blue of the Nix logo. */
+[data-palette="medianoche"] {
+  --palette-name: "Medianoche";
   --bg: #f4f7fb;
   --ink: #142033;
   --muted: #526075;
@@ -21,10 +30,11 @@
   --code-bg: #e9eef5;
   --kw: #2c5a96;
   --str: #2f6b5a;
+  --warn: #a63a26;
   color-scheme: light;
 }
-
-:root[data-theme="dark"] {
+[data-theme="dark"][data-palette="medianoche"],
+[data-theme="dark"] [data-palette="medianoche"] {
   --bg: #121a26;
   --ink: #dfe6f0;
   --muted: #93a0b4;
@@ -34,13 +44,134 @@
   --code-bg: #0c121b;
   --kw: #a9c7ff;
   --str: #a3d4c3;
+  --warn: #f2a08c;
+  color-scheme: dark;
+}
+
+/* Ámbar: warm charcoal and terminal-phosphor amber. */
+[data-palette="ambar"] {
+  --palette-name: "Ámbar";
+  --bg: #f7f6f3;
+  --ink: #221d16;
+  --muted: #635a4c;
+  --line: #e3dfd6;
+  --accent: #865400;
+  --mark: #f6ead0;
+  --code-bg: #efece6;
+  --kw: #865400;
+  --str: #4f5e1c;
+  --warn: #a63a26;
+  color-scheme: light;
+}
+[data-theme="dark"][data-palette="ambar"],
+[data-theme="dark"] [data-palette="ambar"] {
+  --bg: #1a1713;
+  --ink: #ece4d6;
+  --muted: #ab9f8c;
+  --line: #342d24;
+  --accent: #f0b65c;
+  --mark: #2b2317;
+  --code-bg: #12100c;
+  --kw: #f0b65c;
+  --str: #c3cf98;
+  --warn: #f2a08c;
+  color-scheme: dark;
+}
+
+/* Índigo y oro: deep indigo with a gold accent. */
+[data-palette="indigo"] {
+  --palette-name: "Índigo y oro";
+  --bg: #f6f7fc;
+  --ink: #1a1f3d;
+  --muted: #575d80;
+  --line: #e0e2ef;
+  --accent: #3b45a8;
+  --mark: #e8eaf8;
+  --code-bg: #eceef8;
+  --kw: #3b45a8;
+  --str: #2d6a5f;
+  --warn: #a63a26;
+  color-scheme: light;
+}
+[data-theme="dark"][data-palette="indigo"],
+[data-theme="dark"] [data-palette="indigo"] {
+  --bg: #161a33;
+  --ink: #e6e8f5;
+  --muted: #a2a8ca;
+  --line: #2c3254;
+  --accent: #e8c274;
+  --mark: #232a4c;
+  --code-bg: #10132a;
+  --kw: #e8c274;
+  --str: #9fd3c8;
+  --warn: #f2a08c;
+  color-scheme: dark;
+}
+
+/* Ciruela: dark plum and lilac. */
+[data-palette="ciruela"] {
+  --palette-name: "Ciruela";
+  --bg: #fbf9fc;
+  --ink: #241b2c;
+  --muted: #62566d;
+  --line: #e8e1ee;
+  --accent: #663a9c;
+  --mark: #f0e6f8;
+  --code-bg: #f2edf6;
+  --kw: #663a9c;
+  --str: #2f6b55;
+  --warn: #a63a26;
+  color-scheme: light;
+}
+[data-theme="dark"][data-palette="ciruela"],
+[data-theme="dark"] [data-palette="ciruela"] {
+  --bg: #1a1520;
+  --ink: #ebe4ef;
+  --muted: #a99db4;
+  --line: #33293d;
+  --accent: #d0a8ff;
+  --mark: #2a2034;
+  --code-bg: #130f18;
+  --kw: #e0b6ff;
+  --str: #a9d6c1;
+  --warn: #f2a08c;
+  color-scheme: dark;
+}
+
+/* Grafito y cobalto: neutral graphite with cobalt blue. */
+[data-palette="cobalto"] {
+  --palette-name: "Grafito y cobalto";
+  --bg: #f8f9fa;
+  --ink: #17191d;
+  --muted: #5a5f68;
+  --line: #e1e3e7;
+  --accent: #2e55c9;
+  --mark: #e6ecfb;
+  --code-bg: #eff1f4;
+  --kw: #2e55c9;
+  --str: #456a1f;
+  --warn: #a63a26;
+  color-scheme: light;
+}
+[data-theme="dark"][data-palette="cobalto"],
+[data-theme="dark"] [data-palette="cobalto"] {
+  --bg: #16181c;
+  --ink: #e4e6ea;
+  --muted: #9ba0a9;
+  --line: #2b2f36;
+  --accent: #7da2ff;
+  --mark: #20252f;
+  --code-bg: #101215;
+  --kw: #9cb8ff;
+  --str: #b5d39b;
+  --warn: #f2a08c;
   color-scheme: dark;
 }
 
 /* Paper: printing (for example the CV to PDF) always uses black on white. */
 @media print {
-  :root,
-  :root[data-theme="dark"] {
+  :root:root[data-palette],
+  :root:root[data-palette][data-theme="dark"] {
     --bg: #ffffff;
     --ink: #000000;
     --muted: #444444;
@@ -50,18 +181,7 @@
     --code-bg: #f2f2f2;
     --kw: #1f3f6e;
     --str: #2f5a4a;
+    --warn: #8a2a18;
     color-scheme: light;
   }
 }
-
-/* Candidate palettes (dark values; replace the [data-theme="dark"] block above to try one).
-   Light companions for these two are not defined yet.
-
-   Ámbar:
-     --bg: #1a1713; --ink: #ece4d6; --muted: #ab9f8c; --line: #342d24; --accent: #f0b65c;
-     --mark: #2b2317; --code-bg: #12100c; --kw: #f0b65c; --str: #c3cf98;
-
-   Índigo y oro:
-     --bg: #161a33; --ink: #e6e8f5; --muted: #a2a8ca; --line: #2c3254; --accent: #e8c274;
-     --mark: #232a4c; --code-bg: #10132a; --kw: #e8c274; --str: #9fd3c8;
-*/

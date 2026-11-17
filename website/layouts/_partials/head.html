@@ -14,7 +14,11 @@
 <meta name="description" content="{{ $desc }}">
 <meta name="author" content="{{ site.Params.author }}">
 <meta name="theme-color" content="">
-<script>try{if(localStorage.getItem("theme")==="dark")document.documentElement.dataset.theme="dark"}catch(e){}</script>
+{{- /* Reading settings chosen in the "Aa" panel (header.html), applied before
+       first paint so nothing flashes. Unknown values are ignored. */}}
+{{- $ids := apply (partial "palettes.html" .) "index" "." "id" }}
+<script>(function(d,ok){try{var s=localStorage,p=s.getItem("palette");if(s.getItem("theme")==="dark")d.dataset.theme="dark";if(ok.indexOf(p)>=0)d.dataset.palette=p;p=s.getItem("size");if(p==="s"||p==="l")d.dataset.size=p;if(s.getItem("font")==="sans")d.dataset.font="sans"}catch(e){}})(document.documentElement,{{ $ids }})</script>
+
 <link rel="canonical" href="{{ .Permalink }}">
 <link rel="icon" href="/favicon.ico" sizes="any">
 {{- /* Feeds: everything, plus this page's own when it has one. */}}

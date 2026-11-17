@@ -1,7 +1,8 @@
 {{- /* Share image, 1200×630, drawn at build time with Hugo's image filters:
-       the light palette's ground from tokens.css, the type label in the accent,
-       the title in Newsreader and the name in Hanken Grotesk. The two TTFs come
-       from the nix fonts derivation (assets/fonts/, copied by `just fonts`);
+       the default palette (params.palette) in light mode, read from
+       tokens.css; the type label in the accent, the title in Newsreader and
+       the name in Hanken Grotesk. The two TTFs come from the nix fonts
+       derivation (assets/fonts/, copied by `just fonts`);
        without them there is no image and the page falls back to a small card.
        Context: dict page, title, label. Returns an image resource or nil. */ -}}
 {{- $out := false -}}
@@ -9,7 +10,7 @@
 {{- $sans := resources.Get "fonts/og-sans.ttf" -}}
 {{- $base := resources.Get "images/og-base.png" -}}
 {{- if and $serif $sans $base -}}
-  {{- $root := index (findRE `(?s):root \{.*?\}` (resources.Get "css/tokens.css").Content 1) 0 -}}
+  {{- $root := index (findRE (printf `(?ms)^\[data-palette="%s"\] \{.*?\}` site.Params.palette) (resources.Get "css/tokens.css").Content 1) 0 -}}
   {{- $c := dict -}}
   {{- range slice "bg" "ink" "muted" "accent" "line" -}}
     {{- $m := index (findRESubmatch (printf `--%s:\s*(#[0-9a-fA-F]{6})` .) $root 1) 0 -}}

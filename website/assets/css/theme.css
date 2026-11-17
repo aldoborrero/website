@@ -1,7 +1,10 @@
 /* Longform: a reading-first personal site.
    Newsreader for everything you read, Hanken Grotesk for UI and labels,
    IBM Plex Mono for code. Layout: a 12rem margin column (dates, contents,
-   labels) beside a 38rem text measure. Colours come from tokens.css only. */
+   labels) beside a 38rem text measure. Colours come from tokens.css only.
+   Reading settings (header.html) set data-size and data-font on <html>:
+   they scale the reading text through --scale and swap --font-read; the UI
+   chrome keeps its sizes. */
 
 @font-face {
   font-family: "Newsreader";
@@ -33,7 +36,8 @@
 }
 
 :root {
-  --font-read: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --font-serif: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --font-read: var(--font-serif);
   --font-ui: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-code: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
   --margin-col: 12rem;
@@ -41,6 +45,24 @@
   --gutter: 3rem;
   --side: max(16px, env(safe-area-inset-left, 0px));
   --side-r: max(16px, env(safe-area-inset-right, 0px));
+  --base: 1.25rem;
+  --fs: 1;
+  --fs-font: 1;
+  --scale: calc(var(--fs) * var(--fs-font));
+}
+:root[data-size="s"] {
+  --fs: 0.9;
+}
+:root[data-size="l"] {
+  --fs: 1.15;
+}
+/* Hanken Grotesk is larger on the body than Newsreader at the same size. */
+:root[data-font="sans"] {
+  --font-read: var(--font-ui);
+  --fs-font: 0.92;
+}
+:root[data-font="sans"] .dek {
+  font-style: normal;
 }
 
 /* ---------- base ---------- */
@@ -67,7 +89,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 400 1.25rem/1.65 var(--font-read);
+  font: 400 calc(var(--base) * var(--scale)) / 1.65 var(--font-read);
   font-optical-sizing: auto;
   font-kerning: normal;
   text-rendering: optimizeLegibility;
@@ -192,13 +214,13 @@ img {
   text-decoration-color: var(--accent);
 }
 
-/* The toggle shares the nav's cell (and the brand's on narrow screens). */
+/* The "Aa" button shares the nav's cell (and the brand's on narrow screens). */
 .site-head .row > .site-nav {
   grid-column: 2;
   grid-row: 1;
   padding-right: 3rem;
 }
-.theme-toggle {
+.aa {
   grid-column: 2;
   grid-row: 1;
   align-self: center;
@@ -213,21 +235,150 @@ img {
   border-radius: 50%;
   background: none;
   color: var(--muted);
+  font: 500 1.1rem/1 var(--font-serif);
   cursor: pointer;
 }
-.theme-toggle[hidden] {
+.aa[hidden] {
   display: none;
 }
-.theme-toggle:hover {
-  color: var(--accent);
+.aa:hover,
+.aa:has(+ .reading:popover-open) {
+  color: var(--ink);
   background: var(--mark);
 }
-.theme-toggle .icon-sun,
-:root[data-theme="dark"] .theme-toggle .icon-moon {
-  display: none;
+
+/* The reading settings panel: a popover placed under the button by the
+   header script. Radios stay real (keyboard: Tab between groups, arrows
+   inside one); the labels carry the look. */
+.reading {
+  position: absolute;
+  inset: auto;
+  width: min(20rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 5rem);
+  overflow-y: auto;
+  margin: 0;
+  padding: 1rem 1rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--ink);
+  box-shadow: 0 16px 40px -12px color-mix(in srgb, var(--ink) 28%, transparent);
+  font: 400 0.92rem/1.4 var(--font-ui);
+  overscroll-behavior: contain;
 }
-:root[data-theme="dark"] .theme-toggle .icon-sun {
-  display: block;
+.reading h2 {
+  margin: 0 0 0.75rem;
+  font: 600 0.92rem/1.4 var(--font-ui);
+}
+.reading fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.reading fieldset + fieldset {
+  margin-top: 0.9rem;
+}
+.reading legend {
+  margin-bottom: 0.35rem;
+  padding: 0;
+  font: 500 0.82rem/1.4 var(--font-ui);
+  color: var(--muted);
+}
+.reading input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+}
+.reading label {
+  cursor: pointer;
+  border-radius: 6px;
+}
+.reading label:has(:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.palettes {
+  display: grid;
+  gap: 0.15rem;
+}
+.palettes label {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 2.5rem;
+  padding: 0.2rem 0.4rem;
+}
+.palettes label:hover {
+  background: var(--mark);
+}
+.palettes label:has(:checked) {
+  background: var(--mark);
+  box-shadow: inset 0 0 0 1.5px var(--ink);
+  font-weight: 600;
+}
+/* Each swatch carries its own data-palette, so it shows that palette's
+   ground, text and accent in the current mode. */
+.swatch {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 1.85rem;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--bg);
+  color: var(--ink);
+  font: 500 1rem/1 var(--font-serif);
+  text-decoration: underline 2px var(--accent);
+  text-underline-offset: 0.2em;
+}
+.seg > div {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 8px;
+  background: var(--mark);
+}
+.seg label {
+  display: grid;
+  place-items: center;
+  min-height: 2.25rem;
+  padding: 0 0.4rem;
+  color: var(--ink);
+  text-align: center;
+}
+.seg label:hover {
+  background: var(--bg);
+}
+.seg label:has(:checked) {
+  background: var(--ink);
+  color: var(--bg);
+  font-weight: 600;
+}
+.seg .serif {
+  font: 500 1rem/1 var(--font-serif);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .reading:popover-open {
+    animation: pop-in 0.14s ease-out;
+  }
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    translate: 0 -4px;
+  }
+}
+/* No popover support: no panel (the script never shows the button). */
+@supports not selector(:popover-open) {
+  .reading {
+    display: none;
+  }
 }
 
 .site-foot {
@@ -386,7 +537,7 @@ img {
   text-wrap: balance;
 }
 .dek {
-  font-size: 1.3rem;
+  font-size: calc(1.3rem * var(--scale));
   line-height: 1.45;
   font-style: italic;
   color: var(--muted);
@@ -421,13 +572,13 @@ img {
   scrollbar-width: thin;
 }
 .toc h2,
-.toc-mobile summary {
+.toc-sheet h2 {
   font: 600 0.88rem/1.4 var(--font-ui);
   color: var(--ink);
   margin: 0 0 0.6rem;
 }
 .toc ul,
-.toc-mobile ul {
+.toc-sheet ul {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -435,31 +586,40 @@ img {
   gap: 0.4rem;
 }
 .toc ul ul,
-.toc-mobile ul ul {
+.toc-sheet ul ul {
   display: none;
 }
 .toc a,
-.toc-mobile a {
+.toc-sheet a {
   color: var(--muted);
   text-decoration: none;
 }
-.toc a[aria-current] {
+.toc a[aria-current],
+.toc-sheet a[aria-current] {
   color: var(--ink);
   text-decoration: underline;
   text-decoration-color: var(--accent);
 }
 .toc a:hover,
-.toc-mobile a:hover {
+.toc-sheet a:hover {
   color: var(--accent);
   text-decoration: underline;
 }
-.toc-mobile {
+/* Narrow screens only (see the media query at the end): a "Contents" button
+   fixed at the bottom opens the list as a popover sheet. */
+.toc-button,
+.toc-sheet {
   display: none;
 }
 
 /* the reading column */
 .prose {
   overflow-wrap: break-word;
+}
+/* Keeps the measure under about 80 characters when a small sans size would
+   otherwise fit more into the column (it has no effect at the other sizes). */
+.post-body > .prose {
+  max-width: 34em;
 }
 .prose > :first-child {
   margin-top: 0;
@@ -493,13 +653,13 @@ img {
   color: var(--muted);
 }
 .prose h2 {
-  font: 600 1.75rem/1.3 var(--font-read);
+  font: 600 calc(1.75rem * var(--scale)) / 1.3 var(--font-read);
   margin: 3rem 0 1rem;
   text-wrap: balance;
   scroll-margin-top: 1.5rem;
 }
 .prose h3 {
-  font: 600 1.25rem/1.35 var(--font-read);
+  font: 600 calc(1.25rem * var(--scale)) / 1.35 var(--font-read);
   margin: 2.25rem 0 0.75rem;
   text-wrap: balance;
   scroll-margin-top: 1.5rem;
@@ -515,6 +675,74 @@ img {
   border: 0;
   border-top: 1px solid var(--line);
   margin: 2.5rem 0;
+}
+
+/* Heading anchors (_markup/render-heading.html): a "#" after h2 and h3,
+   shown on hover and keyboard focus. */
+.prose .anchor {
+  margin-left: 0.3em;
+  color: var(--muted);
+  font-weight: 400;
+  text-decoration: none;
+  opacity: 0;
+}
+.prose .anchor::before {
+  content: "#";
+}
+.prose :is(h2, h3):hover .anchor,
+.prose .anchor:focus-visible {
+  opacity: 1;
+}
+.prose .anchor:hover {
+  color: var(--accent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .prose .anchor {
+    transition: opacity 0.15s;
+  }
+}
+
+/* Callouts (> [!NOTE] … through _markup/render-blockquote.html): a quiet
+   ground with an icon and a title. Note and tip are plain, important adds an
+   accent hairline; warning and caution use --warn, caution with a hairline. */
+.prose .callout {
+  margin: 1.75rem 0;
+  padding: 0.85rem 1.15rem 1rem;
+  border-radius: 8px;
+  background: var(--mark);
+  font-size: 0.92em;
+  line-height: 1.6;
+}
+.prose .callout-important {
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.prose .callout-caution {
+  box-shadow: inset 0 0 0 1px var(--warn);
+}
+.prose .callout p {
+  margin: 0 0 0.6rem;
+}
+.prose .callout > :last-child {
+  margin-bottom: 0;
+}
+.prose .callout-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+  font: 600 0.9rem/1.4 var(--font-ui);
+  color: var(--accent);
+}
+.prose :is(.callout-warning, .callout-caution) .callout-title {
+  color: var(--warn);
+}
+.callout-title svg {
+  flex: none;
+}
+.prose .callout-source {
+  margin-top: 0.6rem;
+  font: 500 0.85rem/1.5 var(--font-ui);
+  color: var(--muted);
 }
 /* Quotations read as text, not as an aside: ink, roman, the same 2px rule
    as the quotes/ type. With a source they are a figure.quote (see below and
@@ -667,7 +895,7 @@ pre {
   background: var(--code-bg);
   color: var(--ink);
   border-left: 2px solid var(--accent);
-  font-size: 0.9rem;
+  font-size: calc(0.9rem * var(--fs));
   line-height: 1.65;
   tab-size: 2;
   hyphens: none;
@@ -687,6 +915,65 @@ pre code {
   background: none;
   padding: 0;
   font-size: inherit;
+}
+
+/* Fenced blocks come in a .code wrapper (_markup/render-codeblock.html) with
+   an optional file name and a copy button (_partials/code-copy.html). The
+   button is positioned over the block, so it never moves the layout. */
+.prose .code {
+  position: relative;
+  margin: 0 0 1.35rem;
+}
+.prose .code .highlight,
+.prose .code > pre {
+  margin: 0;
+}
+.code-file {
+  margin: 0;
+  padding: 0.45rem 6rem 0.45rem 1.25rem;
+  border-left: 2px solid var(--accent);
+  border-bottom: 1px solid var(--line);
+  background: var(--code-bg);
+  font: 400 calc(0.8rem * var(--fs)) / 1.4 var(--font-code);
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.prose .code-file {
+  margin: 0;
+}
+.copy {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.4rem;
+  min-width: 4.6rem;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--code-bg);
+  color: var(--muted);
+  font: 500 0.78rem/1.4 var(--font-ui);
+  cursor: pointer;
+}
+/* A 44px tap area without a bigger button. */
+.copy::after {
+  content: "";
+  position: absolute;
+  inset: -0.6rem -0.3rem;
+}
+.copy:hover {
+  border-color: var(--muted);
+  color: var(--ink);
+}
+/* Over the code itself, the button shows on hover and focus only (on touch
+   screens it is always there); in a file-name bar it always shows. */
+@media (hover: hover) {
+  .code:not(:has(.code-file)) .copy {
+    opacity: 0;
+  }
+  .code:hover .copy,
+  .code .copy:focus-visible {
+    opacity: 1;
+  }
 }
 
 /* Chroma, coloured from the tokens */
@@ -769,6 +1056,8 @@ pre code {
 }
 .chroma .hl {
   display: block;
+  margin-inline: -0.6rem;
+  padding-inline: 0.6rem;
   background: var(--mark);
 }
 
@@ -1286,7 +1575,7 @@ pre code {
   width: 100%;
 }
 .prose .side-body p {
-  font-size: 1.05rem;
+  font-size: calc(1.05rem * var(--scale));
   line-height: 1.6;
 }
 
@@ -1494,17 +1783,17 @@ a.zoom:focus-visible::after {
 /* ---------- narrow screens ---------- */
 
 @media (max-width: 760px) {
-  body {
-    font-size: 1.125rem;
+  :root {
+    --base: 1.125rem;
   }
   .prose {
     hyphens: auto;
   }
   .prose h2 {
-    font-size: 1.55rem;
+    font-size: calc(1.55rem * var(--scale));
   }
   .dek {
-    font-size: 1.15rem;
+    font-size: calc(1.15rem * var(--scale));
   }
   .row,
   .tl > li,
@@ -1519,8 +1808,12 @@ a.zoom:focus-visible::after {
     grid-row: 2;
     padding-right: 0;
   }
-  .theme-toggle {
+  .aa {
     grid-column: 1;
+  }
+  .palettes label,
+  .seg label {
+    min-height: 2.75rem;
   }
   .label {
     line-height: 1.6;
@@ -1562,20 +1855,65 @@ a.zoom:focus-visible::after {
   .margin .toc {
     display: none;
   }
-  .toc-mobile {
+  .toc-button {
+    position: fixed;
+    z-index: 5;
+    right: var(--side-r);
+    bottom: max(1rem, env(safe-area-inset-bottom, 0px));
     display: block;
-    margin: 0 0 2rem;
-    padding: 0.75rem 1rem;
-    background: var(--mark);
-    border-radius: 6px;
-    font: 400 0.95rem/1.5 var(--font-ui);
-  }
-  .toc-mobile summary {
-    margin: 0;
+    min-height: 2.75rem;
+    padding: 0 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--bg);
+    color: var(--ink);
+    box-shadow: 0 6px 18px -6px color-mix(in srgb, var(--ink) 35%, transparent);
+    font: 500 0.92rem/1 var(--font-ui);
     cursor: pointer;
   }
-  .toc-mobile > ul {
-    margin-top: 0.75rem;
+  .toc-sheet:popover-open {
+    position: fixed;
+    inset: auto var(--side-r) max(1rem, env(safe-area-inset-bottom, 0px)) var(--side);
+    display: block;
+    width: auto;
+    max-height: min(70dvh, 34rem);
+    overflow-y: auto;
+    margin: 0;
+    padding: 1rem 1.1rem 0.6rem;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--ink);
+    box-shadow: 0 16px 40px -12px color-mix(in srgb, var(--ink) 35%, transparent);
+    font: 400 1rem/1.4 var(--font-ui);
+    overscroll-behavior: contain;
+  }
+  .prose .toc-sheet h2 {
+    margin: 0 0 0.25rem;
+    font: 600 0.88rem/1.4 var(--font-ui);
+  }
+  .prose .toc-sheet ul {
+    gap: 0;
+    margin: 0;
+    padding: 0;
+  }
+  .prose .toc-sheet li {
+    margin: 0;
+  }
+  .toc-sheet a {
+    display: block;
+    padding-block: 0.65rem;
+  }
+  /* No popover support: the list shows inline at the top, as before. */
+  @supports not selector(:popover-open) {
+    .toc-sheet {
+      display: block;
+      margin: 0 0 2rem;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      background: var(--mark);
+      font: 400 0.95rem/1.5 var(--font-ui);
+    }
   }
   .prose pre,
   .highlight pre {
@@ -1584,11 +1922,37 @@ a.zoom:focus-visible::after {
     border-left: 0;
     border-top: 2px solid var(--accent);
   }
+  /* A wrapped block bleeds as a whole: file name, code and button. */
+  .prose .code {
+    margin-inline: calc(-1 * var(--side)) calc(-1 * var(--side-r));
+  }
+  .prose .code .copy {
+    right: 0.75rem;
+  }
+  .prose .code pre {
+    margin-inline: 0;
+  }
+  .code-file {
+    padding-inline: var(--side) 6rem;
+    border-left: 0;
+    border-top: 2px solid var(--accent);
+  }
+  .code-file + .highlight pre {
+    border-top: 0;
+  }
   /* inside a list the block keeps the item's indent instead of bleeding */
+  .prose li .code {
+    margin-inline: 0;
+  }
   .prose li pre,
   .prose li .highlight pre {
     margin-inline: 0;
     padding-inline: 1rem;
+    border-top: 0;
+    border-left: 2px solid var(--accent);
+  }
+  .prose li .code-file {
+    padding-left: 1rem;
     border-top: 0;
     border-left: 2px solid var(--accent);
   }
@@ -1636,13 +2000,17 @@ a.zoom:focus-visible::after {
     font-size: 10.5pt;
   }
   .site-head nav,
-  .theme-toggle,
+  .aa,
+  .reading,
+  .toc-button,
+  .toc-sheet,
+  .copy,
+  .prose .anchor,
   .follow,
   .pager-list,
   .site-foot,
   .skip,
   .toc,
-  .toc-mobile,
   .pager {
     display: none;
   }

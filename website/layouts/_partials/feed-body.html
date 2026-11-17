@@ -6,4 +6,5 @@
 {{- else if eq .Section "links" -}}
   {{- $out = printf `<p><a href="%s">%s</a>%s</p>` .Params.link .Title (cond (isset .Params "by") (printf " by %s" .Params.by) "") -}}
 {{- end -}}
-{{- return (printf "%s%s" $out .Content) -}}
+{{- /* Heading anchors only make sense on the page itself. */ -}}
+{{- return (printf "%s%s" $out (.Content | replaceRE `<a class="anchor" [^>]*></a>` "")) -}}

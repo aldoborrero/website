@@ -10,25 +10,71 @@
       <a href="/about/"{{ if eq .RelPermalink "/about/" }} aria-current="page"{{ end }}>About</a>
       <a href="/atom.xml">Feed</a>
     </nav>
-    <button type="button" class="theme-toggle" hidden>
-      <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-      <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></g></svg>
-    </button>
+    {{- /* Reading settings: palette, light/dark, text size and font, in a
+           popover. Choices live in localStorage and are applied before first
+           paint by the script in head.html. Without JS the button stays
+           hidden and the page keeps the defaults. */}}
+    <button type="button" class="aa" popovertarget="reading" aria-label="Reading settings" hidden><span aria-hidden="true">Aa</span></button>
+    <div id="reading" class="reading" popover role="dialog" aria-labelledby="reading-h">
+      <h2 id="reading-h">Reading settings</h2>
+      <fieldset class="palettes">
+        <legend>Palette</legend>
+        {{- range partial "palettes.html" . }}
+        <label><input type="radio" name="palette" value="{{ .id }}"><span class="swatch" data-palette="{{ .id }}" aria-hidden="true">Aa</span>{{ .name }}</label>
+        {{- end }}
+      </fieldset>
+      <fieldset class="seg">
+        <legend>Mode</legend>
+        <div>
+          <label><input type="radio" name="theme" value="light">Light</label>
+          <label><input type="radio" name="theme" value="dark">Dark</label>
+        </div>
+      </fieldset>
+      <fieldset class="seg">
+        <legend>Text size</legend>
+        <div>
+          <label><input type="radio" name="size" value="s">Small</label>
+          <label><input type="radio" name="size" value="m">Medium</label>
+          <label><input type="radio" name="size" value="l">Large</label>
+        </div>
+      </fieldset>
+      <fieldset class="seg">
+        <legend>Font</legend>
+        <div>
+          <label class="serif"><input type="radio" name="font" value="serif">Serif</label>
+          <label class="sans"><input type="radio" name="font" value="sans">Sans</label>
+        </div>
+      </fieldset>
+    </div>
     <script>
       (function () {
         var root = document.documentElement;
-        var btn = document.currentScript.previousElementSibling;
+        var panel = document.getElementById("reading");
+        var btn = panel.previousElementSibling;
+        if (!panel.showPopover) return;
         var meta = document.querySelector('meta[name="theme-color"]');
+        // Each setting: its <html> data attribute and the value that means "no attribute".
+        var keys = { palette: null, theme: "light", size: "m", font: "serif" };
+        function current(k) { return root.dataset[k] || keys[k]; }
         function sync() {
-          var dark = root.dataset.theme === "dark";
-          btn.setAttribute("aria-label", dark ? "Switch to light theme" : "Switch to dark theme");
+          for (var k in keys) {
+            var r = panel.querySelector('input[name="' + k + '"][value="' + current(k) + '"]');
+            if (r) r.checked = true;
+          }
           if (meta) meta.content = getComputedStyle(root).getPropertyValue("--bg").trim();
         }
-        btn.addEventListener("click", function () {
-          var dark = root.dataset.theme !== "dark";
-          if (dark) root.dataset.theme = "dark"; else delete root.dataset.theme;
-          try { localStorage.setItem("theme", dark ? "dark" : "light"); } catch (e) {}
+        panel.addEventListener("change", function (e) {
+          var k = e.target.name, v = e.target.value;
+          if (v === keys[k]) delete root.dataset[k]; else root.dataset[k] = v;
+          try { localStorage.setItem(k, v); } catch (err) {}
           sync();
+        });
+        // Below the button, right-aligned with it; scrolls with the page.
+        panel.addEventListener("beforetoggle", function (e) {
+          if (e.newState !== "open") return;
+          var r = btn.getBoundingClientRect();
+          panel.style.top = r.bottom + scrollY + 8 + "px";
+          panel.style.right = Math.max(16, root.clientWidth - r.right) + "px";
         });
         sync();
         btn.hidden = false;

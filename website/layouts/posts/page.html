@@ -28,33 +28,45 @@
         <h2 id="toc-h">Contents</h2>
         {{ .TableOfContents | replaceRE `^<nav id="TableOfContents">\s*|\s*</nav>$` "" | safeHTML }}
       </nav>
-      {{- /* Marks the section being read (aria-current="location"); without JS
-             the contents list is simply static. */}}
+      {{- /* Marks the section being read (aria-current="location") in both
+             contents lists, and closes the mobile sheet once a link is
+             chosen. Without JS the lists are simply static. */}}
       <script type="module">
-        const links = new Map([...document.querySelectorAll(".toc a")].map((a) => [decodeURIComponent(a.hash.slice(1)), a]));
+        const links = new Map();
+        for (const a of document.querySelectorAll(".toc a, .toc-sheet a")) {
+          const id = decodeURIComponent(a.hash.slice(1));
+          links.set(id, [...(links.get(id) || []), a]);
+        }
         const heads = [...document.querySelectorAll(".prose h2[id]")].filter((h) => links.has(h.id));
-        let current = null, queued = 0;
+        let current = [], queued = 0;
         const update = () => {
           queued = 0;
           let head = null;
           for (const h of heads) { if (h.getBoundingClientRect().top < innerHeight * 0.3) head = h; else break; }
-          const a = head && links.get(head.id);
-          if (a === current) return;
-          if (current) current.removeAttribute("aria-current");
-          if (a) a.setAttribute("aria-current", "location");
-          current = a;
+          const as = (head && links.get(head.id)) || [];
+          if (as === current) return;
+          for (const a of current) a.removeAttribute("aria-current");
+          for (const a of as) a.setAttribute("aria-current", "location");
+          current = as;
         };
         addEventListener("scroll", () => { queued ||= requestAnimationFrame(update); }, { passive: true });
         update();
+        const sheet = document.getElementById("toc-sheet");
+        sheet.addEventListener("click", (e) => { if (e.target.closest("a") && sheet.hidePopover) sheet.hidePopover(); });
       </script>
       {{- end }}
     </aside>
     <div class="prose">
       {{- if ge $h2 2 }}
-      <details class="toc-mobile">
-        <summary>Contents</summary>
+      {{- /* Narrow screens: a small "Contents" button fixed at the bottom
+             opens the list as a sheet from any scroll position (popover; no
+             JS needed). Where popovers are unsupported, the sheet simply
+             shows inline here and the button stays hidden. */}}
+      <button type="button" class="toc-button" popovertarget="toc-sheet">Contents</button>
+      <nav id="toc-sheet" class="toc-sheet" popover aria-labelledby="toc-sheet-h">
+        <h2 id="toc-sheet-h">Contents</h2>
         {{ .TableOfContents | replaceRE `^<nav id="TableOfContents">\s*|\s*</nav>$` "" | safeHTML }}
-      </details>
+      </nav>
       {{- end }}
       {{ partial "sidenotes.html" (string $content) | safeHTML }}
       <footer class="sign">

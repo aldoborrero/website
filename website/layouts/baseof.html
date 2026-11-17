@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ site.Language.Locale | default "en" }}">
+<html lang="{{ site.Language.Locale | default "en" }}" data-palette="{{ site.Params.palette }}">
 <head>
 {{ partial "head.html" . }}
 </head>
@@ -18,6 +18,9 @@
 {{- $js := resources.Get "js/zoom.js" | js.Build (dict "minify" true "format" "esm" "target" "es2020") | fingerprint }}
 <script type="module">if(document.querySelector("a[data-zoom]"))import("{{ $js.RelPermalink }}")</script>
 {{- end }}
+{{- /* Copy buttons: on pages with a code block, and on lists, where entries
+       may carry one (the script finds nothing otherwise). */}}
+{{- if or (.Store.Get "code") (not .IsPage) }}{{ partial "code-copy.html" . }}{{ end }}
 </div>
 </body>
 </html>
