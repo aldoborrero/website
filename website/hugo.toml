@@ -20,6 +20,10 @@ twitter = "aldoborrero"
 # Follow links, shown in the follow list once set (undecided):
 # bluesky = "https://bsky.app/profile/<handle>"
 # linkedin = "https://www.linkedin.com/in/<handle>"
+# Cloudflare Web Analytics site token (dashboard: Web Analytics > Add a site;
+# the token is the one in the JS snippet). Empty: no beacon. Only used in
+# production builds, see layouts/baseof.html.
+cfAnalyticsToken = ""
 
 [taxonomies]
 tag = "tags"

@@ -21,6 +21,13 @@
 {{- /* Copy buttons: on pages with a code block, and on lists, where entries
        may carry one (the script finds nothing otherwise). */}}
 {{- if or (.Store.Get "code") (not .IsPage) }}{{ partial "code-copy.html" . }}{{ end }}
+{{- /* Cloudflare Web Analytics: no cookies and nothing stored on the device,
+       so no consent banner. Only in production builds (`just build`, CI) and
+       only once params.cfAnalyticsToken is set: `just serve`, builds without
+       a token and forks send nothing. */}}
+{{- with site.Params.cfAnalyticsToken }}{{ if hugo.IsProduction }}
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{{ dict "token" . | jsonify }}'></script>
+{{- end }}{{ end }}
 </div>
 </body>
 </html>

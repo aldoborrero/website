@@ -95,6 +95,13 @@ One site, one stream: most entries are English, some are Spanish. An entry decla
 - Reply HTML is rebuilt node by node from an allow-list (p, br, a, span, strong, b, em, i, code, pre, blockquote, lists, del, s): no attributes except an http(s) `href` on links, scripts, iframes, images and styles dropped. Nothing from the server goes through `innerHTML`.
 - Errors (server down, toot deleted) say the replies are still on Mastodon and leave the button to retry; no replies says so.
 
+## Analytics
+
+- Cloudflare Web Analytics, set by `params.cfAnalyticsToken` in `hugo.toml` (empty by default). Get the token in the Cloudflare dashboard: Web Analytics, "Add a site", hostname `aldoborrero.com`, then copy the token from the JS snippet it shows (choose the manual snippet, not automatic setup). The token is public (it ends up in every page), so it lives in `hugo.toml`, not in sops.
+- The beacon (`static.cloudflareinsights.com/beacon.min.js`, in `baseof.html`) is added only in production builds (`just build`, CI) and only when the token is set; `just serve`, a build without a token and forks send nothing.
+- No cookies, no local storage and no fingerprinting, so no consent banner is needed.
+- Not owned by tofu yet: `terraform/` could manage the site as a `cloudflare_web_analytics_site` and output its token, but the hermetic build can't read tofu state, so the token would still be copied into `hugo.toml` by hand.
+
 ## Search
 
 - `/search/` (`layouts/search/page.html`, content `search.md`) searches every published entry in the browser with [Pagefind](https://pagefind.app/). The index is built in `nix build .#site` after Hugo (`nix/packages/site/package.nix`) and served from `/pagefind/`; the bundled Pagefind UI files are deleted, the page draws its own results from the tokens.
