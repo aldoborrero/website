@@ -23,3 +23,6 @@ website/static/fonts/
 # agent skills: restored from skills-lock.json with `just skills`
 .claude/skills/
 website/assets/fonts/
+
+# lychee (just check-links)
+.lycheecache

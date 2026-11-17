@@ -67,6 +67,11 @@ touch file:
     ' "$f" > "$f.tmp" && mv "$f.tmp" "$f"
     grep -m1 "^lastmod:" "$f"
 
+# Check external links in a fresh build (lychee.toml: cached a day, rate-limited);
+# internal links and anchors are checked offline by `just check`
+check-links: build
+    lychee --config lychee.toml --root-dir "{{ justfile_directory() }}/result-site" "result-site/**/*.html"
+
 # Format everything (nix, markdown, shell, yaml, toml, json, hcl)
 fmt:
     nix fmt

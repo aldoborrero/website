@@ -1,0 +1,54 @@
+name: Links
+
+# Weekly check of the external links in the built site (internal links are
+# checked offline by `nix flake check` on every push). Broken links are listed
+# in the run's summary and flagged with a warning; the run itself stays green,
+# since other sites go down for a day, and it never touches the deploy.
+on:
+  schedule:
+    - cron: "17 6 * * 1" # Mondays, 06:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  links:
+    name: External links
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@3dc140bfc76c49fbd4dd958429132e3746bcb086 # v31.11.5
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Build site
+        run: nix build .#site -o result-site --print-build-logs
+
+      - name: Check external links
+        id: lychee
+        # lychee asks the GitHub API about github.com links with this token;
+        # without it GitHub answers 503 to most of them.
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          nix develop --command lychee --config lychee.toml --no-progress \
+            --root-dir "$PWD/result-site" --format markdown --output lychee.md \
+            "result-site/**/*.html"
+          echo "exit=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Report
+        if: always()
+        run: |
+          {
+            echo "## External links"
+            if [ -f lychee.md ]; then cat lychee.md; else echo "lychee did not run; see the step log."; fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "${{ steps.lychee.outputs.exit }}" != "0" ]; then
+            echo "::warning title=Broken external links::lychee found broken links; the list is in this run's summary."
+          fi

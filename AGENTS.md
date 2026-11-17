@@ -7,11 +7,12 @@ Personal website and blog. Static site, served from a Cloudflare Worker (Workers
 | Path | What |
 | --- | --- |
 | `flake.nix` | numtide/blueprint flake, `prefix = "nix"`; outputs come from files under `nix/` |
-| `nix/devshell.nix` | `mkShellNoCC`: just, treefmt, hugo, pagefind, tofu, wrangler, sops/age |
+| `nix/devshell.nix` | `mkShellNoCC`: just, treefmt, hugo, pagefind, lychee, tofu, wrangler, sops/age |
 | `nix/formatter.nix` | treefmt-nix (`nix fmt`) + format check wired into `nix flake check` |
 | `nix/packages/tofu/` | OpenTofu with the Cloudflare provider baked in |
 | `nix/packages/site/` | the site: `hugo --minify --panicOnWarning` in the sandbox, then `pagefind` for the search index, plus self-hosted fonts (`.#site.fonts`: woff2 for pages, two static TTFs for share images); also `checks.<sys>.pkgs-site` |
 | `nix/checks/tfsec.nix` | tfsec over `terraform/` |
+| `nix/checks/no-comments.nix`, `nix/checks/links.nix` | no content HTML comment in the built site; internal links and anchors resolve (lychee, offline) |
 | `website/` | Hugo site with its own theme: `layouts/`, `assets/css/` (`tokens.css` holds every colour: five palettes, each light and dark), `assets/js/zoom.js` (the image viewer), `data/cv.toml` (the career page at `/about/`), `i18n/` (strings the theme writes inside an entry, per language), `content/`, `archetypes/`, `static/` |
 | `terraform/` | OpenTofu: the Worker and its custom domain; state in R2 |
 | `wrangler.jsonc` | Worker static-assets config used by `wrangler deploy` |
@@ -27,6 +28,7 @@ Personal website and blog. Static site, served from a Cloudflare Worker (Workers
 | `just search` | drafts build with the search index, served by pagefind at <http://localhost:1414> (`just serve` has no index, so /search/ only works here and in `just build`) |
 | `just new <type> <slug> [--lang es]` | new draft `website/content/<type>/YYYY-MM-DD-<slug>.md` from its archetype; type is `posts`, `til`, `notes`, `links` or `quotes`; `--lang es` writes `lang: es` |
 | `just touch <file>` | set `lastmod:` to today in an entry (path from the current directory or from `website/content/`); "Updated <date>" shows once lastmod is more than a day after date |
+| `just check-links` | `just build`, then lychee over the external links (`lychee.toml`: cached a day in `.lycheecache`, rate-limited per host); export `GITHUB_TOKEN` or github.com links answer 503 |
 | `just fmt` / `just check` | `nix fmt` / `nix flake check` (formatting, tfsec, devshell, site) |
 | `just tf-init` / `tf-plan` / `tf-apply` | OpenTofu in `terraform/` |
 | `just deploy` / `just preview <alias>` | wrangler deploy / upload a preview version |
@@ -104,6 +106,12 @@ One site, one stream: most entries are English, some are Spanish. An entry decla
 - Privacy: nothing is requested from the Mastodon server until the button is clicked. Then `assets/js/replies.js` fetches `https://<server>/api/v1/statuses/<id>/context` (public, no login) and lists the public and unlisted replies: avatar, name, handle, date (linking the reply), content; replies to replies are indented up to three levels; content warnings stay folded.
 - Reply HTML is rebuilt node by node from an allow-list (p, br, a, span, strong, b, em, i, code, pre, blockquote, lists, del, s): no attributes except an http(s) `href` on links, scripts, iframes, images and styles dropped. Nothing from the server goes through `innerHTML`.
 - Errors (server down, toot deleted) say the replies are still on Mastodon and leave the button to retry; no replies says so.
+
+## Link checking
+
+- Internal links and anchors: `nix flake check` runs `nix/checks/links.nix`, lychee offline over the built site. Root-relative and `https://aldoborrero.com/` links must resolve to a file in the build (a directory needs its `index.html`), and `#fragments` to an id on that page. No network; a broken internal link fails CI.
+- External links: `just check-links` locally, and `.github/workflows/links.yml` every Monday (and on demand from the Actions tab), which lists broken links in the run summary with a warning and stays green; it never touches the deploy. Settings in `lychee.toml`: excludes (this site, X/Twitter and LinkedIn, which refuse automated requests, the analytics beacon), 429 counts as OK, at most two requests at a time per host, 500 ms apart, two retries.
+- Fix a broken external link in the post itself (or point it to the Internet Archive); don't add it to the excludes.
 
 ## Analytics
 

@@ -22,7 +22,8 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
 
-      # Formatting (treefmt), tfsec, the devshell and the site build (pkgs-site).
+      # Formatting (treefmt), tfsec, the devshell, the site build (pkgs-site),
+      # no content HTML comments and internal links (offline).
       - name: Run flake check
         run: nix flake check --print-build-logs
 
