@@ -12,7 +12,7 @@ Personal website and blog. Static site, served from a Cloudflare Worker (Workers
 | `nix/packages/tofu/` | OpenTofu with the Cloudflare provider baked in |
 | `nix/packages/site/` | the site: `hugo --minify --panicOnWarning` in the sandbox, plus self-hosted fonts (`.#site.fonts`: woff2 for pages, two static TTFs for share images); also `checks.<sys>.pkgs-site` |
 | `nix/checks/tfsec.nix` | tfsec over `terraform/` |
-| `website/` | Hugo site with its own theme: `layouts/`, `assets/css/` (`tokens.css` holds every colour; light by default, dark through the header toggle), `data/cv.toml` (the career page at `/about/`), `content/`, `archetypes/`, `static/` |
+| `website/` | Hugo site with its own theme: `layouts/`, `assets/css/` (`tokens.css` holds every colour; light by default, dark through the header toggle), `assets/js/zoom.js` (the image viewer), `data/cv.toml` (the career page at `/about/`), `content/`, `archetypes/`, `static/` |
 | `terraform/` | OpenTofu: the Worker and its custom domain; state in R2 |
 | `wrangler.jsonc` | Worker static-assets config used by `wrangler deploy` |
 | `secrets/secrets.yaml` | sops (age + YubiKey) dotenv with Cloudflare / R2 credentials |
@@ -46,6 +46,14 @@ Five sections, all in one stream on the home page (newest first, 15 per page) an
 - Every page gets Open Graph and Twitter tags (`_partials/head.html`) and a 1200×630 share image drawn at build time from the light tokens (`_partials/og-image.html`). Locally, `just fonts` must have run, or pages fall back to a small card.
 - Follow links (feed, Mastodon, GitHub) come from `_partials/follow.html`; Bluesky and LinkedIn appear once `params.bluesky` / `params.linkedin` are set in `hugo.toml`.
 - Samples in each new section are `draft: true` lorem ipsum: visible with `just serve`, never in `just build`.
+
+## Images
+
+- Write a standalone Markdown image: `![Alt text that describes it](file.webp "Optional caption")`. Put the file next to the entry (make the entry a bundle: `posts/YYYY-MM-DD-slug/index.md` plus its images) or under `website/static/images/posts/<slug>/` and use `/images/posts/<slug>/file.webp`.
+- Every standalone image opens in the image viewer (`assets/js/zoom.js`, from `_markup/render-image.html`): click or tap for 1:1, wheel or pinch to zoom, drag to pan, arrows or swipe for the entry's other images, Esc / back / the close button to leave. Without JS the image is a plain link to the file.
+- Images wider than 1520 px are shown downscaled (`srcset`); the original is only fetched when the viewer opens. `static/images` is mounted as `assets/images` for this (`hugo.toml`).
+- Opt out: SVGs and images inside a sentence never open in the viewer. For any other image, put `{.nozoom}` on the line right after it.
+- Alt text is the accessible name of the link ("Open image: <alt>"), so always write one.
 
 ## Invariants
 
