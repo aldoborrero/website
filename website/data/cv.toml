@@ -75,24 +75,44 @@ org = "[Google Summer of Code](https://summerofcode.withgoogle.com), lorem ipsum
 text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 
 [[selected]]
-name = "hashi-homelab"
-url = "https://github.com/aldoborrero/hashi-homelab"
-text = "Nomad, Consul and Vault recipes for a home cluster."
-
-[[selected]]
 name = "ccq"
 url = "https://github.com/aldoborrero/ccq"
-text = "Search Claude Code conversation history from the terminal. Rust, 2026."
+text = "Search and browse Claude Code conversation history from the terminal. Rust, 2026."
 
 [[selected]]
-name = "Learn how to use the Nix REPL effectively"
-url = "/posts/2022/12/02/learn-how-to-use-the-nix-repl-effectively/"
-text = "Blog post on inspecting Nix expressions with the REPL, 2022."
+name = "herdr-supervisor"
+url = "https://github.com/aldoborrero/herdr-supervisor"
+text = "Durable supervision for coding agents: isolated worktrees, SQLite state and NATS coordination. Rust, 2026."
 
 [[selected]]
-name = "wsl-fido-bridge"
-url = "https://github.com/aldoborrero/wsl-fido-bridge"
-text = "SSH signing with FIDO keys through Windows WebAuthn. Rust, 2026."
+name = "pi-agent-kit"
+url = "https://github.com/aldoborrero/pi-agent-kit"
+text = "The skills I use with coding agents, published. TypeScript, 2026."
+
+[[selected]]
+name = "cc-skills-nix"
+url = "https://github.com/aldoborrero/cc-skills-nix"
+text = "Agent skills for Nix projects: numtide/blueprint and friends. 2026."
+
+[[selected]]
+name = "templates"
+url = "https://github.com/aldoborrero/templates"
+text = "Nix flake templates for starting new projects. 2024."
+
+[[selected]]
+name = "use-nix-action"
+url = "https://github.com/aldoborrero/use-nix-action"
+text = "GitHub Action that installs Nix and loads direnv in CI runners. 2024."
+
+[[selected]]
+name = "freecad.nix"
+url = "https://github.com/aldoborrero/freecad.nix"
+text = "FreeCAD weekly builds and extensions, packaged for Nix. 2026."
+
+[[selected]]
+name = "hashi-homelab"
+url = "https://github.com/aldoborrero/hashi-homelab"
+text = "Nomad, Consul and Vault recipes for a home cluster. 2022."
 
 # placeholder
 [[facts]]
