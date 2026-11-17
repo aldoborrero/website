@@ -12,7 +12,7 @@ Personal website and blog. Static site, served from a Cloudflare Worker (Workers
 | `nix/packages/tofu/` | OpenTofu with the Cloudflare provider baked in |
 | `nix/packages/site/` | the site: `hugo --minify --panicOnWarning` in the sandbox, plus self-hosted fonts (`.#site.fonts`: woff2 for pages, two static TTFs for share images); also `checks.<sys>.pkgs-site` |
 | `nix/checks/tfsec.nix` | tfsec over `terraform/` |
-| `website/` | Hugo site with its own theme: `layouts/`, `assets/css/` (`tokens.css` holds every colour: five palettes, each light and dark), `assets/js/zoom.js` (the image viewer), `data/cv.toml` (the career page at `/about/`), `content/`, `archetypes/`, `static/` |
+| `website/` | Hugo site with its own theme: `layouts/`, `assets/css/` (`tokens.css` holds every colour: five palettes, each light and dark), `assets/js/zoom.js` (the image viewer), `data/cv.toml` (the career page at `/about/`), `i18n/` (strings the theme writes inside an entry, per language), `content/`, `archetypes/`, `static/` |
 | `terraform/` | OpenTofu: the Worker and its custom domain; state in R2 |
 | `wrangler.jsonc` | Worker static-assets config used by `wrangler deploy` |
 | `secrets/secrets.yaml` | sops (age + YubiKey) dotenv with Cloudflare / R2 credentials |
@@ -24,7 +24,8 @@ Personal website and blog. Static site, served from a Cloudflare Worker (Workers
 | --- | --- |
 | `just` | list recipes |
 | `just serve` / `just build` | hugo dev server with drafts (copies the fonts in first) / `nix build .#site -o result-site` |
-| `just new <type> <slug>` | new draft `website/content/<type>/YYYY-MM-DD-<slug>.md` from its archetype; type is `posts`, `til`, `notes`, `links` or `quotes` |
+| `just new <type> <slug> [--lang es]` | new draft `website/content/<type>/YYYY-MM-DD-<slug>.md` from its archetype; type is `posts`, `til`, `notes`, `links` or `quotes`; `--lang es` writes `lang: es` |
+| `just touch <file>` | set `lastmod:` to today in an entry (path from the current directory or from `website/content/`); "Updated <date>" shows once lastmod is more than a day after date |
 | `just fmt` / `just check` | `nix fmt` / `nix flake check` (formatting, tfsec, devshell, site) |
 | `just tf-init` / `tf-plan` / `tf-apply` | OpenTofu in `terraform/` |
 | `just deploy` / `just preview <alias>` | wrangler deploy / upload a preview version |
@@ -46,6 +47,43 @@ Five sections, all in one stream on the home page (newest first, 15 per page) an
 - Every page gets Open Graph and Twitter tags (`_partials/head.html`) and a 1200×630 share image drawn at build time from the light tokens (`_partials/og-image.html`). Locally, `just fonts` must have run, or pages fall back to a small card.
 - Follow links (feed, Mastodon, GitHub) come from `_partials/follow.html`; Bluesky and LinkedIn appear once `params.bluesky` / `params.linkedin` are set in `hugo.toml`.
 - Samples in each new section are `draft: true` lorem ipsum: visible with `just serve`, never in `just build`.
+
+## Front matter
+
+Every key the theme reads, for all five types unless the type is named:
+
+| Key | What it does |
+| --- | --- |
+| `title` | the entry's title; may be empty for notes and quotes (a title is built for them) |
+| `slug` | frozen URL slug (`just new` writes it); never change it once published |
+| `date` | publication date; sets the URL and the order |
+| `lastmod` | last real change (`just touch <file>`); shows "Updated <date>" when more than a day after `date`, and feeds `article:modified_time` and Atom `<updated>` |
+| `draft` | `true` keeps it out of `just build` (`just serve` shows it) |
+| `tags` | list of tags, any type |
+| `aliases` | old URLs that redirect here; keep them when moving anything |
+| `description` | posts: the dek under the title, the summary in lists and the share description |
+| `topic` | TIL: one lowercase topic, groups it on `/til/` |
+| `link`, `by`, `via`, `viaUrl` | links: what is linked, who made it, where it was found |
+| `quote`, `source`, `sourceUrl`, `context` | quotes: the quotation and its source |
+| `lang` | the entry's language: `es`, or absent for English (see Languages) |
+| `translationKey` | the same value on an entry and its translation links them (see Languages) |
+| `status` | `outdated`: a warning callout at the top, "This post is out of date. I wrote it in <month year>, and parts of it may no longer hold." |
+| `statusNote` | with `status: outdated`, a sentence of your own after that standard text (inline Markdown) |
+| `supersededBy` | content path of the entry that replaces this one (`/posts/2026-11-16-lorem-ipsum-new`): a "There's a newer version of this post" callout linking it, with its date |
+| `supersedes` | content path of the entry this one replaces: a line "This replaces my <year> post, <title>." at the top |
+
+- Notices come from `_partials/notices.html`, in the entry's language, above the text (after a post's hero image) and at the top of the entry in the feeds. They are Markdown callouts underneath, so they look like any other.
+- The build fails if `supersededBy` or `supersedes` doesn't resolve (also when it points to a draft, in `just build`), on a `status` other than `outdated`, or on a `statusNote` without it.
+- The two keys are independent: set `supersededBy` on the old entry and `supersedes` on the new one.
+
+## Languages
+
+One site, one stream: most entries are English, some are Spanish. An entry declares `lang: es`; without the key it is English (the site language). There is no `/es/` site or URL prefix: Spanish entries use the same dated URLs.
+
+- Inside a Spanish entry, the strings the theme writes are Spanish: dates, reading time, "Updated", contents, callout titles, the heading-anchor label, the copy button, the image-viewer link label, the sign-off, built titles ("Nota, <fecha>"), notices. They live in `website/i18n/<lang>.toml` (`en.toml`, `es.toml`) and are read by `_partials/lang.html`, not Hugo's `T`, because `T` only knows the site language. Site chrome stays English: header, "Aa" panel, footer, pager, follow list, type labels. On a Spanish page `<html lang="es">` and the chrome carries `lang="en"`; in lists, a Spanish entry carries `lang="es"` and an "ES" tag.
+- Translations: give an entry and its translation the same `translationKey`. Each shows a link to the other at the top of its header, worded in the target language ("Leer en castellano", "Read in English"), and gets `<link rel="alternate" hreflang>` for both plus `og:locale` / `og:locale:alternate`.
+- Feeds: `/atom.xml` and `/index.xml` (and every section and tag feed) carry every language; each item says its own (`xml:lang` on Atom entries, `dc:language` in RSS). `/en/atom.xml`, `/en/index.xml`, `/es/atom.xml` and `/es/index.xml` carry one language each (output formats `feed*` in `hugo.toml`, templates `layouts/feed*.xml`); the home page links them with `hreflang`.
+- New Spanish entry: `just new posts <slug> --lang es`. Another language needs its own `i18n/<lang>.toml` with every key of `en.toml`, and a feed pair in `hugo.toml` and `layouts/` if it should have feeds.
 
 ## Images
 
