@@ -27,7 +27,7 @@
     <aside class="margin"></aside>
     <div class="prose">
       {{- if eq .Section "quotes" }}{{ partial "quote.html" . }}{{ end }}
-      {{ .Content }}
+      {{ partial "sidenotes.html" (string .Content) | safeHTML }}
       <footer class="entry-foot">
         {{ partial "tags.html" . }}
         {{ partial "follow.html" . }}

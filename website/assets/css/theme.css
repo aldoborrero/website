@@ -386,9 +386,12 @@ img {
   text-wrap: balance;
 }
 .dek {
+  font-size: 1.3rem;
+  line-height: 1.45;
   font-style: italic;
   color: var(--muted);
   margin: 1rem 0 0;
+  text-wrap: pretty;
 }
 
 .hero {
@@ -440,6 +443,11 @@ img {
   color: var(--muted);
   text-decoration: none;
 }
+.toc a[aria-current] {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+}
 .toc a:hover,
 .toc-mobile a:hover {
   color: var(--accent);
@@ -455,6 +463,15 @@ img {
 }
 .prose > :first-child {
   margin-top: 0;
+}
+.prose p {
+  text-wrap: pretty;
+}
+.prose a {
+  hyphens: manual;
+}
+.prose a:visited {
+  text-decoration-color: var(--muted);
 }
 .prose p,
 .prose ul,
@@ -476,7 +493,7 @@ img {
   color: var(--muted);
 }
 .prose h2 {
-  font: 600 1.55rem/1.3 var(--font-read);
+  font: 600 1.75rem/1.3 var(--font-read);
   margin: 3rem 0 1rem;
   text-wrap: balance;
   scroll-margin-top: 1.5rem;
@@ -499,17 +516,99 @@ img {
   border-top: 1px solid var(--line);
   margin: 2.5rem 0;
 }
+/* Quotations read as text, not as an aside: ink, roman, the same 2px rule
+   as the quotes/ type. With a source they are a figure.quote (see below and
+   _markup/render-blockquote.html). */
 .prose blockquote {
   padding-left: 1.25rem;
-  border-left: 1px solid var(--accent);
-  font-style: italic;
-  color: var(--muted);
+  border-left: 2px solid var(--accent);
+  color: var(--ink);
 }
 .prose blockquote p {
   margin-bottom: 0.75rem;
 }
 .prose blockquote > :last-child {
   margin-bottom: 0;
+}
+.prose .quote blockquote {
+  margin: 0;
+  font: inherit;
+}
+
+/* Footnotes: endnotes under the text; on wide screens each note is also set
+   beside its reference (.sidenote, from _partials/sidenotes.html) and the
+   endnote folds away until something links to it. */
+.prose sup {
+  line-height: 0;
+}
+.footnote-ref {
+  padding: 0 0.15em;
+  font: 600 0.72em/0 var(--font-ui);
+  text-decoration: none;
+}
+.footnotes {
+  margin-top: 3rem;
+  font: 400 0.95rem/1.6 var(--font-ui);
+}
+.footnotes hr {
+  width: 6rem;
+  margin: 0 0 1.25rem;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+.footnotes li p {
+  margin: 0 0 0.5rem;
+}
+.footnotes li:target {
+  background: var(--mark);
+  outline: 0.4rem solid var(--mark);
+}
+.footnote-backref {
+  text-decoration: none;
+}
+.sidenote {
+  display: none;
+}
+@media (min-width: 76rem) {
+  .prose .sidenote {
+    display: block;
+    float: right;
+    clear: right;
+    width: 12rem;
+    margin: 0.3rem -14rem 1rem 0;
+    font: 400 0.88rem/1.5 var(--font-ui);
+    color: var(--muted);
+  }
+  .sn-num {
+    margin-right: 0.2em;
+    font-weight: 600;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .sn-p {
+    display: block;
+    margin-top: 0.5rem;
+  }
+  .sn-num + .sn-p {
+    display: inline;
+  }
+  .footnotes:not(:has(:target)) li.sn {
+    height: 0;
+    margin: 0;
+    overflow: hidden;
+    list-style: none;
+  }
+  .footnotes:not(:has(:target)):not(:has(li:not(.sn))) {
+    height: 0;
+    margin: 0;
+    overflow: hidden;
+  }
+}
+.prose figure {
+  margin-block: 2rem;
+}
+.prose figure:has(> svg) figcaption {
+  text-align: center;
 }
 .prose figure img {
   display: block;
@@ -553,7 +652,7 @@ pre {
   font-variant-ligatures: none;
 }
 :not(pre) > code {
-  font-size: 0.8em;
+  font-size: 0.78em;
   background: var(--code-bg);
   padding: 0.12em 0.32em;
   border-radius: 3px;
@@ -568,7 +667,7 @@ pre {
   background: var(--code-bg);
   color: var(--ink);
   border-left: 2px solid var(--accent);
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   line-height: 1.65;
   tab-size: 2;
   hyphens: none;
@@ -577,6 +676,12 @@ pre {
 }
 .prose > pre {
   margin-bottom: 1.35rem;
+}
+/* Code inside a list item is usually something to copy (a URL, a command):
+   wrap it so none of it hides behind a scrollbar. */
+.prose li pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 pre code {
   background: none;
@@ -1317,6 +1422,12 @@ a.zoom:focus-visible::after {
   .prose {
     hyphens: auto;
   }
+  .prose h2 {
+    font-size: 1.55rem;
+  }
+  .dek {
+    font-size: 1.15rem;
+  }
   .row,
   .tl > li,
   .facts {
@@ -1394,6 +1505,14 @@ a.zoom:focus-visible::after {
     padding-inline: var(--side) var(--side-r);
     border-left: 0;
     border-top: 2px solid var(--accent);
+  }
+  /* inside a list the block keeps the item's indent instead of bleeding */
+  .prose li pre,
+  .prose li .highlight pre {
+    margin-inline: 0;
+    padding-inline: 1rem;
+    border-top: 0;
+    border-left: 2px solid var(--accent);
   }
   .pager ul {
     grid-template-columns: minmax(0, 1fr);

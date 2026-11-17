@@ -1,0 +1,26 @@
+{{- /* Markdown blockquotes. With a source, written as block attributes on the
+       line right after the quote:
+         > The quoted text.
+         {source="Who, *Where*" url="https://…"}
+       it becomes a <figure class="quote"> with an attribution line (source
+       may hold inline Markdown; url links it and sets cite). Without one it
+       stays a plain <blockquote>. Alerts (> [!NOTE]) keep their type as a
+       class. */ -}}
+{{- $source := .Attributes.source }}
+{{- /* nix fmt (rumdl, bare URLs) writes url="<https://…>"; accept both. */}}
+{{- $url := "" }}
+{{- with .Attributes.url }}{{ $url = . | string | strings.TrimPrefix "<" | strings.TrimSuffix ">" }}{{ end }}
+{{- if eq .Type "alert" -}}
+<blockquote class="alert alert-{{ .AlertType }}">{{ .Text }}</blockquote>
+{{- else if or $source $url -}}
+<figure class="quote">
+  <blockquote{{ with $url }} cite="{{ . }}"{{ end }}>{{ .Text }}</blockquote>
+  <figcaption>
+    {{- $label := "" }}
+    {{- with $source }}{{ $label = . | string | $.Page.RenderString }}{{ else }}{{ $label = (urls.Parse $url).Host }}{{ end }}
+    {{- if and $url (not (strings.Contains (string $label) "<a ")) }}<a href="{{ $url }}">{{ $label }}</a>{{ else }}{{ $label }}{{ end -}}
+  </figcaption>
+</figure>
+{{- else -}}
+<blockquote>{{ .Text }}</blockquote>
+{{- end -}}

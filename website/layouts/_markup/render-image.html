@@ -38,7 +38,8 @@
 {{- if .IsBlock -}}
 <figure class="figure">
   {{- if $zoom }}<a class="zoom" href="{{ $full }}" data-zoom aria-label="Open image{{ with .PlainText }}: {{ . }}{{ end }}">{{ $img }}</a>{{ else }}{{ $img }}{{ end }}
-  {{- with .Title }}<figcaption>{{ . }}</figcaption>{{ end -}}
+  {{- /* The title is the caption; inline Markdown (links, emphasis) works. */}}
+  {{- with .Title }}<figcaption>{{ $.Page.RenderString . }}</figcaption>{{ end -}}
 </figure>
 {{- else -}}
 {{ $img }}
