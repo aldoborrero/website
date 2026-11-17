@@ -67,6 +67,25 @@ Five sections, all in one stream on the home page (newest first, 15 per page) an
 
 - Footnotes (`text[^1]` … `[^1]: The note.`) show as sidenotes right of the text from 1216 px up, and as endnotes below that (`_partials/sidenotes.html`). Keep notes to inline text and links: a note with a list or code stays an endnote only.
 
+## Two perspectives
+
+One moment from two sides (what the child sees, what the parent does), with `_shortcodes/perspectives.html` and `side.html`. Use `{{% %}}` so each side is Markdown; images keep the render hook and the zoom viewer, which steps through them in reading order (first side, then second).
+
+```markdown
+{{% perspectives title="Time's up" %}}
+{{% side label="Leo sees" %}}
+![Alt text](/images/posts/<slug>/peke-times-up.webp "Caption")
+The film stops and the buddy says goodbye.
+{{% /side %}}
+{{% side label="You do" %}}
+Type the parent code and add 15 minutes.
+{{% /side %}}
+{{% /perspectives %}}
+```
+
+- `title` is optional and renders as an h3 in raw HTML, so it stays out of the contents list. `label` is required on each side.
+- A side holds text and zero to two images. Wide screens show the sides next to each other, widened up to 60rem into the right margin from 64rem; under 48rem they stack, first side first. The first label's marker is `--accent`, the second's `--ink`.
+
 ## Invariants
 
 - Blueprint only sees git-tracked files: `git add` new files under `nix/` before any nix command.
