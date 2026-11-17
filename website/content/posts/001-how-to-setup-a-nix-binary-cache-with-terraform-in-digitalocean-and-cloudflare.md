@@ -2,6 +2,8 @@
 author: Aldo Borrero
 date: 2022-11-25
 lastmod: 2026-11-17
+status: outdated
+statusNote: The tools, provider versions, commands and prices it relies on have changed since, so read it as background rather than a recipe to copy as is.
 title: How to set up a Nix Binary cache with Terraform in DigitalOcean + Cloudflare
 slug: how-to-set-up-a-nix-binary-cache-with-terraform-in-digitalocean--cloudflare
 aliases:
@@ -9,9 +11,6 @@ aliases:
 ---
 
 ![The Future](/images/posts/how-to-setup-a-nix-binary-cache-with-terraform-in-digitalocean-and-cloudflare/future.webp)
-
-> [!WARNING] This post is out of date
-> I wrote it in November 2022. The tools, provider versions, commands and prices it relies on have changed since, so read it as background rather than a recipe to copy as is.
 
 As the name implies, a Nix binary cache allows you to have the result of building packages handy so that it can be used by other machines (or yours) directly instead of building the same packages over and over.
 
