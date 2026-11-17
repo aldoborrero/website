@@ -1233,6 +1233,84 @@ pre code {
   margin: 0;
 }
 
+/* ---------- perspectives: one moment from two sides (_shortcodes/) ---------- */
+
+.prose .perspectives {
+  margin: 2.5rem 0;
+}
+.perspectives-title {
+  margin: 0 0 1rem;
+  font: 600 1.15rem/1.35 var(--font-read);
+  text-wrap: balance;
+}
+.perspectives-sides {
+  display: grid;
+  gap: 1.75rem;
+}
+.side {
+  display: grid;
+  gap: 0.6rem;
+  align-content: start;
+}
+.prose .side-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font: 600 0.8rem/1.4 var(--font-ui);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+/* The marker tells the sides apart: accent for the first, ink for the second. */
+.side-label::before {
+  content: "";
+  flex: none;
+  width: 1rem;
+  height: 2px;
+  background: var(--accent);
+}
+.side:nth-child(2) .side-label::before {
+  background: var(--ink);
+}
+.side-body > :last-child {
+  margin-bottom: 0;
+}
+.prose .side figure {
+  margin: 0 0 0.9rem;
+}
+.prose .side a.zoom {
+  width: auto;
+}
+.prose .side figure img {
+  width: 100%;
+}
+.prose .side-body p {
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+/* Wide: side by side, labels on one row (subgrid) so the images' tops align. */
+@media (min-width: 48rem) {
+  .perspectives-sides {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto 1fr;
+    gap: 0.6rem 1.75rem;
+  }
+  .side {
+    grid-row: span 2;
+    grid-template-rows: subgrid;
+  }
+}
+/* Wider still: break out of the measure into the right margin (up to 60rem,
+   keeping 1rem from the viewport edge), so 16:9 screenshots stay readable. */
+@media (min-width: 64rem) {
+  .prose .perspectives {
+    clear: both;
+    width: min(60rem, 50vw + 13rem);
+  }
+}
+
 /* ---------- image viewer (assets/js/zoom.js) ---------- */
 
 /* On the page: the image links to its full-size file. A lens appears on hover
