@@ -16,7 +16,7 @@
   {{- $hero := index (findRE `(?s)^\s*<figure class="figure">.*?</figure>` $content 1) 0 }}
   {{- with $hero }}
   {{- $content = replace $content . "" 1 }}
-  <div class="hero">{{ . | replaceRE `^\s*<figure class="figure">|</figure>$` "" | safeHTML }}</div>
+  <div class="hero">{{ . | replaceRE `^\s*<figure class="figure">|</figure>$` "" | replaceRE "100vw, 38rem" "100vw, 60rem" | safeHTML }}</div>
   {{- end }}
 
   {{- $toc := .Fragments.Headings }}

@@ -11,6 +11,13 @@
 {{ block "main" . }}{{ end }}
 </main>
 {{ partial "footer.html" . }}
+{{- /* Image viewer: only on pages whose content has a zoomable image (the image
+       render hook sets the flag), and on lists, where entries may carry one;
+       there it loads only if the page really has a link to open. */}}
+{{- if or (.Store.Get "zoom") (not .IsPage) }}
+{{- $js := resources.Get "js/zoom.js" | js.Build (dict "minify" true "format" "esm" "target" "es2020") | fingerprint }}
+<script type="module">if(document.querySelector("a[data-zoom]"))import("{{ $js.RelPermalink }}")</script>
+{{- end }}
 </div>
 </body>
 </html>

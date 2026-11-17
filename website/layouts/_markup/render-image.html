@@ -1,11 +1,49 @@
+{{- /* Markdown images. A standalone image becomes a <figure> whose image links
+       to the full-size file; assets/js/zoom.js turns that link into an in-page
+       viewer. Images wider than the 2x text measure are shown downscaled, so
+       the original is only fetched when someone opens it.
+       Opt out: SVGs and inline images never zoom; for any other image, put
+       {.nozoom} on the line right after it.
+       Sources: a file in the page bundle, or /images/... in static/ (also
+       mounted as assets/images, so Hugo can read and resize it). */ -}}
 {{- $src := .Destination }}
-{{- $dims := "" }}
-{{- if and (hasPrefix $src "/") (fileExists (path.Join "static" $src)) }}
-  {{- with images.Config (path.Join "static" $src) }}{{ $dims = printf ` width="%d" height="%d"` .Width .Height }}{{ end }}
+{{- $u := urls.Parse $src }}
+{{- $res := "" }}
+{{- $bundled := false }}
+{{- if not $u.IsAbs }}
+  {{- with .Page.Resources.Get $u.Path }}{{ $res = . }}{{ $bundled = true }}
+  {{- else }}{{ with resources.Get (strings.TrimPrefix "/" $u.Path) }}{{ $res = . }}{{ end }}{{ end }}
 {{- end }}
-{{- $img := printf `<img src="%s" alt="%s"%s loading="%s" decoding="async">` $src .PlainText $dims (cond (eq .Ordinal 0) "eager" "lazy") }}
+{{- $full := $src }}
+{{- $show := $src }}
+{{- $srcset := "" }}
+{{- $w := 0 }}{{ $h := 0 }}
+{{- $svg := strings.HasSuffix (lower $u.Path) ".svg" }}
+{{- with $res }}
+  {{- if $bundled }}{{ $full = .RelPermalink }}{{ $show = $full }}{{ end }}
+  {{- if in (slice "jpeg" "png" "webp" "gif") .MediaType.SubType }}
+    {{- $w = .Width }}{{ $h = .Height }}
+    {{- /* 1520px covers the 38rem measure at 2x; GIFs keep their animation. */}}
+    {{- if and (gt .Width 1520) (ne .MediaType.SubType "gif") }}
+      {{- $small := .Resize "1520x" }}
+      {{- $show = $small.RelPermalink }}
+      {{- $srcset = printf "%s 1520w, %s %dw" $small.RelPermalink $full .Width }}
+    {{- end }}
+  {{- else if eq .MediaType.SubType "svg" }}{{ $svg = true }}
+  {{- end }}
+{{- end }}
+{{- $zoom := and .IsBlock (not $svg) (not (in (strings.Split (.Attributes.class | default "") " ") "nozoom")) }}
+{{- if $zoom }}{{ .Page.Store.Set "zoom" true }}{{ end }}
+{{- $img := partial "inline/zoom-img.html" (dict "src" $show "srcset" $srcset "alt" .PlainText "w" $w "h" $h "eager" (eq .Ordinal 0)) }}
 {{- if .IsBlock -}}
-<figure class="figure">{{ $img | safeHTML }}{{ with .Title }}<figcaption>{{ . }}</figcaption>{{ end }}</figure>
+<figure class="figure">
+  {{- if $zoom }}<a class="zoom" href="{{ $full }}" data-zoom aria-label="Open image{{ with .PlainText }}: {{ . }}{{ end }}">{{ $img }}</a>{{ else }}{{ $img }}{{ end }}
+  {{- with .Title }}<figcaption>{{ . }}</figcaption>{{ end -}}
+</figure>
 {{- else -}}
-{{ $img | safeHTML }}
+{{ $img }}
+{{- end -}}
+
+{{- define "_partials/inline/zoom-img.html" -}}
+<img src="{{ .src }}"{{ with .srcset }} srcset="{{ . }}" sizes="(max-width: 760px) 100vw, 38rem"{{ end }} alt="{{ .alt }}"{{ with .w }} width="{{ . }}" height="{{ $.h }}"{{ end }} loading="{{ cond .eager "eager" "lazy" }}" decoding="async">
 {{- end -}}

@@ -69,3 +69,21 @@ endLevel = 3
 [sitemap]
 changeFreq = ""
 priority = -1
+
+# Lets Markdown images opt out of the viewer with {.nozoom} on the next line.
+[markup.goldmark.parser.attribute]
+block = true
+
+# static/images is also an asset source, so the image render hook can read
+# dimensions and publish a downscaled copy of large images.
+[[module.mounts]]
+source = "assets"
+target = "assets"
+
+[[module.mounts]]
+source = "static/images"
+target = "assets/images"
+
+[[module.mounts]]
+source = "static"
+target = "static"

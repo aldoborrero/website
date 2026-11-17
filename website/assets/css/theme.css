@@ -1128,6 +1128,186 @@ pre code {
   margin: 0;
 }
 
+/* ---------- image viewer (assets/js/zoom.js) ---------- */
+
+/* On the page: the image links to its full-size file. A lens appears on hover
+   and keyboard focus; nothing changes size, so there is no layout shift. */
+a.zoom {
+  position: relative;
+  display: block;
+  width: fit-content;
+  margin-inline: auto;
+  cursor: zoom-in;
+}
+.hero a.zoom {
+  width: auto;
+}
+a.zoom::before,
+a.zoom::after {
+  content: "";
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+a.zoom::before {
+  background: var(--bg);
+  border: 1px solid var(--line);
+}
+a.zoom::after {
+  background: var(--ink);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10.5 4a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM15.3 15.3 20 20M10.5 7.5v6M7.5 10.5h6' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E")
+    center / 1.1rem no-repeat;
+}
+a.zoom:focus-visible::before,
+a.zoom:focus-visible::after {
+  opacity: 1;
+}
+@media (hover: hover) {
+  a.zoom:hover::before,
+  a.zoom:hover::after {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  a.zoom::before,
+  a.zoom::after {
+    transition: opacity 0.15s;
+  }
+}
+
+/* The viewer: a modal <dialog> covering the viewport. */
+.zv {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  overflow: hidden;
+  overscroll-behavior: contain;
+  font: 400 0.88rem/1.5 var(--font-ui);
+}
+.zv::backdrop {
+  background: var(--bg);
+}
+.zv-stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.zv-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: none;
+  transform-origin: 0 0;
+  cursor: zoom-in;
+  box-shadow: 0 0 0 1px var(--line);
+}
+.zv.is-zoomed .zv-img {
+  cursor: grab;
+}
+.zv.is-zoomed .zv-img:active {
+  cursor: grabbing;
+}
+.zv-img.zv-anim {
+  transition: transform 0.2s ease-out;
+}
+.zv-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--ink);
+  cursor: pointer;
+}
+.zv-btn:hover {
+  background: var(--mark);
+}
+.zv-btn[hidden] {
+  display: none;
+}
+.zv-tools {
+  position: absolute;
+  top: max(0.75rem, env(safe-area-inset-top, 0px));
+  right: max(0.75rem, env(safe-area-inset-right, 0px));
+  display: flex;
+  gap: 0.5rem;
+}
+.zv-prev,
+.zv-next {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+}
+.zv-prev {
+  left: max(0.75rem, env(safe-area-inset-left, 0px));
+}
+.zv-next {
+  right: max(0.75rem, env(safe-area-inset-right, 0px));
+}
+.zv-count {
+  position: absolute;
+  top: max(0.75rem, env(safe-area-inset-top, 0px));
+  left: max(0.75rem, env(safe-area-inset-left, 0px));
+  margin: 0;
+  padding: 0.6rem 0.25rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.zv-cap {
+  position: absolute;
+  left: 50%;
+  bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+  translate: -50% 0;
+  width: max-content;
+  max-width: min(38rem, calc(100% - 1.5rem));
+  margin: 0;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--muted);
+  text-align: center;
+}
+.zv-cap[hidden] {
+  display: none;
+}
+/* Zoomed in, the controls get out of the way of the image a little. */
+.zv.is-zoomed .zv-cap,
+.zv.is-zoomed .zv-count {
+  opacity: 0.85;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .zv[open] {
+    animation: zv-in 0.15s ease-out;
+  }
+  .zv[open]::backdrop {
+    animation: zv-in 0.15s ease-out;
+  }
+}
+@keyframes zv-in {
+  from {
+    opacity: 0;
+  }
+}
+
 /* ---------- narrow screens ---------- */
 
 @media (max-width: 760px) {
