@@ -111,3 +111,11 @@ other = "Couldn't load the replies. They're still on Mastodon."
 other = "1 reply"
 [manyReplies]
 other = "%d replies"
+
+# Series (front matter `series:`, _partials/series-nav.html). seriesPart:
+# part number, number of parts, the linked series name.
+[seriesPart]
+other = "Part %d of %d in %s"
+# "%s" is the linked series name.
+[seriesTitle]
+other = "Series: %s"

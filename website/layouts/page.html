@@ -25,9 +25,11 @@
   <div class="post-body row">
     <aside class="margin"></aside>
     <div class="prose">
+      {{ partial "series-nav.html" (dict "page" . "where" "top") }}
       {{ partial "notices.html" . }}
       {{- if eq .Section "quotes" }}{{ partial "quote.html" . }}{{ end }}
       {{ partial "sidenotes.html" (string (partial "content.html" .)) | safeHTML }}
+      {{ partial "series-nav.html" (dict "page" . "where" "end") }}
       {{ partial "replies.html" . }}
       <footer class="entry-foot" data-pagefind-ignore>
         {{ partial "tags.html" . }}

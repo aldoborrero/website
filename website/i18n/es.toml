@@ -95,3 +95,8 @@ other = "No se pudieron cargar las respuestas. Siguen en Mastodon."
 other = "1 respuesta"
 [manyReplies]
 other = "%d respuestas"
+
+[seriesPart]
+other = "Parte %d de %d de la serie %s"
+[seriesTitle]
+other = "Serie: %s"

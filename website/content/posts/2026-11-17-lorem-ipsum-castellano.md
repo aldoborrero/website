@@ -10,6 +10,7 @@ lang: es
 draft: true
 description: "Un borrador de prueba para las entradas en castellano: fechas, índice, avisos y bloques de código."
 tags: [lorem]
+series: Lorem ipsum en serie
 # Sample toot URL (not a real toot): shows the replies block in Spanish.
 mastodon: https://fosstodon.org/@aldo/100000000000000002
 ---

@@ -68,8 +68,10 @@
         {{ .TableOfContents | replaceRE `^<nav id="TableOfContents">\s*|\s*</nav>$` "" | safeHTML }}
       </nav>
       {{- end }}
+      {{ partial "series-nav.html" (dict "page" . "where" "top") }}
       {{ partial "notices.html" . }}
       {{ partial "sidenotes.html" (string $content) | safeHTML }}
+      {{ partial "series-nav.html" (dict "page" . "where" "end") }}
       <footer class="sign" data-pagefind-ignore>
         <img src="/images/author.jpg" alt="" width="48" height="48" loading="lazy">
         <p>{{ printf $t.sign site.Params.author (printf `<a href="%s">Mastodon</a>` (.Params.mastodon | default site.Params.mastodon)) | safeHTML }}</p>

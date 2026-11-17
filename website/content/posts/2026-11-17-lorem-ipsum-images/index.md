@@ -5,6 +5,8 @@ slug: lorem-ipsum-images
 date: 2026-11-17T10:00:00+01:00
 description: "Two large screenshots, a logo that stays put and a decorative image that opts out."
 tags: [lorem]
+series: Lorem ipsum, the series
+seriesOrder: 1
 draft: true
 ---
 

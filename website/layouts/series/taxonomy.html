@@ -1,0 +1,16 @@
+{{ define "main" }}
+{{- /* /series/: every series, with its number of parts. */}}
+<header class="archive-head row">
+  <div></div>
+  <div>
+    <h1>Series</h1>
+    {{- with .Pages }}
+    <ul class="topics">
+      {{- range .ByTitle }}<li {{ with index .Pages 0 }}{{ partial "lang-attr.html" . }}{{ end }}><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a> <span lang="en">{{ len .Pages }} {{ cond (eq (len .Pages) 1) "part" "parts" }}</span></li>{{ end }}
+    </ul>
+    {{- else }}
+    <p class="empty">No series yet. Everything is listed under <a href="/posts/">Writing</a>.</p>
+    {{- end }}
+  </div>
+</header>
+{{ end }}

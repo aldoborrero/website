@@ -1,0 +1,21 @@
+{{- /* Series navigation in an entry, in the entry's language. Context: dict
+       "page" and "where": "top" gives one line ("Part 2 of 4 in <series>")
+       that jumps to the list; "end" gives the list of every part, this one
+       marked (aria-current), titled with the series and linking its page. */ -}}
+{{- $p := .page }}
+{{- with partial "series.html" $p }}
+{{- $s := . }}
+{{- $t := (partial "lang.html" $p).t }}
+{{- if eq $.where "top" }}
+<p class="series-line" data-pagefind-ignore>{{ printf $t.seriesPart $s.n $s.total (printf `<a href="#series">%s</a>` ($s.term.LinkTitle | htmlEscape)) | safeHTML }}</p>
+{{- else }}
+<nav class="series" id="series" aria-labelledby="series-h" data-pagefind-ignore>
+  <h2 id="series-h">{{ printf $t.seriesTitle (printf `<a href="%s">%s</a>` $s.term.RelPermalink ($s.term.LinkTitle | htmlEscape)) | safeHTML }}</h2>
+  <ol>
+    {{- range $s.parts }}
+    <li{{ if eq . $p }} aria-current="page"{{ end }} {{ partial "lang-attr.html" . }}>{{ if eq . $p }}<span>{{ (partial "kind.html" .).title }}</span>{{ else }}<a href="{{ .RelPermalink }}">{{ (partial "kind.html" .).title }}</a>{{ end }}</li>
+    {{- end }}
+  </ol>
+</nav>
+{{- end }}
+{{- end }}

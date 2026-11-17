@@ -2093,6 +2093,63 @@ a.zoom:focus-visible::after {
   font-size: 0.92rem;
 }
 
+/* ---------- series (_partials/series-nav.html, series/term.html) ---------- */
+
+/* "Part 2 of 4 in <series>" above the text; the name jumps to the list. */
+.prose .series-line {
+  margin: 0 0 1.75rem;
+  font: 500 0.92rem/1.5 var(--font-ui);
+  color: var(--muted);
+}
+/* The list of parts at the end, the current one marked. */
+.series {
+  margin-top: 3rem;
+  padding: 1.25rem 1.25rem 1rem;
+  border-radius: 10px;
+  background: var(--mark);
+  font: 400 1rem/1.5 var(--font-ui);
+  scroll-margin-top: 1.5rem;
+}
+.prose .series h2 {
+  margin: 0 0 0.75rem;
+  font: 600 1.15rem/1.3 var(--font-read);
+}
+.prose .series ol {
+  margin: 0;
+  padding-left: 1.6rem;
+}
+.prose .series li {
+  margin: 0.35rem 0 0;
+  padding-left: 0.2rem;
+}
+.series li::marker {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.series li[aria-current] {
+  font-weight: 600;
+  color: var(--ink);
+}
+.series li[aria-current]::marker {
+  color: var(--accent);
+}
+.series-parts .part-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 0.5rem;
+  margin: 0;
+  font: 500 0.85rem/1.6 var(--font-ui);
+  color: var(--muted);
+}
+.series-parts .part-meta span {
+  color: var(--accent);
+  font-weight: 600;
+}
+.series-parts .lang-tag {
+  margin-left: 0;
+}
+
 /* ---------- narrow screens ---------- */
 
 @media (max-width: 760px) {

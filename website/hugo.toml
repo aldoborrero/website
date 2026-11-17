@@ -27,6 +27,8 @@ cfAnalyticsToken = ""
 
 [taxonomies]
 tag = "tags"
+# series: <name> on each part; /series/<name>/ lists the parts in order.
+series = "series"
 
 [permalinks.page]
 # Production URLs. Each entry freezes :slug in its front matter, so renaming

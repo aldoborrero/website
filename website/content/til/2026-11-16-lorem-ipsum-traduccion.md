@@ -8,6 +8,7 @@ lang: es
 translationKey: lorem-ipsum-translation
 topic: nix
 tags: [nix, lorem]
+series: Lorem ipsum en serie
 draft: true
 ---
 

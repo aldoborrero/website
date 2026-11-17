@@ -1,13 +1,14 @@
 {{- $k := partial "kind.html" . }}
 {{- $title := $k.title }}
-{{- if eq .Kind "term" }}{{ $title = printf "#%s" .LinkTitle }}{{ else if eq .Kind "taxonomy" }}{{ $title = "Tags" }}{{ end }}
+{{- $series := eq .Data.Plural "series" }}
+{{- if eq .Kind "term" }}{{ $title = cond $series .LinkTitle (printf "#%s" .LinkTitle) }}{{ else if eq .Kind "taxonomy" }}{{ $title = cond $series "Series" "Tags" }}{{ end }}
 {{- $isEntry := and .IsPage (in (slice "posts" "til" "notes" "links" "quotes") .Section) }}
 {{- $desc := site.Params.description }}
 {{- with .Description }}{{ $desc = . }}{{ else }}{{ if .IsPage }}
   {{- $src := .Summary }}{{ if eq .Section "quotes" }}{{ $src = .Params.quote | default "" }}{{ end }}
   {{- with $src | plainify | htmlUnescape | strings.TrimSpace }}{{ $desc = . | replaceRE `\s+` " " | truncate 160 }}{{ end }}
 {{- end }}{{ end }}
-{{- if eq .Kind "term" }}{{ $desc = printf "Everything %s has written tagged %s." site.Params.author .LinkTitle }}{{ end }}
+{{- if eq .Kind "term" }}{{ $desc = cond $series (printf "%s, a series by %s in %d parts." .LinkTitle site.Params.author (len .Pages)) (printf "Everything %s has written tagged %s." site.Params.author .LinkTitle) }}{{ end }}
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ $title }} · {{ site.Title }}{{ end }}</title>

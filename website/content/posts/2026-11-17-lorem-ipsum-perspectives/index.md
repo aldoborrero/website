@@ -5,6 +5,8 @@ slug: lorem-ipsum-perspectives
 date: 2026-11-17T14:00:00+01:00
 description: "Each moment shown twice: what the child sees and what the parent does."
 tags: [lorem]
+series: Lorem ipsum, the series
+seriesOrder: 3
 draft: true
 ---
 

@@ -74,6 +74,8 @@ Every key the theme reads, for all five types unless the type is named:
 | `supersededBy` | content path of the entry that replaces this one (`/posts/2026-11-16-lorem-ipsum-new`): a "There's a newer version of this post" callout linking it, with its date |
 | `supersedes` | content path of the entry this one replaces: a line "This replaces my <year> post, <title>." at the top |
 | `mastodon` | URL of the toot that announces the entry (`https://fosstodon.org/@aldo/<id>`): a "Replies" block at the end with "Reply on Mastodon" and "Load replies" (see Mastodon replies); a post's sign-off links the toot instead of the profile. The build fails if it isn't a toot URL |
+| `series` | name of the series the entry is part of (one; a series per language: its parts share a language): "Part N of M in <series>" at the top and the list of parts at the end; `/series/<slug>/` lists them in order |
+| `seriesOrder` | with `series`: the part's position (1, 2, …). Set it on every part or on none (then the date orders them); the build fails on a mix |
 
 - Notices come from `_partials/notices.html`, in the entry's language, above the text (after a post's hero image) and at the top of the entry in the feeds. They are Markdown callouts underneath, so they look like any other.
 - The build fails if `supersededBy` or `supersedes` doesn't resolve (also when it points to a draft, in `just build`), on a `status` other than `outdated`, or on a `statusNote` without it.
@@ -87,6 +89,14 @@ One site, one stream: most entries are English, some are Spanish. An entry decla
 - Translations: give an entry and its translation the same `translationKey`. Each shows a link to the other at the top of its header, worded in the target language ("Leer en castellano", "Read in English"), and gets `<link rel="alternate" hreflang>` for both plus `og:locale` / `og:locale:alternate`.
 - Feeds: `/atom.xml` and `/index.xml` (and every section and tag feed) carry every language; each item says its own (`xml:lang` on Atom entries, `dc:language` in RSS). `/en/atom.xml`, `/en/index.xml`, `/es/atom.xml` and `/es/index.xml` carry one language each (output formats `feed*` in `hugo.toml`, templates `layouts/feed*.xml`); the home page links them with `hreflang`.
 - New Spanish entry: `just new posts <slug> --lang es`. Another language needs its own `i18n/<lang>.toml` with every key of `en.toml`, and a feed pair in `hugo.toml` and `layouts/` if it should have feeds.
+
+## Series
+
+- Give each part `series: <name>` (the same string; it is a taxonomy, `[taxonomies] series` in `hugo.toml`). Parts can be of any type. Order is `seriesOrder` when the parts set it, else the date (`_partials/series-parts.html`).
+- In an entry (`_partials/series-nav.html`, strings in the entry's language): "Part 2 of 4 in <series>" above the text, the name jumping to the list at the end; the list names every part with the current one marked (`aria-current`, bold, accent number) and the series name linking its page.
+- `/series/<slug>/` (`layouts/series/term.html`) lists the parts in order with "Part N", the date and a summary, plus Atom and RSS feeds of the series; `/series/` lists every series.
+- Series per language: name a Spanish series in Spanish and give it Spanish parts; the entry strings follow each entry's language, and the series pages (site chrome) mark Spanish parts with "ES". Drafts don't count in "of M" in `just build`.
+- Samples: "Lorem ipsum, the series" (three English lorem posts, with `seriesOrder`) and "Lorem ipsum en serie" (the Spanish lorem post and TIL, by date).
 
 ## Mastodon replies
 

@@ -5,6 +5,8 @@ date: 2026-11-17T12:00:00Z
 draft: true
 description: "A draft sample for callouts, code blocks with file names and highlighted lines, and heading anchors."
 tags: [lorem]
+series: Lorem ipsum, the series
+seriesOrder: 2
 # Sample toot URL (not a real toot): shows the replies block.
 mastodon: https://fosstodon.org/@aldo/100000000000000001
 ---
