@@ -13,17 +13,17 @@
   </p>
   {{- if eq .Section "quotes" }}
   {{ partial "quote.html" . }}
-  {{- with .Content }}<div class="prose">{{ . }}</div>{{ end }}
+  {{- with partial "content.html" . }}<div class="prose">{{ . }}</div>{{ end }}
   {{- else if eq .Section "links" }}
   <h3><a href="{{ .Params.link }}">{{ .Title }}</a>{{ with .Params.by }} <span class="by">by {{ . }}</span>{{ end }}</h3>
-  {{- if $short }}<div class="prose">{{ .Content }}</div>{{ else }}<p>{{ .Summary | plainify | htmlUnescape | truncate 240 }} <a href="{{ .RelPermalink }}">{{ $l.t.readMore }}</a></p>{{ end }}
+  {{- if $short }}<div class="prose">{{ partial "content.html" . }}</div>{{ else }}<p>{{ .Summary | plainify | htmlUnescape | truncate 240 }} <a href="{{ .RelPermalink }}">{{ $l.t.readMore }}</a></p>{{ end }}
   {{- else if eq .Section "notes" }}
   {{- with .Title }}<h3><a href="{{ $.RelPermalink }}">{{ . }}</a></h3>{{ end }}
-  {{- if $short }}<div class="prose">{{ .Content }}</div>{{ else }}<p>{{ .Summary | plainify | htmlUnescape | truncate 240 }} <a href="{{ .RelPermalink }}">{{ $l.t.readMore }}</a></p>{{ end }}
+  {{- if $short }}<div class="prose">{{ partial "content.html" . }}</div>{{ else }}<p>{{ .Summary | plainify | htmlUnescape | truncate 240 }} <a href="{{ .RelPermalink }}">{{ $l.t.readMore }}</a></p>{{ end }}
   {{- else }}
   <h3><a href="{{ .RelPermalink }}">{{ $k.title }}</a></h3>
   {{- /* The description, or else the first paragraph, so code never leaks in. */}}
-  {{- with .Description }}<p>{{ . }}</p>{{ else }}{{ with index (findRE `(?s)<p>.*?</p>` .Content 1) 0 | plainify | htmlUnescape | strings.TrimSpace }}<p>{{ . | truncate 180 }}</p>{{ end }}{{ end }}
+  {{- with .Description }}<p>{{ . }}</p>{{ else }}{{ with index (findRE `(?s)<p>.*?</p>` (partial "content.html" .) 1) 0 | plainify | htmlUnescape | strings.TrimSpace }}<p>{{ . | truncate 180 }}</p>{{ end }}{{ end }}
   {{- end }}
   <footer class="item-foot">
     <a class="permalink" href="{{ .RelPermalink }}" title="Permalink"><time datetime="{{ .Date.Format "2006-01-02" }}">{{ partial "date.html" (dict "date" .Date "l" $l) }}</time></a>

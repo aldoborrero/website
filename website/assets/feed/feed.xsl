@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Shows a feed opened in a browser as a page: what a feed is, how to
-     subscribe, and the latest entries. One stylesheet for RSS 2.0 and Atom.
-     Built from this file as a Hugo template (_partials/feed-xsl.html), which
-     fills in the site's stylesheet; feed readers ignore it. -->
+{{- /* Shows a feed opened in a browser as a page: what a feed is, how to
+       subscribe, and the latest entries. One stylesheet for RSS 2.0 and Atom.
+       Built from this file as a Hugo template (_partials/feed-xsl.html), which
+       fills in the site's stylesheet; feed readers ignore it. A template
+       comment, so it is not published (checks/no-comments.nix). */}}
 <xsl:stylesheet version="1.0"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:atom="http://www.w3.org/2005/Atom"

@@ -12,7 +12,7 @@
   </header>
 
   {{- /* A post that opens with an image gets it as a full-width hero. */}}
-  {{- $content := .Content }}
+  {{- $content := partial "content.html" . }}
   {{- $hero := index (findRE `(?s)^\s*<figure class="figure">.*?</figure>` $content 1) 0 }}
   {{- with $hero }}
   {{- $content = replace $content . "" 1 }}

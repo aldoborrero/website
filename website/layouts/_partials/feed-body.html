@@ -9,4 +9,4 @@
 {{- /* Front-matter notices (out of date, newer version) come first, as on the
        page. Heading anchors only make sense on the page itself. */ -}}
 {{- $out = printf "%s%s" $out (partial "notices.html" .) -}}
-{{- return (printf "%s%s" $out (.Content | replaceRE `<a class="anchor" [^>]*></a>` "")) -}}
+{{- return (printf "%s%s" $out (partial "content.html" . | replaceRE `<a class="anchor" [^>]*></a>` "")) -}}

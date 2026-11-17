@@ -4,7 +4,7 @@
     <img src="/images/author.jpg" alt="Portrait of {{ site.Params.author }}" width="96" height="96">
   </div>
   <div>
-    {{ .Content }}
+    {{ partial "content.html" . }}
     {{ partial "follow.html" . }}
   </div>
 </div>

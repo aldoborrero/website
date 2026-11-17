@@ -27,7 +27,7 @@
     <div class="prose">
       {{ partial "notices.html" . }}
       {{- if eq .Section "quotes" }}{{ partial "quote.html" . }}{{ end }}
-      {{ partial "sidenotes.html" (string .Content) | safeHTML }}
+      {{ partial "sidenotes.html" (string (partial "content.html" .)) | safeHTML }}
       {{ partial "replies.html" . }}
       <footer class="entry-foot" data-pagefind-ignore>
         {{ partial "tags.html" . }}
