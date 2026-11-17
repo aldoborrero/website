@@ -11,6 +11,7 @@ result-*
 
 # hugo
 website/public/
+website/resources/
 website/static/fonts/
 .hugo_build.lock
 
