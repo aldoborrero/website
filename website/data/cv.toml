@@ -16,8 +16,6 @@ next = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 contact = [
   # placeholder: city, country
   "Lorem, Ipsum",
-  # placeholder: email
-  "lorem@ipsum.invalid",
   "[github.com/aldoborrero](https://github.com/aldoborrero)",
   "[@aldo@fosstodon.org](https://fosstodon.org/@aldo)",
 ]
