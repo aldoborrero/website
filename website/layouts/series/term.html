@@ -16,7 +16,7 @@
     {{- range $i, $p := $parts }}
       <li {{ partial "lang-attr.html" . }}>
         <p class="part-meta" lang="en"><span>Part {{ add $i 1 }}</span><time datetime="{{ .Date.Format "2006-01-02" }}" {{ partial "lang-attr.html" . }}>{{ partial "date.html" (dict "date" .Date "l" (partial "lang.html" .)) }}</time>{{ partial "lang-tag.html" . }}</p>
-        <h3><a href="{{ .RelPermalink }}">{{ (partial "kind.html" .).title }}</a></h3>
+        <h2><a href="{{ .RelPermalink }}">{{ (partial "kind.html" .).title }}</a></h2>
         {{- with .Description }}<p>{{ . }}</p>{{ else }}{{ with index (findRE `(?s)<p>.*?</p>` (partial "content.html" .) 1) 0 | plainify | htmlUnescape | strings.TrimSpace }}<p>{{ . | truncate 150 }}</p>{{ end }}{{ end }}
       </li>
     {{- end }}
