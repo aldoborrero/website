@@ -54,6 +54,18 @@ Five sections, all in one stream on the home page (newest first, 15 per page) an
 - Images wider than 1520 px are shown downscaled (`srcset`); the original is only fetched when the viewer opens. `static/images` is mounted as `assets/images` for this (`hugo.toml`).
 - Opt out: SVGs and images inside a sentence never open in the viewer. For any other image, put `{.nozoom}` on the line right after it.
 - Alt text is the accessible name of the link ("Open image: <alt>"), so always write one.
+- Captions (the image title) take inline Markdown, so they can link: `![Alt](file.webp "The films are the [Blender open movies](https://studio.blender.org/films/).")`.
+
+## Quotes and footnotes
+
+- A blockquote can carry its source as block attributes on the line right after it; it then gets an attribution line and `cite` (`_markup/render-blockquote.html`). `source` takes inline Markdown; `url` alone shows the host name (`nix fmt` may rewrite it as `url="<https://…>"`, which works too).
+
+  ```markdown
+  > So many kids are using mobile devices today…
+  {source="The Child Mode request on Jellyfin's feature board" url="https://features.jellyfin.org/posts/531"}
+  ```
+
+- Footnotes (`text[^1]` … `[^1]: The note.`) show as sidenotes right of the text from 1216 px up, and as endnotes below that (`_partials/sidenotes.html`). Keep notes to inline text and links: a note with a list or code stays an endnote only.
 
 ## Invariants
 
