@@ -9,6 +9,11 @@ lang: {{ . }}
 {{- end }}
 # Groups the TIL on /til/ (lowercase, e.g. nix, git, cloudflare).
 topic: ""
+# Thumbnail in lists (posts only) and share image: a file in the page bundle
+# or a /images/... path; the build fails if it does not exist.
+# image: ""
+# Describes the image for the share preview (og:image:alt).
+# imageAlt: ""
 tags: []
 draft: true
 ---

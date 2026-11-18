@@ -68,11 +68,17 @@
 <meta property="article:tag" content="{{ .LinkTitle }}">
 {{- end }}
 {{- end }}
-{{- with partial "og-image.html" (dict "page" . "title" $ogTitle "label" (cond $isEntry $k.label "")) }}
+{{- /* An entry's own `image:` (cropped to 1200×630, JPEG for the widest
+       support), else the card drawn from its title. */}}
+{{- $ogAlt := cond .IsHome site.Title (printf "%s, by %s" $ogTitle site.Params.author) }}
+{{- $og := partial "entry-image.html" . }}
+{{- if $og }}{{ $og = $og.Fill "1200x630 jpg q85" }}{{ with .Params.imageAlt }}{{ $ogAlt = . }}{{ end }}
+{{- else }}{{ $og = partial "og-image.html" (dict "page" . "title" $ogTitle "label" (cond $isEntry $k.label "")) }}{{ end }}
+{{- with $og }}
 <meta property="og:image" content="{{ .Permalink }}">
 <meta property="og:image:width" content="{{ .Width }}">
 <meta property="og:image:height" content="{{ .Height }}">
-<meta property="og:image:alt" content="{{ if $.IsHome }}{{ site.Title }}{{ else }}{{ $ogTitle }}, by {{ site.Params.author }}{{ end }}">
+<meta property="og:image:alt" content="{{ $ogAlt }}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="{{ .Permalink }}">
 {{- else }}

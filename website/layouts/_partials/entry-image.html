@@ -1,0 +1,18 @@
+{{- /* The image an entry sets with `image:` in its front matter: a file in its
+       page bundle (`peke-home.webp`) or a path under static/images
+       (`/images/posts/<slug>/peke-home.webp`, mounted as assets/images). The
+       build fails if it doesn't resolve or isn't a JPEG, PNG or WebP.
+       Returns the image resource, or false when the key is absent.
+       Context: page. */ -}}
+{{- $out := false }}
+{{- with .Params.image }}
+  {{- $u := urls.Parse . }}
+  {{- $res := "" }}
+  {{- if not $u.IsAbs }}
+    {{- with $.Resources.Get $u.Path }}{{ $res = . }}{{ else }}{{ with resources.Get (strings.TrimPrefix "/" $u.Path) }}{{ $res = . }}{{ end }}{{ end }}
+  {{- end }}
+  {{- if not $res }}{{ errorf "%s: image %q is not a file in the page bundle or under static/images" $.File.Path . }}{{ end }}
+  {{- if not (in (slice "jpeg" "png" "webp") $res.MediaType.SubType) }}{{ errorf "%s: image %q must be a JPEG, PNG or WebP" $.File.Path . }}{{ end }}
+  {{- $out = $res }}
+{{- end }}
+{{- return $out }}
