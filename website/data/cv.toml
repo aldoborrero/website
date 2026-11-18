@@ -1,21 +1,12 @@
 # Data for /about/. Text is Markdown; [[...]] still renders as a highlighted
 # gap, but nothing uses it right now.
-#
-# PLACEHOLDERS: every "lorem ipsum" below stands in for a fact Aldo has not
-# confirmed yet (dates, roles, descriptions, contact, education, languages,
-# talks). Entries and fields marked "# placeholder" need real text before
-# launch. Everything else is confirmed.
 
 name = "Aldo Borrero"
-role = "Consultant at Numtide: Nix, blockchain and AI"
+role = "Consultant at Numtide: Nix, DevOps and AI"
 summary = "I build infrastructure and tooling with Nix. My background is in banking and Ethereum, and before Numtide I co-founded the consultancy 41North."
 clients = "Clients have included ING, AVG, WorldReader, MyEtherWallet, Golem Base (Arkiv) and PortalDeFi."
-# placeholder
-next = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 
 contact = [
-  # placeholder: city, country
-  "Lorem, Ipsum",
   "[github.com/aldoborrero](https://github.com/aldoborrero)",
   "[@aldo@fosstodon.org](https://fosstodon.org/@aldo)",
 ]
@@ -25,12 +16,7 @@ current = true
 when = "2022 – now"
 title = "Consultant"
 org = "[Numtide](https://numtide.com), Nix consultancy"
-text = "Nix, blockchain and AI work for Numtide's clients."
-# placeholder: publicly describable Numtide projects
-notes = [
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  "Sed do eiusmod tempor incididunt ut labore.",
-]
+text = "Nix, DevOps and AI work for Numtide's clients."
 
 # placeholder: confirm description
 [[experience]]
@@ -48,31 +34,24 @@ links = [
 # placeholder: role, description
 [[experience]]
 when = "2018 – 2019"
-title = "Lorem ipsum"
 org = "[MyEtherWallet](https://www.myetherwallet.com)"
-text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 
 # placeholder: role, description; confirm AVG and WorldReader belong here
 [[experience]]
 when = "2015 – 2018"
-title = "Lorem ipsum"
 org = "[Mobile Jazz](https://web.archive.org/web/20160911033954mp_/https://mobilejazz.com/)"
-text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
 clients = "Clients: **AVG**, **WorldReader**"
 
 # placeholder: role, description
 [[experience]]
 when = "2014 – 2015"
-title = "Lorem ipsum"
 org = "**ING**"
-text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor."
 
 # placeholder: organisation, project, description
 [[experience]]
 when = "2009"
 title = "Student developer"
-org = "[Google Summer of Code](https://summerofcode.withgoogle.com), lorem ipsum"
-text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+org = "[Google Summer of Code](https://summerofcode.withgoogle.com)"
 
 [[selected]]
 name = "ccq"
@@ -114,22 +93,8 @@ name = "hashi-homelab"
 url = "https://github.com/aldoborrero/hashi-homelab"
 text = "Nomad, Consul and Vault recipes for a home cluster. 2022."
 
-# placeholder
-[[facts]]
-term = "Education"
-text = "Lorem ipsum, dolor sit amet."
-
-# placeholder
-[[facts]]
-term = "Languages"
-text = "Lorem ipsum, dolor sit amet."
 
 [[facts]]
 term = "Tools"
 # placeholder: order not confirmed
 text = "Nix and NixOS, Rust, Go, Python, Kotlin and Java on Android"
-
-# placeholder
-[[facts]]
-term = "Talks"
-text = "Lorem ipsum dolor sit amet."

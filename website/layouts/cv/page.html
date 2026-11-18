@@ -20,8 +20,8 @@
     <li{{ if .current }} class="current"{{ end }}>
       <div class="when">{{ partial "text.html" .when }}</div>
       <div>
-        <h3>{{ .title }}</h3>
-        <p class="org">{{ partial "text.html" .org }}</p>
+        {{ if .title }}<h3>{{ .title }}</h3>
+        <p class="org">{{ partial "text.html" .org }}</p>{{ else }}<h3>{{ partial "text.html" .org }}</h3>{{ end }}
         {{ with .text }}<p>{{ partial "text.html" . }}</p>{{ end }}
         {{ with .clients }}<p class="clientline">{{ partial "text.html" . }}</p>{{ end }}
         {{ with .notes }}<ul class="notes">{{ range . }}<li>{{ partial "text.html" . }}</li>{{ end }}</ul>{{ end }}
