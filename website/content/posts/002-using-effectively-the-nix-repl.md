@@ -12,7 +12,7 @@ aliases:
 Inspecting Nix is hard! The dynamic nature of the language sometimes makes your head dizzy, especially when starting your first steps toward enlightenment in [NixOS](https://nixos.org). It is pretty common to suffer from the following issues:
 
 - Has the infinite recursion error hit you? It happened to me.
-- Has the Nix expression spitted a weird error with a bizarre stack trace resembling [Klingon](https://en.wikipedia.org/wiki/Klingon-language)? Yep, that too.
+- Has the Nix expression spitted a weird error with a bizarre stack trace resembling [Klingon](https://en.wikipedia.org/wiki/Klingon_language)? Yep, that too.
 - Do you wonder what options/packages/nixos and home-manager modules the expression may produce? I have no idea.
 
 Discoverability could be much better in the Nix/NixOS ecosystem despite having numerous resources/manuals/blog articles. To the uninitiated, it feels vast but, at the same time, shallow. Furthermore, it only makes sense **once** you have acquired some knowledge. So, trust me, you're not alone.
@@ -21,7 +21,7 @@ While I was writing the previous paragraph, it got me thinking next on the follo
 
 > How can discoverability be improved on Nix?
 
-And suddenly remembered [this Vox's interview](https://youtu.be/K-NBcP0YUQI?t=151) with [Shigeru Miyamoto](https://en.wikipedia.org/wiki/Shigeru-Miyamoto) (creator of Super Mario Bros, Zelda, Donkey Kong, and other big Nintendo franchises). It turns out he has something to say about discoverability in video games:
+And suddenly remembered [this Vox's interview](https://youtu.be/K-NBcP0YUQI?t=151) with [Shigeru Miyamoto](https://en.wikipedia.org/wiki/Shigeru_Miyamoto) (creator of Super Mario Bros, Zelda, Donkey Kong, and other big Nintendo franchises). It turns out he has something to say about discoverability in video games:
 
 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/K-NBcP0YUQI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
@@ -48,7 +48,7 @@ I remember discussing with [Jonas Chevalier](https://twitter.com/zimbatm) in Aug
 1. Learn how to solve your upstream Linux issues.
 1. Move slowly towards NixOS.
 
-There was a before and an after to understanding Nix in my particular case: the **REPL** (an acronym for [Read Eval Loop](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print-loop)). Unfortunately, the REPL is presented in the [NixOS Manual](https://nixos.org/manual/nixos/stable/#sec-modularity) in the Modularity section, a thing that, for the beginner, is too hidden to be understood as a valuable tool to use almost immediately. I know there are other places like [nix.wiki](https://nixos.wiki/wiki/Nix-command/repl), where there's a shy mention of the REPL and its benefits, but nothing more than a glorified summarized version of the [official docs for the command](https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-repl.html).
+There was a before and an after to understanding Nix in my particular case: the **REPL** (an acronym for [Read Eval Loop](https://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop)). Unfortunately, the REPL is presented in the [NixOS Manual](https://nixos.org/manual/nixos/stable/#sec-modularity) in the Modularity section, a thing that, for the beginner, is too hidden to be understood as a valuable tool to use almost immediately. I know there are other places like [nix.wiki](https://web.archive.org/web/20221114225155/https://nixos.wiki/wiki/Nix_command/repl), where there's a shy mention of the REPL and its benefits, but nothing more than a glorified summarized version of the [official docs for the command](https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-repl.html).
 
 How can you teach the basics without having a safe playground? It's also a thing [I was jokingly discussing on Mastodon](https://fosstodon.org/@aldo/109404422650458768):
 
@@ -146,7 +146,7 @@ This is useful if you want to bring multiple variables simultaneously to the par
 
 ### Load flakes
 
-With previous knowledge, we can utilize the `--expr` flag to load a random [Nix Flake](https://nixos.wiki/wiki/Flakes) directly:
+With previous knowledge, we can utilize the `--expr` flag to load a random [Nix Flake](https://wiki.nixos.org/wiki/Flakes) directly:
 
 ```bash
 $ nix repl --expr 'builtins.getFlake "github:nix-community/ethereum.nix"'
@@ -332,7 +332,7 @@ the built-in function 'getFlake'
 
 ### Load a Nix shell with a package ready to be used
 
-We can enter into a [`nix shell`](https://nixos.org/manual/nix/stable/command-ref/new-cli/nix3-shell.html) with `:u` shortcut so the specific package derivation will be compiled and ready for you to be used:
+We can enter into a [`nix shell`](https://nix.dev/manual/nix/stable/command-ref/new-cli/nix3-env-shell.html) with `:u` shortcut so the specific package derivation will be compiled and ready for you to be used:
 
 ```bash
 $ nix repl --expr 'builtins.getFlake "github:nix-community/ethereum.nix"'

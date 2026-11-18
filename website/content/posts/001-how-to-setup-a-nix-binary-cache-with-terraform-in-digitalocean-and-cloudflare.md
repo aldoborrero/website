@@ -66,7 +66,7 @@ I do recommend, though, setting up a sane `expiration` rule to expire objects wi
 
 I also enabled versioning just in case, for whatever reason, I remove something and want to revert to a different version, but it's not that necessary.
 
-Next, we need to configure the S3 bucket to allow anonymous reads [the Nix manual includes information related to this matter](https://nixos.org/manual/nix/stable/package-management/s3-substituter.html#anonymous-reads-to-your-s3-compatible-binary-cache):
+Next, we need to configure the S3 bucket to allow anonymous reads [the Nix manual includes information related to this matter](https://nix.dev/manual/nix/stable/store/types/s3-binary-cache-store.html#anonymous-reads-to-your-s3-compatible-binary-cache):
 
 ```terraform
 resource "digitalocean-spaces-bucket-policy" "nix-cache-anonymous-reads" {
@@ -145,7 +145,7 @@ resource "tls-private-key" "nix-store-origin-key" {
 }
 ```
 
-The next step is to properly craft a [certificate signing request](https://en.wikipedia.org/wiki/Certificate-signing-request), like below (modify the common name to match the domain you plan to use for the binary cache and also as well the other options):
+The next step is to properly craft a [certificate signing request](https://en.wikipedia.org/wiki/Certificate_signing_request), like below (modify the common name to match the domain you plan to use for the binary cache and also as well the other options):
 
 ```terraform
 resource "tls-cert-request" "nix-store-origin-cert" {
@@ -223,9 +223,9 @@ As I mentioned at the beginning of the article, [this Gist contains everything i
 If you want to expand more knowledge related to the Nix binary cache, I would recommend reading the following:
 
 - [A Nix Binary Cache Specification](https://fzakaria.com/2021/08/12/a-nix-binary-cache-specification.html).
-- [Serving a Nix Store via S3](https://nixos.org/manual/nix/stable/package-management/s3-substituter.html).
+- [Serving a Nix Store via S3](https://nix.dev/manual/nix/stable/store/types/s3-binary-cache-store.html).
 - [Setting up a private nix cache for fun and profit](https://www.channable.com/tech/setting-up-a-private-nix-cache-for-fun-and-profit).
-- [Nix Wiki: Binary Cache entry](https://nixos.wiki/wiki/Binary-Cache).
+- [Nix Wiki: Binary Cache entry](https://wiki.nixos.org/wiki/Binary_Cache).
 - [Nix's source code implementation of the binary cache store](https://github.com/NixOS/nix/blob/b3d2a05c59266688aa904d5fb326394cbb7e9e90/src/libstore/binary-cache-store.cc).
 
 See you in the next post 👋🏻!
