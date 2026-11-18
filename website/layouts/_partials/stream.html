@@ -1,6 +1,9 @@
-{{- /* A list of entries in compact form. Context: a page collection. */ -}}
+{{- /* A list of entries as previews. Context: a page collection, or dict
+       "pages" and "tags" (false leaves the tags out, as on the home page). */ -}}
+{{- $pages := . }}{{ $tags := true }}
+{{- if reflect.IsMap . }}{{ $pages = .pages }}{{ $tags = .tags }}{{ end }}
 <div class="stream">
-{{- range . }}
-  {{ partial "item.html" . }}
+{{- range $pages }}
+  {{ partial "item.html" (dict "page" . "tags" $tags) }}
 {{- end }}
 </div>

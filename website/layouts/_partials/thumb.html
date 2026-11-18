@@ -1,0 +1,17 @@
+{{- /* A post's hero image (the image it opens with, shown full width on the
+       post) cut to a 4:3 thumbnail for lists, or nothing. Returns dict "small"
+       and "large" (320 and 640 px wide), or false. Context: page. */ -}}
+{{- $out := false }}
+{{- if findRE `^\s*<figure class="figure">` (partial "content.html" .) 1 }}
+  {{- with findRESubmatch `^\s*!\[[^\]]*\]\(\s*([^\s)]+)` .RawContent 1 }}
+    {{- $u := urls.Parse (index (index . 0) 1) }}
+    {{- $res := "" }}
+    {{- if not $u.IsAbs }}
+      {{- with $.Resources.Get $u.Path }}{{ $res = . }}{{ else }}{{ with resources.Get (strings.TrimPrefix "/" $u.Path) }}{{ $res = . }}{{ end }}{{ end }}
+    {{- end }}
+    {{- with $res }}{{ if in (slice "jpeg" "png" "webp") .MediaType.SubType }}
+      {{- $out = dict "small" (.Fill "320x240 webp") "large" (.Fill "640x480 webp") }}
+    {{- end }}{{ end }}
+  {{- end }}
+{{- end }}
+{{- return $out }}

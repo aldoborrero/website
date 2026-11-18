@@ -3,18 +3,30 @@
   <div class="who">
     <img src="/images/author.jpg" alt="Portrait of {{ site.Params.author }}" width="96" height="96">
   </div>
-  <div>
+  <div class="intro-text">
     {{ partial "content.html" . }}
     {{ partial "follow.html" . }}
   </div>
 </div>
 
-{{- /* Everything, newest first, each entry in its compact form. */}}
+{{- /* Everything, newest first: posts as anchors, the small types compact.
+       The left column indexes the sections, with their counts. */}}
 {{- $pager := .Paginate (partial "stream-pages.html" .) 15 }}
 <section class="block row" aria-labelledby="stream-h">
-  <h2 class="label" id="stream-h">{{ if eq $pager.PageNumber 1 }}Latest{{ else }}Page {{ $pager.PageNumber }}{{ end }}</h2>
+  <div class="home-side">
+    <h2 class="label" id="stream-h">{{ if eq $pager.PageNumber 1 }}Latest{{ else }}Page {{ $pager.PageNumber }}{{ end }}</h2>
+    <nav class="sections" aria-label="Sections" {{ partial "chrome-lang.html" . }}>
+      <ul>
+        {{- range slice "posts" "til" "notes" "links" "quotes" }}
+        {{- with site.GetPage . }}{{ if .RegularPages }}
+        <li><a href="{{ .RelPermalink }}">{{ .Title }}</a> <span>{{ len .RegularPages }}</span></li>
+        {{- end }}{{ end }}
+        {{- end }}
+      </ul>
+    </nav>
+  </div>
   <div>
-    {{ partial "stream.html" $pager.Pages }}
+    {{ partial "stream.html" (dict "pages" $pager.Pages "tags" false) }}
     {{ partial "pager.html" $pager }}
   </div>
 </section>

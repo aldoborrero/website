@@ -1,6 +1,10 @@
-{{- /* Tag links for a page. */ -}}
-{{- with .GetTerms "tags" }}
-<ul class="tags" aria-label="{{ (partial "lang.html" $).t.tags }}">
-  {{- range . }}<li><a href="{{ .RelPermalink }}" rel="tag">#{{ .LinkTitle }}</a></li>{{ end }}
+{{- /* Tag links for a page. Context: a page, or dict "page" and "max" (show
+       at most that many, as in lists). */ -}}
+{{- $p := . }}{{ $max := 0 }}
+{{- if reflect.IsMap . }}{{ $p = .page }}{{ $max = .max }}{{ end }}
+{{- with $p.GetTerms "tags" }}
+{{- $terms := cond (gt $max 0) (first $max .) . }}
+<ul class="tags" aria-label="{{ (partial "lang.html" $p).t.tags }}">
+  {{- range $terms }}<li><a href="{{ .RelPermalink }}" rel="tag">#{{ .LinkTitle }}</a></li>{{ end }}
 </ul>
 {{- end }}

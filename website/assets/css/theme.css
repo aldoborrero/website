@@ -214,34 +214,43 @@ img {
   text-decoration-color: var(--accent);
 }
 
-/* The "Aa" button and the search link share the nav's cell (and the
-   brand's on narrow screens), search rightmost. */
-.site-head .row > .site-nav {
+/* The nav, then the "Aa" button and the search link right after it on the
+   same line, set off by a hairline. On narrow screens the controls move up
+   to the brand's line (see the media query at the end). */
+.site-bar {
   grid-column: 2;
   grid-row: 1;
-  padding-right: 5.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1.5rem;
+}
+.site-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding-left: 0.75rem;
+  border-left: 1px solid var(--line);
 }
 .aa,
 .search-link {
-  grid-column: 2;
-  grid-row: 1;
-  align-self: center;
-  justify-self: end;
   display: inline-grid;
   place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
-  margin: -0.75rem -0.75rem -0.75rem 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin-block: -0.5rem;
   padding: 0;
   border: 0;
   border-radius: 50%;
   background: none;
   color: var(--muted);
-  font: 500 1.1rem/1 var(--font-serif);
+  font: 600 0.95rem/1 var(--font-ui);
+  letter-spacing: 0.01em;
   cursor: pointer;
 }
-.aa {
-  margin-right: 2rem;
+.search-link svg {
+  width: 1.15rem;
+  height: 1.15rem;
 }
 .aa[hidden] {
   display: none;
@@ -427,7 +436,7 @@ img {
 /* ---------- home ---------- */
 
 .intro {
-  padding-block: 3rem 4rem;
+  padding-block: 2.5rem 3rem;
 }
 .intro .who {
   display: grid;
@@ -435,20 +444,54 @@ img {
   align-content: start;
 }
 .intro .who img {
-  width: 6rem;
-  height: 6rem;
+  width: 4.5rem;
+  height: 4.5rem;
   border-radius: 50%;
   object-fit: cover;
 }
+/* The page's h1, set as a lead paragraph so the stream starts on the first
+   screen. */
 .intro h1 {
-  font: 500 clamp(1.9rem, 4.2vw, 2.7rem)/1.18 var(--font-read);
-  letter-spacing: -0.01em;
-  margin: 0 0 1.5rem;
-  text-wrap: balance;
+  font: 500 clamp(1.4rem, 2vw, 1.65rem)/1.35 var(--font-read);
+  margin: 0 0 0.9rem;
+  text-wrap: pretty;
 }
 .intro p {
   margin: 0 0 1rem;
+  color: var(--muted);
 }
+.intro .follow {
+  margin-top: 1.25rem;
+}
+
+/* Home, left of the stream: the sections with their counts. */
+.home-side {
+  align-self: start;
+  position: sticky;
+  top: 1.5rem;
+}
+.sections ul {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+  font: 500 0.92rem/1.5 var(--font-ui);
+}
+.sections a {
+  color: var(--ink);
+  text-decoration: none;
+}
+.sections a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.sections span {
+  margin-left: 0.3rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
 .links {
   display: flex;
   flex-wrap: wrap;
@@ -595,7 +638,13 @@ img {
   margin: 0;
   padding: 0;
   display: grid;
-  gap: 0.4rem;
+  gap: 0.6rem;
+}
+/* A long heading wraps as a tight block, so the items stay apart. */
+.toc li,
+.toc-sheet li {
+  line-height: 1.3;
+  text-wrap: pretty;
 }
 .toc ul ul,
 .toc-sheet ul ul {
@@ -1147,6 +1196,50 @@ a.item-kind:hover {
   color: var(--accent);
   text-decoration: underline;
   text-decoration-thickness: 1px;
+}
+/* Posts are the anchors; the small types are compact. */
+.item-compact {
+  padding-block: 1.25rem;
+}
+.item-compact h3 {
+  font-size: 1.2rem;
+  line-height: 1.35;
+}
+.item-lead h3 {
+  font-size: 1.75rem;
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+}
+.item-lead .item-text {
+  margin-top: 0.55rem;
+  font-size: 1.1rem;
+}
+.has-thumb {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 12rem;
+  gap: 1.75rem;
+  align-items: start;
+}
+.item-thumb {
+  display: block;
+  margin-top: 0.3rem;
+}
+.item-thumb img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 4px;
+  outline: 1px solid var(--line);
+  outline-offset: -1px;
+  background: var(--mark);
+}
+.item h3 .host {
+  white-space: nowrap;
+}
+.nowrap {
+  white-space: nowrap;
 }
 .item h3 .by {
   font: 500 0.9rem var(--font-ui);
@@ -2305,14 +2398,26 @@ kbd {
   .site-head .row {
     gap: 0.6rem;
   }
-  .site-head .row > .site-nav {
+  .site-bar {
+    display: contents;
+  }
+  .site-nav {
     grid-column: 1;
     grid-row: 2;
-    padding-right: 0;
+  }
+  .site-tools {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: end;
+    align-self: center;
+    margin-right: -0.5rem;
+    padding-left: 0;
+    border-left: 0;
   }
   .aa,
   .search-link {
-    grid-column: 1;
+    width: 2.75rem;
+    height: 2.75rem;
   }
   .palettes label,
   .seg label {
@@ -2326,17 +2431,51 @@ kbd {
   .feed-page .label {
     display: none;
   }
+  /* The portrait beside the lead sentence, the rest below both. */
   .intro {
-    padding-block: 1rem 2.5rem;
-  }
-  .intro .who {
-    grid-template-columns: auto 1fr;
-    align-items: center;
-    margin-bottom: 1.5rem;
+    grid-template-columns: 3.25rem minmax(0, 1fr);
+    column-gap: 1rem;
+    align-items: start;
+    padding-block: 0.75rem 2rem;
   }
   .intro .who img {
-    width: 4rem;
-    height: 4rem;
+    width: 3.25rem;
+    height: 3.25rem;
+  }
+  .intro-text {
+    display: contents;
+  }
+  .intro h1 {
+    grid-column: 2;
+    font-size: 1.25rem;
+  }
+  .intro-text > :not(h1) {
+    grid-column: 1 / -1;
+  }
+  /* The sections fold into one line under "Latest". */
+  .home-side {
+    position: static;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .home-side .label {
+    margin: 0;
+  }
+  .sections ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.9rem;
+    margin: 0;
+  }
+  .has-thumb {
+    grid-template-columns: minmax(0, 1fr) 6rem;
+    gap: 1rem;
+  }
+  .item-lead h3 {
+    font-size: 1.45rem;
   }
   .year h2 {
     margin-bottom: 1rem;
@@ -2512,6 +2651,7 @@ kbd {
     font-size: 10.5pt;
   }
   .site-head nav,
+  .site-tools,
   .aa,
   .reading,
   .toc-button,

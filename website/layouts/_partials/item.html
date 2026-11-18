@@ -1,38 +1,60 @@
 {{- /* One entry as a preview, for the home stream, section indexes and tag
-       pages: a meta line (type, topic, date), the title, about 50 words of
-       text and "Read more" when shortened, then the tags. Only very short
-       notes, links and quotes (50 words or less, no draft placeholder) show
-       their text in full; a quote always shows its quotation. */ -}}
-{{- $k := partial "kind.html" . }}
-{{- $l := partial "lang.html" . }}
-{{- $body := partial "content.html" . }}
-{{- $full := and (le .WordCount 50) (not (strings.Contains $body "[ALDO:")) }}
-{{- $ex := partial "excerpt.html" . }}
-{{- /* An entry in another language carries its lang (dates and strings in it
-       follow) and an "ES" tag; the type label stays site chrome. */}}
-<article class="item item-{{ .Section }}" {{ partial "lang-attr.html" . }}>
-  <p class="item-meta" {{ partial "chrome-lang.html" . }}>
-    {{- with site.GetPage .Section }}<a class="item-kind" href="{{ .RelPermalink }}">{{ $k.label }}</a>{{ else }}<span class="item-kind">{{ $k.label }}</span>{{ end }}
-    {{- if and (eq .Section "til") .Params.topic }}<span class="item-topic">{{ .Params.topic }}</span>{{ end }}
-    {{- partial "lang-tag.html" . }}
-    <a class="permalink" href="{{ .RelPermalink }}" {{ partial "lang-attr.html" . }}><time datetime="{{ .Date.Format "2006-01-02" }}">{{ partial "date.html" (dict "date" .Date "l" $l) }}</time></a>
+       pages. Posts are the anchors: a large title, reading time, the
+       description (or the opening words) and their hero image as a
+       thumbnail. TILs, notes and links are compact: meta line and title (a
+       link with its domain), with their text only when it is very short (50
+       words or less, no draft placeholder). A note without a title shows its
+       opening words instead; a quote shows its quotation.
+       Context: dict "page", "tags" (false leaves the tags out). */ -}}
+{{- $p := .page }}
+{{- $k := partial "kind.html" $p }}
+{{- $l := partial "lang.html" $p }}
+{{- $post := eq $p.Section "posts" }}
+{{- $body := partial "content.html" $p }}
+{{- $full := and (le $p.WordCount 50) (not (strings.Contains $body "[ALDO:")) }}
+{{- $thumb := and $post (partial "thumb.html" $p) }}
+<article class="item item-{{ $p.Section }} {{ if $post }}item-lead{{ else }}item-compact{{ end }}{{ if $thumb }} has-thumb{{ end }}" {{ partial "lang-attr.html" $p }}>
+  <div class="item-main">
+  {{- /* An entry in another language carries its lang (dates and strings in
+         it follow) and an "ES" tag; the type label stays site chrome. */}}
+  <p class="item-meta" {{ partial "chrome-lang.html" $p }}>
+    {{- with site.GetPage $p.Section }}<a class="item-kind" href="{{ .RelPermalink }}">{{ $k.label }}</a>{{ else }}<span class="item-kind">{{ $k.label }}</span>{{ end }}
+    {{- if and (eq $p.Section "til") $p.Params.topic }}<span class="item-topic">{{ $p.Params.topic }}</span>{{ end }}
+    {{- partial "lang-tag.html" $p }}
+    <a class="permalink" href="{{ $p.RelPermalink }}" {{ partial "lang-attr.html" $p }}><time datetime="{{ $p.Date.Format "2006-01-02" }}">{{ partial "date.html" (dict "date" $p.Date "l" $l) }}</time></a>
+    {{- if $post }}<span {{ partial "lang-attr.html" $p }}>{{ printf $l.t.readingTime $p.ReadingTime }}</span>{{ end }}
   </p>
-  {{- if eq .Section "quotes" }}
-  {{ partial "quote.html" . }}
-  {{- with $body }}{{ if $full }}<div class="prose">{{ . }}</div>{{ else }}<p class="item-text"><a class="read-more" href="{{ $.RelPermalink }}">{{ $l.t.readMore }}<span aria-hidden="true"> →</span></a></p>{{ end }}{{ end }}
+  {{- if eq $p.Section "quotes" }}
+  {{ partial "quote.html" $p }}
+  {{- with $body }}{{ if $full }}<div class="prose">{{ . }}</div>{{ else }}<p class="item-text"><a class="read-more" href="{{ $p.RelPermalink }}">{{ $l.t.readMore }}<span aria-hidden="true"> →</span></a></p>{{ end }}{{ end }}
+  {{- else if eq $p.Section "links" }}
+  {{- $host := (urls.Parse $p.Params.link).Host | strings.TrimPrefix "www." }}
+  <h3><a href="{{ $p.Params.link }}">{{ $p.Title }}</a> <span class="by">{{ with $p.Params.by }}by {{ . }} · {{ end }}<span class="host">{{ $host }}</span></span></h3>
+  {{- if $full }}<div class="prose">{{ $body }}</div>{{ end }}
+  {{- else if and (eq $p.Section "notes") (not $p.Title) }}
+  {{- if $full }}<div class="prose">{{ $body }}</div>{{ else }}{{ partial "inline/item-text.html" (dict "p" $p "l" $l) }}{{ end }}
   {{- else }}
-  {{- if eq .Section "links" }}
-  <h3><a href="{{ .Params.link }}">{{ .Title }}</a>{{ with .Params.by }} <span class="by">by {{ . }}</span>{{ end }}</h3>
-  {{- else if eq .Section "notes" }}
-  {{- with .Title }}<h3><a href="{{ $.RelPermalink }}">{{ . }}</a></h3>{{ end }}
-  {{- else }}
-  <h3><a href="{{ .RelPermalink }}">{{ $k.title }}</a></h3>
+  <h3><a href="{{ $p.RelPermalink }}">{{ $k.title }}</a></h3>
+  {{- if $post }}{{ partial "inline/item-text.html" (dict "p" $p "l" $l) }}
+  {{- else if and $full (eq $p.Section "notes") }}<div class="prose">{{ $body }}</div>{{ end }}
   {{- end }}
-  {{- if and $full (ne .Section "posts") (ne .Section "til") }}
-  <div class="prose">{{ $body }}</div>
-  {{- else if or $ex.text $ex.cut }}
-  <p class="item-text">{{ $ex.text }}{{ if or $ex.cut (eq .Section "links") }} <a class="read-more" href="{{ .RelPermalink }}">{{ $l.t.readMore }}<span aria-hidden="true"> →</span></a>{{ end }}</p>
+  {{- if .tags }}{{ partial "tags.html" (dict "page" $p "max" 3) }}{{ end }}
+  </div>
+  {{- with $thumb }}
+  <a class="item-thumb" href="{{ $p.RelPermalink }}" tabindex="-1" aria-hidden="true"><img src="{{ .small.RelPermalink }}" srcset="{{ .small.RelPermalink }} 320w, {{ .large.RelPermalink }} 640w" sizes="(max-width: 760px) 6rem, 12rem" width="320" height="240" alt="" loading="lazy" decoding="async"></a>
   {{- end }}
-  {{- end }}
-  {{ partial "tags.html" . }}
 </article>
+
+{{- /* The excerpt, with "Read more" when shortened; the last word, the
+       ellipsis and the link never break apart. Context: dict "p", "l". */}}
+{{- define "_partials/inline/item-text.html" }}
+{{- $ex := partial "excerpt.html" .p }}
+{{- with $ex.text }}
+{{- if $ex.cut }}
+{{- $last := index (findRE `\S+$` .) 0 }}
+<p class="item-text">{{ strings.TrimSuffix $last . }}<span class="nowrap">{{ $last }} <a class="read-more" href="{{ $.p.RelPermalink }}">{{ $.l.t.readMore }}<span aria-hidden="true"> →</span></a></span></p>
+{{- else }}
+<p class="item-text">{{ . }}</p>
+{{- end }}
+{{- end }}
+{{- end }}
