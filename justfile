@@ -6,16 +6,18 @@ tf := "terraform"
 default:
     @just --list
 
-# Run the hugo dev server with drafts (fonts come from the nix build)
-serve *args: fonts
+# Run the hugo dev server with drafts (fonts come from the nix build); search
+# works from a drafts index built first (`just reindex` refreshes it)
+serve *args: fonts reindex
     hugo server --source {{ site }} --buildDrafts {{ args }}
 
-# Drafts build with the search index, served by pagefind at http://localhost:1414
-# (`just serve` has no index, so /search/ only works here and in `just build`)
-search: fonts
-    rm -rf .cache/search-site
-    hugo --source {{ site }} --buildDrafts --quiet --destination "{{ justfile_directory() }}/.cache/search-site"
-    pagefind --site .cache/search-site --serve
+# Search index for `just serve`: a drafts build in .cache/, indexed by pagefind
+# into {{ site }}/static/pagefind (gitignored; the nix build never sees it and
+# makes its own). Run it again while the server runs to pick up new entries.
+reindex: fonts
+    rm -rf .cache/search-site {{ site }}/static/pagefind
+    hugo --source {{ site }} --buildDrafts --logLevel error --destination "{{ justfile_directory() }}/.cache/search-site"
+    pagefind --site .cache/search-site --output-path {{ site }}/static/pagefind
 
 # Build the site with nix into ./result-site (what wrangler deploys)
 build:

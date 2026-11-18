@@ -6,7 +6,7 @@ pkgs.mkShellNoCC {
 
     # site: `just serve` runs hugo directly; builds go through `nix build .#site`
     hugo
-    pagefind # the search index: `just search` serves a drafts build with one
+    pagefind # the search index (`just reindex` for `just serve`)
     lychee # link checker: `just check-links` (external), checks/links.nix (internal)
 
     # infrastructure: Cloudflare Worker + domain (terraform/), deploys (wrangler)

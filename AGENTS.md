@@ -24,8 +24,8 @@ Personal website and blog. Static site, served from a Cloudflare Worker (Workers
 | Command | Does |
 | --- | --- |
 | `just` | list recipes |
-| `just serve` / `just build` | hugo dev server with drafts (copies the fonts in first) / `nix build .#site -o result-site` |
-| `just search` | drafts build with the search index, served by pagefind at <http://localhost:1414> (`just serve` has no index, so /search/ only works here and in `just build`) |
+| `just serve` / `just build` | hugo dev server with drafts (copies the fonts in and runs `just reindex` first, so search works) / `nix build .#site -o result-site` |
+| `just reindex` | refresh the search index `just serve` uses: a drafts build in `.cache/search-site`, indexed by pagefind into `website/static/pagefind/` (gitignored, like the fonts; never in the nix build, which makes its own). Run it while the server runs to pick up new or edited entries |
 | `just new <type> <slug> [--lang es]` | new draft `website/content/<type>/YYYY-MM-DD-<slug>.md` from its archetype; type is `posts`, `til`, `notes`, `links` or `quotes`; `--lang es` writes `lang: es` |
 | `just touch <file>` | set `lastmod:` to today in an entry (path from the current directory or from `website/content/`); "Updated <date>" shows once lastmod is more than a day after date |
 | `just check-links` | `just build`, then lychee over the external links (`lychee.toml`: cached a day in `.lycheecache`, rate-limited per host); export `GITHUB_TOKEN` or github.com links answer 503 |
@@ -149,6 +149,7 @@ One site, one stream: most entries are English, some are Spanish. An entry decla
 - Languages: Pagefind writes one index per `<html lang>`; the page loads the English one and merges every other language from `pagefind-entry.json`, so one search covers both. Results in another language carry the "ES" tag.
 - Pagefind 1.6 also returns loose matches (a query that only shares a few letters with a word); the page keeps a result only when a highlighted word starts like a word of the query.
 - Nothing from Pagefind loads on other pages; on `/search/` it loads when the box gets focus or a query arrives. Without JS the page says search needs it and points to Writing and Tags.
+- Locally, `just serve` runs `just reindex` first, so `/search/` works on the dev server too, drafts included; the index is a snapshot, so run `just reindex` again after adding or editing entries (the server picks the new files up, no restart). The production index never includes drafts.
 
 ## Images
 
