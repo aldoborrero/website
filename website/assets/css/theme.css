@@ -49,6 +49,13 @@
   --fs: 1;
   --fs-font: 1;
   --scale: calc(var(--fs) * var(--fs-font));
+  /* Weight of regular text (reading and UI). Light text on a dark ground
+     looks thinner than the same strokes dark on light, Windows most of all,
+     so dark mode sets it a step heavier (both faces are variable). */
+  --w-text: 400;
+}
+:root[data-theme="dark"] {
+  --w-text: 440;
 }
 :root[data-size="s"] {
   --fs: 0.9;
@@ -89,11 +96,23 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 400 calc(var(--base) * var(--scale)) / 1.65 var(--font-read);
+  font: var(--w-text) calc(var(--base) * var(--scale)) / 1.65 var(--font-read);
   font-optical-sizing: auto;
   font-kerning: normal;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+}
+/* Greyscale smoothing (macOS) thins light-on-dark text further. */
+:root[data-theme="dark"] body {
+  -webkit-font-smoothing: auto;
+}
+/* Headings: --head, brighter than body text in dark mode (the same in
+   light), so they keep their weight while body text is calmer. */
+h1,
+h2,
+h3,
+h4 {
+  color: var(--head);
 }
 
 ::selection {
@@ -279,7 +298,7 @@ img {
   background: var(--bg);
   color: var(--ink);
   box-shadow: 0 16px 40px -12px color-mix(in srgb, var(--ink) 28%, transparent);
-  font: 400 0.92rem/1.4 var(--font-ui);
+  font: var(--w-text) 0.92rem/1.4 var(--font-ui);
   overscroll-behavior: contain;
 }
 .reading h2 {
@@ -401,7 +420,7 @@ img {
   border-top: 1px solid var(--line);
   margin-top: 2rem;
   padding-block: 2rem 3rem;
-  font: 400 0.88rem/1.6 var(--font-ui);
+  font: var(--w-text) 0.88rem/1.6 var(--font-ui);
   color: var(--muted);
 }
 .site-foot a {
@@ -521,7 +540,7 @@ img {
   text-wrap: balance;
 }
 .entries :is(h2, h3) a {
-  color: var(--ink);
+  color: var(--head);
   text-decoration: none;
 }
 .entries :is(h2, h3) a:hover {
@@ -615,7 +634,7 @@ img {
   padding-bottom: 2rem;
 }
 .margin {
-  font: 400 0.88rem/1.5 var(--font-ui);
+  font: var(--w-text) 0.88rem/1.5 var(--font-ui);
   color: var(--muted);
 }
 
@@ -694,6 +713,17 @@ img {
 .prose a:visited {
   text-decoration-color: var(--muted);
 }
+/* Dark mode: the underline is a quiet mix of accent and ground, a little
+   further from the text, and turns full accent on hover and focus. It never
+   goes away, so links don't rely on colour alone. */
+:root[data-theme="dark"] .prose a,
+:root[data-theme="dark"] .prose a:visited {
+  text-decoration-color: color-mix(in oklab, var(--accent) 45%, var(--bg));
+  text-underline-offset: 0.22em;
+}
+:root[data-theme="dark"] .prose a:is(:hover, :focus-visible) {
+  text-decoration-color: var(--accent);
+}
 .prose p,
 .prose ul,
 .prose ol,
@@ -743,7 +773,7 @@ img {
 .prose .anchor {
   margin-left: 0.3em;
   color: var(--muted);
-  font-weight: 400;
+  font-weight: var(--w-text);
   text-decoration: none;
   opacity: 0;
 }
@@ -837,7 +867,7 @@ img {
 }
 .footnotes {
   margin-top: 3rem;
-  font: 400 0.95rem/1.6 var(--font-ui);
+  font: var(--w-text) 0.95rem/1.6 var(--font-ui);
 }
 .footnotes hr {
   width: 6rem;
@@ -865,7 +895,7 @@ img {
     clear: right;
     width: 12rem;
     margin: 0.3rem -14rem 1rem 0;
-    font: 400 0.88rem/1.5 var(--font-ui);
+    font: var(--w-text) 0.88rem/1.5 var(--font-ui);
     color: var(--muted);
   }
   .sn-num {
@@ -906,7 +936,7 @@ img {
 }
 .prose figcaption {
   margin-top: 0.6rem;
-  font: 400 0.88rem/1.5 var(--font-ui);
+  font: var(--w-text) 0.88rem/1.5 var(--font-ui);
   color: var(--muted);
 }
 .prose iframe {
@@ -920,7 +950,7 @@ img {
 .prose table {
   width: 100%;
   border-collapse: collapse;
-  font: 400 0.95rem/1.5 var(--font-ui);
+  font: var(--w-text) 0.95rem/1.5 var(--font-ui);
   font-variant-numeric: tabular-nums;
   display: block;
   overflow-x: auto;
@@ -995,7 +1025,7 @@ pre code {
   border-left: 2px solid var(--accent);
   border-bottom: 1px solid var(--line);
   background: var(--code-bg);
-  font: 400 calc(0.8rem * var(--fs)) / 1.4 var(--font-code);
+  font: var(--w-text) calc(0.8rem * var(--fs)) / 1.4 var(--font-code);
   color: var(--muted);
   overflow-wrap: anywhere;
 }
@@ -1189,7 +1219,7 @@ a.item-kind:hover {
   text-wrap: balance;
 }
 .item h3 a {
-  color: var(--ink);
+  color: var(--head);
   text-decoration: none;
 }
 .item h3 a:hover {
@@ -1282,7 +1312,7 @@ a.item-kind:hover {
   margin: 0;
   padding-left: 1.25rem;
   border-left: 2px solid var(--accent);
-  font: 400 1.2rem/1.55 var(--font-read);
+  font: var(--w-text) 1.2rem/1.55 var(--font-read);
   color: var(--ink);
 }
 .quote blockquote p {
@@ -1438,7 +1468,7 @@ a.item-kind:hover {
   margin-top: 3rem;
   padding-top: 1.5rem;
   border-top: 1px solid var(--line);
-  font: 400 0.95rem/1.5 var(--font-ui);
+  font: var(--w-text) 0.95rem/1.5 var(--font-ui);
   color: var(--muted);
 }
 .sign img {
@@ -1516,7 +1546,7 @@ a.item-kind:hover {
   margin: 0 0 1rem;
 }
 .cv-head .clients {
-  font: 400 1rem/1.55 var(--font-ui);
+  font: var(--w-text) 1rem/1.55 var(--font-ui);
   color: var(--muted);
 }
 .contact {
@@ -1526,7 +1556,7 @@ a.item-kind:hover {
   display: grid;
   gap: 0.35rem;
   align-content: start;
-  font: 400 0.92rem/1.4 var(--font-ui);
+  font: var(--w-text) 0.92rem/1.4 var(--font-ui);
   color: var(--muted);
 }
 .contact a {
@@ -1600,7 +1630,7 @@ a.item-kind:hover {
   margin: 0 0 0.5rem;
 }
 .tl .clientline {
-  font: 400 1rem/1.5 var(--font-ui);
+  font: var(--w-text) 1rem/1.5 var(--font-ui);
   color: var(--muted);
 }
 .tl ul.notes {
@@ -1616,7 +1646,7 @@ a.item-kind:hover {
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem 1rem;
-  font: 400 0.92rem/1.5 var(--font-ui);
+  font: var(--w-text) 0.92rem/1.5 var(--font-ui);
 }
 
 .selected {
@@ -1637,7 +1667,7 @@ a.item-kind:hover {
   font: 600 1.05rem/1.35 var(--font-read);
 }
 .selected span {
-  font: 400 0.95rem/1.5 var(--font-ui);
+  font: var(--w-text) 0.95rem/1.5 var(--font-ui);
   color: var(--muted);
 }
 
@@ -1802,7 +1832,7 @@ a.zoom:focus-visible::after {
   color: var(--ink);
   overflow: hidden;
   overscroll-behavior: contain;
-  font: 400 0.88rem/1.5 var(--font-ui);
+  font: var(--w-text) 0.88rem/1.5 var(--font-ui);
 }
 .zv::backdrop {
   background: var(--bg);
@@ -1942,7 +1972,7 @@ a.zoom:focus-visible::after {
 }
 /* "This replaces my 2022 post, …" */
 .prose .notice-line {
-  font: 400 0.95rem/1.55 var(--font-ui);
+  font: var(--w-text) 0.95rem/1.55 var(--font-ui);
   color: var(--muted);
 }
 
@@ -1951,7 +1981,7 @@ a.zoom:focus-visible::after {
 .replies {
   margin-top: 2.5rem;
   hyphens: manual;
-  font: 400 0.95rem/1.55 var(--font-ui);
+  font: var(--w-text) 0.95rem/1.55 var(--font-ui);
 }
 .prose .replies h2 {
   margin: 0 0 0.6rem;
@@ -2101,7 +2131,7 @@ a.zoom:focus-visible::after {
   border: 0;
   background: none;
   color: var(--ink);
-  font: 400 1.05rem var(--font-ui);
+  font: var(--w-text) 1.05rem var(--font-ui);
   caret-color: var(--accent);
 }
 .search-form input:focus {
@@ -2163,7 +2193,7 @@ a.zoom:focus-visible::after {
   padding: 1.25rem 1.25rem 1rem;
   border-radius: 10px;
   background: var(--mark);
-  font: 400 1rem/1.6 var(--font-ui);
+  font: var(--w-text) 1rem/1.6 var(--font-ui);
 }
 .feed-how h2,
 .feed-latest {
@@ -2191,7 +2221,7 @@ a.zoom:focus-visible::after {
   border-radius: 6px;
   background: var(--bg);
   color: var(--ink);
-  font: 400 0.9rem var(--font-code);
+  font: var(--w-text) 0.9rem var(--font-code);
 }
 .feed-copy {
   flex: none;
@@ -2227,7 +2257,7 @@ a.zoom:focus-visible::after {
   padding: 1.25rem 1.25rem 1rem;
   border-radius: 10px;
   background: var(--mark);
-  font: 400 1rem/1.5 var(--font-ui);
+  font: var(--w-text) 1rem/1.5 var(--font-ui);
   scroll-margin-top: 1.5rem;
 }
 .prose .series h2 {
@@ -2293,7 +2323,7 @@ kbd {
   background: var(--bg);
   color: var(--ink);
   box-shadow: 0 24px 60px -16px color-mix(in srgb, var(--ink) 40%, transparent);
-  font: 400 0.95rem/1.5 var(--font-ui);
+  font: var(--w-text) 0.95rem/1.5 var(--font-ui);
   overscroll-behavior: contain;
 }
 .keys-dialog::backdrop {
@@ -2317,7 +2347,7 @@ kbd {
 .keys-dialog th {
   width: 5.5rem;
   padding-right: 1rem;
-  font-weight: 400;
+  font-weight: var(--w-text);
   white-space: nowrap;
 }
 .keys-dialog p {
@@ -2536,7 +2566,7 @@ kbd {
     background: var(--bg);
     color: var(--ink);
     box-shadow: 0 16px 40px -12px color-mix(in srgb, var(--ink) 35%, transparent);
-    font: 400 1rem/1.4 var(--font-ui);
+    font: var(--w-text) 1rem/1.4 var(--font-ui);
     overscroll-behavior: contain;
   }
   .prose .toc-sheet h2 {
@@ -2563,7 +2593,7 @@ kbd {
       padding: 0.75rem 1rem;
       border-radius: 6px;
       background: var(--mark);
-      font: 400 0.95rem/1.5 var(--font-ui);
+      font: var(--w-text) 0.95rem/1.5 var(--font-ui);
     }
   }
   .prose pre,

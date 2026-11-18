@@ -14,6 +14,7 @@ Personal website and blog. Static site, served from a Cloudflare Worker (Workers
 | `nix/checks/tfsec.nix` | tfsec over `terraform/` |
 | `nix/checks/no-comments.nix`, `nix/checks/links.nix` | no content HTML comment in the built site; internal links and anchors resolve (lychee, offline) |
 | `website/` | Hugo site with its own theme: `layouts/`, `assets/css/` (`tokens.css` holds every colour: five palettes, each light and dark), `assets/js/zoom.js` (the image viewer), `data/cv.toml` (the career page at `/about/`), `i18n/` (strings the theme writes inside an entry, per language), `content/`, `archetypes/`, `static/` |
+| `docs/theme/` | design notes; `reading-modes.md` benchmarks the dark palettes against browser reading modes, with sources |
 | `terraform/` | OpenTofu: the Worker and its custom domain; state in R2 |
 | `wrangler.jsonc` | Worker static-assets config used by `wrangler deploy` |
 | `secrets/secrets.yaml` | sops (age + YubiKey) dotenv with Cloudflare / R2 credentials |
@@ -217,7 +218,8 @@ Type the parent code and add 15 minutes.
 - The panel's last group, "Keyboard shortcuts" On/Off (`keys` in `localStorage`, `data-keys="off"` on `<html>`), turns the single-key shortcuts off (WCAG 2.1.4); see Keyboard shortcuts.
 - `params.palette` in `hugo.toml` is the default palette, and also the one share images are drawn in (light mode). The build fails if it names a palette that `tokens.css` doesn't define.
 - To add or change a palette, edit only `assets/css/tokens.css`: one block `[data-palette="id"]` (light, with `--palette-name: "Shown name"`) and one `[data-theme="dark"][data-palette="id"], [data-theme="dark"] [data-palette="id"]` (dark), each with every token. The panel and the pre-paint script read the list from that file (`_partials/palettes.html`).
-- Every palette and mode must pass WCAG AA (4.5:1) for: ink, muted, accent and warn on `--bg` and `--mark`; ink, muted, accent, kw and str on `--code-bg`; kw and str on `--mark` (highlighted lines); and bg on ink (the selected option in the panel).
+- Every palette and mode must pass WCAG AA (4.5:1) for: ink, muted, accent and warn on `--bg` and `--mark`; ink, muted, accent, kw and str on `--code-bg`; kw and str on `--mark` (highlighted lines); head on `--bg`; and bg on ink (the selected option in the panel).
+- Dark mode targets (from the reading-mode benchmark in `docs/theme/reading-modes.md`): body ink about 12:1 on `--bg` (Chrome Reading mode is 12.5, Firefox Reader View 16.5); `--head` (headings, new; equal to `--ink` in light) about 14:1; `--muted` at least 6:1 on `--bg`; accent about 7.5:1. Grounds are lifted dark greys, not near-black. Dark mode also renders regular text a step heavier (`--w-text`, 400 in light, 440 in dark; both faces are variable), turns off greyscale smoothing, and draws prose link underlines in a mix of accent and ground that turns full accent on hover and focus. Light mode is unchanged.
 - On narrow screens, posts with a contents list get a "Contents" button fixed at the bottom that opens the list as a sheet (`posts/page.html`, popover, works without JS).
 
 ## Invariants

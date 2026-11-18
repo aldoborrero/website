@@ -14,6 +14,7 @@
 
    --bg       page ground                --mark     highlight ground (callouts, hover, marked lines)
    --ink      body text                  --code-bg  code block ground
+   --head     headings (dark: brighter than body text; light: the same as --ink)
    --muted    secondary text             --kw       code: keywords
    --line     hairlines, borders         --str      code: strings, literals
    --accent   links, focus, selection    --warn     warning and caution callouts */
@@ -23,6 +24,7 @@
   --palette-name: "Medianoche";
   --bg: #f4f7fb;
   --ink: #142033;
+  --head: #142033;
   --muted: #526075;
   --line: #d9e0ea;
   --accent: #2c5a96;
@@ -35,16 +37,17 @@
 }
 [data-theme="dark"][data-palette="medianoche"],
 [data-theme="dark"] [data-palette="medianoche"] {
-  --bg: #121a26;
-  --ink: #dfe6f0;
-  --muted: #93a0b4;
-  --line: #263247;
-  --accent: #82bdf0;
-  --mark: #1c2839;
-  --code-bg: #0c121b;
-  --kw: #a9c7ff;
-  --str: #a3d4c3;
-  --warn: #f2a08c;
+  --bg: #18202c;
+  --ink: #d7dee6;
+  --head: #e7eef7;
+  --muted: #9ba8bc;
+  --line: #2c384e;
+  --accent: #85b5de;
+  --mark: #222e40;
+  --code-bg: #111821;
+  --kw: #a3bef0;
+  --str: #9bc7b7;
+  --warn: #f3a996;
   color-scheme: dark;
 }
 
@@ -53,6 +56,7 @@
   --palette-name: "Ámbar";
   --bg: #f7f6f3;
   --ink: #221d16;
+  --head: #221d16;
   --muted: #635a4c;
   --line: #e3dfd6;
   --accent: #865400;
@@ -65,16 +69,17 @@
 }
 [data-theme="dark"][data-palette="ambar"],
 [data-theme="dark"] [data-palette="ambar"] {
-  --bg: #1a1713;
-  --ink: #ece4d6;
-  --muted: #ab9f8c;
-  --line: #342d24;
-  --accent: #f0b65c;
-  --mark: #2b2317;
-  --code-bg: #12100c;
-  --kw: #f0b65c;
-  --str: #c3cf98;
-  --warn: #f2a08c;
+  --bg: #201d19;
+  --ink: #e1dacd;
+  --head: #f1eadd;
+  --muted: #b3a793;
+  --line: #3a332a;
+  --accent: #d4a660;
+  --mark: #31291d;
+  --code-bg: #181611;
+  --kw: #e7b465;
+  --str: #b7c190;
+  --warn: #f3a896;
   color-scheme: dark;
 }
 
@@ -83,6 +88,7 @@
   --palette-name: "Índigo y oro";
   --bg: #f6f7fc;
   --ink: #1a1f3d;
+  --head: #1a1f3d;
   --muted: #575d80;
   --line: #e0e2ef;
   --accent: #3b45a8;
@@ -95,16 +101,17 @@
 }
 [data-theme="dark"][data-palette="indigo"],
 [data-theme="dark"] [data-palette="indigo"] {
-  --bg: #161a33;
-  --ink: #e6e8f5;
-  --muted: #a2a8ca;
-  --line: #2c3254;
-  --accent: #e8c274;
-  --mark: #232a4c;
-  --code-bg: #10132a;
-  --kw: #e8c274;
-  --str: #9fd3c8;
-  --warn: #f2a08c;
+  --bg: #1c203a;
+  --ink: #dddfea;
+  --head: #eef0fb;
+  --muted: #aab1d3;
+  --line: #32395b;
+  --accent: #cdae71;
+  --mark: #293053;
+  --code-bg: #151930;
+  --kw: #ddbc77;
+  --str: #9bcac0;
+  --warn: #f3a996;
   color-scheme: dark;
 }
 
@@ -113,6 +120,7 @@
   --palette-name: "Ciruela";
   --bg: #fbf9fc;
   --ink: #241b2c;
+  --head: #241b2c;
   --muted: #62566d;
   --line: #e8e1ee;
   --accent: #663a9c;
@@ -125,16 +133,17 @@
 }
 [data-theme="dark"][data-palette="ciruela"],
 [data-theme="dark"] [data-palette="ciruela"] {
-  --bg: #1a1520;
-  --ink: #ebe4ef;
-  --muted: #a99db4;
-  --line: #33293d;
-  --accent: #d0a8ff;
-  --mark: #2a2034;
-  --code-bg: #130f18;
-  --kw: #e0b6ff;
-  --str: #a9d6c1;
-  --warn: #f2a08c;
+  --bg: #201b26;
+  --ink: #ded8e1;
+  --head: #eee8f1;
+  --muted: #b1a5bc;
+  --line: #392f44;
+  --accent: #bfa0e6;
+  --mark: #30263a;
+  --code-bg: #19151e;
+  --kw: #d4aeef;
+  --str: #9ec5b3;
+  --warn: #f3a896;
   color-scheme: dark;
 }
 
@@ -143,6 +152,7 @@
   --palette-name: "Grafito y cobalto";
   --bg: #f8f9fa;
   --ink: #17191d;
+  --head: #17191d;
   --muted: #5a5f68;
   --line: #e1e3e7;
   --accent: #2e55c9;
@@ -155,16 +165,17 @@
 }
 [data-theme="dark"][data-palette="cobalto"],
 [data-theme="dark"] [data-palette="cobalto"] {
-  --bg: #16181c;
-  --ink: #e4e6ea;
-  --muted: #9ba0a9;
-  --line: #2b2f36;
-  --accent: #7da2ff;
-  --mark: #20252f;
-  --code-bg: #101215;
-  --kw: #9cb8ff;
-  --str: #b5d39b;
-  --warn: #f2a08c;
+  --bg: #1c1e22;
+  --ink: #d9dbde;
+  --head: #eaebef;
+  --muted: #a2a8b1;
+  --line: #31353c;
+  --accent: #8dadf9;
+  --mark: #262b35;
+  --code-bg: #16181b;
+  --kw: #a3bdfd;
+  --str: #abc694;
+  --warn: #f3a896;
   color-scheme: dark;
 }
 
@@ -174,6 +185,7 @@
   :root:root[data-palette][data-theme="dark"] {
     --bg: #ffffff;
     --ink: #000000;
+    --head: #000000;
     --muted: #444444;
     --line: #bbbbbb;
     --accent: #1f3f6e;
