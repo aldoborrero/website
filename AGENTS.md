@@ -38,6 +38,8 @@ Personal website and blog. Static site, served from a Cloudflare Worker (Workers
 
 Five sections, all in one stream on the home page (newest first, 15 per page) and in `/atom.xml` and `/index.xml`. Each has its own index and feeds (`/<type>/atom.xml`, `/<type>/index.xml`).
 
+- Lists show previews (`_partials/item.html` on the home page, `/links/`, `/notes/`, `/quotes/` and tag pages; `_partials/entries.html` on `/posts/`, `/til/` and search): a meta line (type, TIL topic, date), the title, then about 30 words in `--muted` with "Read more" when shortened, and the tags. Entries are separated by a `--line` hairline. The preview text is the `description` when set, else the first paragraphs (`_partials/excerpt.html`); `[ALDO: …]` draft placeholders are dropped. Only notes, links and quotes of 50 words or less without a placeholder show in full; a quote always shows its quotation, and a link always gets "Read more" to its entry, since its title links out.
+
 | Type | For | Front matter beyond `title`, `slug`, `date`, `tags` |
 | --- | --- | --- |
 | `posts` | long form: project write-ups, stories, retrospectives | `description` (optional dek) |
