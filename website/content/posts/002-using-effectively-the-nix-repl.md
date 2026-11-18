@@ -1,6 +1,9 @@
 ---
 author: Aldo Borrero
 date: 2022-12-02
+lastmod: 2026-11-18
+status: outdated
+statusNote: Nix and its REPL have changed since, so some commands and their output may look different today.
 title: Learn how to use the Nix REPL effectively
 slug: learn-how-to-use-the-nix-repl-effectively
 aliases:
@@ -361,7 +364,7 @@ Return the first element of a list; abort evaluation if the argument isn’t a l
 an empty list. You can test whether a list is empty by comparing it with [].
 ```
 
-Not every single function includes documentation, though! As [we can see from the Nix REPL implementation](https://github.com/NixOS/nix/blob/master/src/libcmd/repl.cc#L704).
+Not every single function includes documentation, though! As [we can see from the Nix REPL implementation](https://github.com/NixOS/nix/blob/9b35cc716b392dfb96a0e994349137f653b9c532/src/libcmd/repl.cc#L704).
 
 ### Know the type of expression or value
 
