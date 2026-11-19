@@ -1,0 +1,6 @@
+[global]
+disable = [
+  "MD013", # posts keep one paragraph per line
+  "MD014", # `$ cmd` prompts in shell blocks are intentional
+  "MD033", # inline HTML is allowed (goldmark renderer.unsafe = true)
+]
