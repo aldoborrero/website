@@ -14,11 +14,11 @@
 <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ $title }} · {{ site.Title }}{{ end }}</title>
 <meta name="description" content="{{ $desc }}">
 <meta name="author" content="{{ site.Params.author }}">
-<meta name="theme-color" content="">
+<meta name="theme-color" content="{{ (partialCached "mode.html" .).bg }}">
 {{- /* Reading settings chosen in the "Aa" panel (header.html), applied before
        first paint so nothing flashes. Unknown values are ignored. */}}
 {{- $ids := apply (partial "palettes.html" .) "index" "." "id" }}
-<script>(function(d,ok){try{var s=localStorage,p=s.getItem("palette");if(s.getItem("theme")==="dark")d.dataset.theme="dark";if(ok.indexOf(p)>=0)d.dataset.palette=p;p=s.getItem("size");if(p==="s"||p==="l")d.dataset.size=p;if(s.getItem("font")==="sans")d.dataset.font="sans";if(s.getItem("keys")==="off")d.dataset.keys="off"}catch(e){}})(document.documentElement,{{ $ids }})</script>
+<script>(function(d,ok){try{var s=localStorage,p=s.getItem("theme");if(p==="light"||p==="dark")d.dataset.theme=p;p=s.getItem("palette");if(ok.indexOf(p)>=0)d.dataset.palette=p;p=s.getItem("size");if(p==="s"||p==="l")d.dataset.size=p;if(s.getItem("font")==="sans")d.dataset.font="sans";if(s.getItem("keys")==="off")d.dataset.keys="off"}catch(e){}})(document.documentElement,{{ $ids }})</script>
 
 <link rel="canonical" href="{{ .Permalink }}">
 {{- /* Translations (entries sharing translationKey): each version lists all

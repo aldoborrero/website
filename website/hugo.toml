@@ -12,6 +12,10 @@ capitalizeListTitles = false
 # Default colour palette: the id of one of the palettes in assets/css/tokens.css.
 # Readers can switch in the "Aa" panel; share images always use this one, light.
 palette = "medianoche"
+# Default mode, "dark" or "light", for readers who haven't picked one in the
+# "Aa" panel (rendered on <html data-theme>, so it holds without JS too). The
+# system preference is ignored.
+mode = "dark"
 author = "Aldo Borrero"
 description = "Aldo Borrero's blog: long posts about Nix and reproducible infrastructure."
 github = "aldoborrero"

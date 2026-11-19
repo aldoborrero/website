@@ -3,7 +3,8 @@
 
    <html data-palette="…"> picks the palette (default: params.palette in
    hugo.toml; readers can change it in the "Aa" panel), and data-theme="dark"
-   its dark mode. Light is the default; the system preference is ignored.
+   its dark mode; the server always sets data-theme to "light" or "dark"
+   (default: params.mode). The system preference is ignored.
    The selectors also match any element, which is how the panel's swatches
    show each palette's own colours.
 

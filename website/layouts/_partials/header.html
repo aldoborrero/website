@@ -65,8 +65,9 @@
         var btn = panel.previousElementSibling;
         if (!panel.showPopover) return;
         var meta = document.querySelector('meta[name="theme-color"]');
-        // Each setting: its <html> data attribute and the value that means "no attribute".
-        var keys = { palette: null, theme: "light", size: "m", font: "serif", keys: "on" };
+        // Each setting: its <html> data attribute and the value that means "no
+        // attribute" (null: always set; palette and theme come from the server).
+        var keys = { palette: null, theme: null, size: "m", font: "serif", keys: "on" };
         function current(k) { return root.dataset[k] || keys[k]; }
         function sync() {
           for (var k in keys) {
