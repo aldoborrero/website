@@ -2709,3 +2709,12 @@ kbd {
     text-decoration: none;
   }
 }
+
+/* ---------- about ---------- */
+
+.about-who img {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
