@@ -35,10 +35,11 @@ links = [
   "[ethw](https://github.com/aldoborrero/ethw)",
 ]
 
-# placeholder: role, description
 [[experience]]
 when = "2018 – 2019"
+title = "Lead engineer, EthVM"
 org = "[MyEtherWallet](https://www.myetherwallet.com)"
+text = "Led [EthVM](https://github.com/EthVM/EthVM), MyEtherWallet's open-source processing engine and block explorer for Ethereum."
 
 [[experience]]
 when = "2015 – 2018"
