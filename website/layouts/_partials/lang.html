@@ -1,0 +1,9 @@
+{{- /* The language of a page and the theme's strings in it. Context: a page.
+       An entry declares its language with `lang: es` in front matter; any
+       other page (and an entry without the key) is in the site language, en.
+       Returns dict "lang" (en, es) and "t" (the strings of i18n/<lang>.toml,
+       each key's "other" value). The build fails on a language with no
+       strings file. */ -}}
+{{- $l := site.Language.Lang }}
+{{- with .Params.lang }}{{ $l = . | string | lower }}{{ end }}
+{{- return dict "lang" $l "t" (partialCached "i18n-strings.html" $l $l) }}

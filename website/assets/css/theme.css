@@ -1,0 +1,2720 @@
+/* Longform: a reading-first personal site.
+   Newsreader for everything you read, Hanken Grotesk for UI and labels,
+   IBM Plex Mono for code. Layout: a 12rem margin column (dates, contents,
+   labels) beside a 38rem text measure. Colours come from tokens.css only.
+   Reading settings (header.html) set data-size and data-font on <html>:
+   they scale the reading text through --scale and swap --font-read; the UI
+   chrome keeps its sizes. */
+
+@font-face {
+  font-family: "Newsreader";
+  src: url("/fonts/newsreader-roman.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Newsreader";
+  src: url("/fonts/newsreader-italic.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Hanken Grotesk";
+  src: url("/fonts/hanken-grotesk.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("/fonts/plex-mono.woff2") format("woff2");
+  font-weight: 100 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-serif: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --font-read: var(--font-serif);
+  --font-ui: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-code: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --margin-col: 12rem;
+  --text-col: 38rem;
+  --gutter: 3rem;
+  --side: max(16px, env(safe-area-inset-left, 0px));
+  --side-r: max(16px, env(safe-area-inset-right, 0px));
+  --base: 1.25rem;
+  --fs: 1;
+  --fs-font: 1;
+  --scale: calc(var(--fs) * var(--fs-font));
+  /* Weight of regular text (reading and UI). Light text on a dark ground
+     looks thinner than the same strokes dark on light, Windows most of all,
+     so dark mode sets it a step heavier (both faces are variable). */
+  --w-text: 400;
+}
+:root[data-theme="dark"] {
+  --w-text: 440;
+}
+:root[data-size="s"] {
+  --fs: 0.9;
+}
+:root[data-size="l"] {
+  --fs: 1.15;
+}
+/* Hanken Grotesk is larger on the body than Newsreader at the same size. */
+:root[data-font="sans"] {
+  --font-read: var(--font-ui);
+  --fs-font: 0.92;
+}
+:root[data-font="sans"] .dek {
+  font-style: normal;
+}
+
+/* ---------- base ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scrollbar-color: var(--line) var(--bg);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: var(--w-text) calc(var(--base) * var(--scale)) / 1.65 var(--font-read);
+  font-optical-sizing: auto;
+  font-kerning: normal;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+/* Greyscale smoothing (macOS) thins light-on-dark text further. */
+:root[data-theme="dark"] body {
+  -webkit-font-smoothing: auto;
+}
+/* Headings: --head, brighter than body text in dark mode (the same in
+   light), so they keep their weight while body text is calmer. */
+h1,
+h2,
+h3,
+h4 {
+  color: var(--head);
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.skip {
+  position: absolute;
+  left: var(--side);
+  top: -4rem;
+  z-index: 10;
+  padding: 0.5rem 0.9rem;
+  background: var(--bg);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  font: 500 0.95rem var(--font-ui);
+}
+.skip:focus {
+  top: 1rem;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Unconfirmed facts and draft copy: visible on purpose until replaced. */
+.todo {
+  background: var(--mark);
+  outline: 1px dashed var(--accent);
+  outline-offset: 1px;
+  border-radius: 2px;
+  font-style: italic;
+}
+
+/* ---------- page grid ---------- */
+
+.page {
+  max-width: calc(var(--margin-col) + var(--gutter) + var(--text-col) + 7rem);
+  margin: 0 auto;
+  padding-left: var(--side);
+  padding-right: var(--side-r);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: var(--margin-col) minmax(0, var(--text-col));
+  gap: 0 var(--gutter);
+}
+.row > * {
+  min-width: 0;
+}
+
+.label {
+  margin: 0;
+  font: 500 0.92rem/2.2 var(--font-ui);
+  color: var(--muted);
+}
+
+/* ---------- header and footer ---------- */
+
+.site-head {
+  padding-block: 2rem;
+}
+.site-head .row {
+  align-items: baseline;
+}
+.brand {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
+  font: 600 1rem var(--font-ui);
+  color: var(--ink);
+  text-decoration: none;
+}
+.site-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.5rem;
+  font: 500 0.95rem var(--font-ui);
+}
+.site-nav a {
+  color: var(--muted);
+  text-decoration: none;
+}
+.site-nav a:hover {
+  color: var(--accent);
+}
+.site-nav a[aria-current="page"],
+.site-nav a[aria-current="true"] {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+}
+
+/* The nav, then the "Aa" button and the search link right after it on the
+   same line, set off by a hairline. On narrow screens the controls move up
+   to the brand's line (see the media query at the end). */
+.site-bar {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1.5rem;
+}
+.site-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding-left: 0.75rem;
+  border-left: 1px solid var(--line);
+}
+.aa,
+.search-link {
+  display: inline-grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin-block: -0.5rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--muted);
+  font: 600 0.95rem/1 var(--font-ui);
+  letter-spacing: 0.01em;
+  cursor: pointer;
+}
+.search-link svg {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+.aa[hidden] {
+  display: none;
+}
+.aa:hover,
+.search-link:hover,
+.search-link[aria-current="page"],
+.aa:has(+ .reading:popover-open) {
+  color: var(--ink);
+  background: var(--mark);
+}
+
+/* The reading settings panel: a popover placed under the button by the
+   header script. Radios stay real (keyboard: Tab between groups, arrows
+   inside one); the labels carry the look. */
+.reading {
+  position: absolute;
+  inset: auto;
+  width: min(20rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 5rem);
+  overflow-y: auto;
+  margin: 0;
+  padding: 1rem 1rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--ink);
+  box-shadow: 0 16px 40px -12px color-mix(in srgb, var(--ink) 28%, transparent);
+  font: var(--w-text) 0.92rem/1.4 var(--font-ui);
+  overscroll-behavior: contain;
+}
+.reading h2 {
+  margin: 0 0 0.75rem;
+  font: 600 0.92rem/1.4 var(--font-ui);
+}
+.reading fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.reading fieldset + fieldset {
+  margin-top: 0.9rem;
+}
+.reading legend {
+  margin-bottom: 0.35rem;
+  padding: 0;
+  font: 500 0.82rem/1.4 var(--font-ui);
+  color: var(--muted);
+}
+.reading input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+}
+.reading label {
+  cursor: pointer;
+  border-radius: 6px;
+}
+.reading label:has(:focus-visible) {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.palettes {
+  display: grid;
+  gap: 0.15rem;
+}
+.palettes label {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 2.5rem;
+  padding: 0.2rem 0.4rem;
+}
+.palettes label:hover {
+  background: var(--mark);
+}
+.palettes label:has(:checked) {
+  background: var(--mark);
+  box-shadow: inset 0 0 0 1.5px var(--ink);
+  font-weight: 600;
+}
+/* Each swatch carries its own data-palette, so it shows that palette's
+   ground, text and accent in the current mode. */
+.swatch {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 1.85rem;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--bg);
+  color: var(--ink);
+  font: 500 1rem/1 var(--font-serif);
+  text-decoration: underline 2px var(--accent);
+  text-underline-offset: 0.2em;
+}
+.seg > div {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 8px;
+  background: var(--mark);
+}
+.seg label {
+  display: grid;
+  place-items: center;
+  min-height: 2.25rem;
+  padding: 0 0.4rem;
+  color: var(--ink);
+  text-align: center;
+}
+.seg label:hover {
+  background: var(--bg);
+}
+.seg label:has(:checked) {
+  background: var(--ink);
+  color: var(--bg);
+  font-weight: 600;
+}
+.seg .serif {
+  font: 500 1rem/1 var(--font-serif);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .reading:popover-open {
+    animation: pop-in 0.14s ease-out;
+  }
+}
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    translate: 0 -4px;
+  }
+}
+/* No popover support: no panel (the script never shows the button). */
+@supports not selector(:popover-open) {
+  .reading {
+    display: none;
+  }
+}
+
+.site-foot {
+  border-top: 1px solid var(--line);
+  margin-top: 2rem;
+  padding-block: 2rem 3rem;
+  font: var(--w-text) 0.88rem/1.6 var(--font-ui);
+  color: var(--muted);
+}
+.site-foot a {
+  color: var(--muted);
+}
+.site-foot a:hover {
+  color: var(--accent);
+}
+.site-foot ul {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+}
+.site-foot p {
+  margin: 0;
+}
+
+/* ---------- sections ---------- */
+
+.block {
+  border-top: 1px solid var(--line);
+  padding-block: 2.5rem;
+}
+.block > h2 {
+  font: 600 1.4rem/1.3 var(--font-read);
+  margin: 0 0 1.25rem;
+}
+
+/* ---------- home ---------- */
+
+.intro {
+  padding-block: 2.5rem 3rem;
+}
+.intro .who {
+  display: grid;
+  gap: 0.75rem;
+  align-content: start;
+}
+.intro .who img {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+/* The page's h1, set as a lead paragraph so the stream starts on the first
+   screen. */
+.intro h1 {
+  font: 500 clamp(1.4rem, 2vw, 1.65rem)/1.35 var(--font-read);
+  margin: 0 0 0.9rem;
+  text-wrap: pretty;
+}
+.intro p {
+  margin: 0 0 1rem;
+  color: var(--muted);
+}
+.intro .follow {
+  margin-top: 1.25rem;
+}
+
+/* Home, left of the stream: the sections with their counts. */
+.home-side {
+  align-self: start;
+  position: sticky;
+  top: 1.5rem;
+}
+.sections ul {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+  font: 500 0.92rem/1.5 var(--font-ui);
+}
+.sections a {
+  color: var(--ink);
+  text-decoration: none;
+}
+.sections a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.sections span {
+  margin-left: 0.3rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  font: 500 0.95rem var(--font-ui);
+}
+
+/* list of posts, used on the home page and /posts/ */
+.entries {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+}
+/* The same hairline between entries as the stream. */
+.entries > li + li {
+  margin-top: 1.4rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--line);
+}
+.entries :is(h2, h3) {
+  margin: 0;
+  font: 500 1.45rem/1.3 var(--font-read);
+  text-wrap: balance;
+}
+.entries :is(h2, h3) a {
+  color: var(--head);
+  text-decoration: none;
+}
+.entries :is(h2, h3) a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}
+.entries p {
+  margin: 0.25rem 0 0;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.entries time {
+  font: 500 0.85rem var(--font-ui);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.more {
+  display: inline-block;
+  margin-top: 1.75rem;
+  font: 500 0.95rem var(--font-ui);
+}
+
+/* ---------- archive (/posts/) ---------- */
+
+.archive-head {
+  padding-block: 2rem 2.5rem;
+}
+.archive-head h1,
+.page-head h1 {
+  font: 500 clamp(2rem, 4.4vw, 2.8rem)/1.12 var(--font-read);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.archive-head p {
+  margin: 0.75rem 0 0;
+  color: var(--muted);
+}
+.year {
+  border-top: 1px solid var(--line);
+  padding-block: 1.75rem;
+}
+.year h2 {
+  margin: 0;
+  font: 500 2rem/1.1 var(--font-read);
+  font-variant-numeric: oldstyle-nums;
+  color: var(--muted);
+}
+
+/* ---------- post ---------- */
+
+.post-head {
+  padding-block: 2.5rem 2rem;
+}
+.post-meta {
+  display: grid;
+  gap: 0.2rem;
+  align-content: start;
+  font: 500 0.88rem/1.6 var(--font-ui);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.post-head h1 {
+  font: 500 clamp(2rem, 5vw, 3rem)/1.12 var(--font-read);
+  letter-spacing: -0.015em;
+  margin: 0;
+  text-wrap: balance;
+}
+.dek {
+  font-size: calc(1.3rem * var(--scale));
+  line-height: 1.45;
+  font-style: italic;
+  color: var(--muted);
+  margin: 1rem 0 0;
+  text-wrap: pretty;
+}
+
+.hero {
+  margin: 0 0 2.5rem;
+}
+.hero img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 21 / 9;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.post-body {
+  padding-bottom: 2rem;
+}
+.margin {
+  font: var(--w-text) 0.88rem/1.5 var(--font-ui);
+  color: var(--muted);
+}
+
+.toc {
+  position: sticky;
+  top: calc(env(safe-area-inset-top, 0px) + 1.5rem);
+  max-height: calc(100vh - 3rem);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.toc h2,
+.toc-sheet h2 {
+  font: 600 0.88rem/1.4 var(--font-ui);
+  color: var(--ink);
+  margin: 0 0 0.6rem;
+}
+.toc ul,
+.toc-sheet ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+/* A long heading wraps as a tight block, so the items stay apart. */
+.toc li,
+.toc-sheet li {
+  line-height: 1.3;
+  text-wrap: pretty;
+}
+.toc ul ul,
+.toc-sheet ul ul {
+  display: none;
+}
+.toc a,
+.toc-sheet a {
+  color: var(--muted);
+  text-decoration: none;
+}
+.toc a[aria-current],
+.toc-sheet a[aria-current] {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+}
+.toc a:hover,
+.toc-sheet a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+/* Narrow screens only (see the media query at the end): a "Contents" button
+   fixed at the bottom opens the list as a popover sheet. */
+.toc-button,
+.toc-sheet {
+  display: none;
+}
+
+/* the reading column */
+.prose {
+  overflow-wrap: break-word;
+}
+/* Keeps the measure under about 80 characters when a small sans size would
+   otherwise fit more into the column (it has no effect at the other sizes). */
+.post-body > .prose {
+  max-width: 34em;
+}
+.prose > :first-child {
+  margin-top: 0;
+}
+.prose p {
+  text-wrap: pretty;
+}
+.prose a {
+  hyphens: manual;
+}
+.prose a:visited {
+  text-decoration-color: var(--muted);
+}
+/* Dark mode: the underline is a quiet mix of accent and ground, a little
+   further from the text, and turns full accent on hover and focus. It never
+   goes away, so links don't rely on colour alone. */
+:root[data-theme="dark"] .prose a,
+:root[data-theme="dark"] .prose a:visited {
+  text-decoration-color: color-mix(in oklab, var(--accent) 45%, var(--bg));
+  text-underline-offset: 0.22em;
+}
+:root[data-theme="dark"] .prose a:is(:hover, :focus-visible) {
+  text-decoration-color: var(--accent);
+}
+.prose p,
+.prose ul,
+.prose ol,
+.prose blockquote,
+.prose figure,
+.prose .highlight,
+.prose table {
+  margin: 0 0 1.35rem;
+}
+.prose ul,
+.prose ol {
+  padding-left: 1.4rem;
+}
+.prose li {
+  margin-bottom: 0.35rem;
+}
+.prose li::marker {
+  color: var(--muted);
+}
+.prose h2 {
+  font: 600 calc(1.75rem * var(--scale)) / 1.3 var(--font-read);
+  margin: 3rem 0 1rem;
+  text-wrap: balance;
+  scroll-margin-top: 1.5rem;
+}
+.prose h3 {
+  font: 600 calc(1.25rem * var(--scale)) / 1.35 var(--font-read);
+  margin: 2.25rem 0 0.75rem;
+  text-wrap: balance;
+  scroll-margin-top: 1.5rem;
+}
+.prose h4 {
+  font: 600 1rem/1.4 var(--font-ui);
+  margin: 2rem 0 0.5rem;
+}
+.prose strong {
+  font-weight: 600;
+}
+.prose hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 2.5rem 0;
+}
+
+/* Heading anchors (_markup/render-heading.html): a "#" after h2 and h3,
+   shown on hover and keyboard focus. */
+.prose .anchor {
+  margin-left: 0.3em;
+  color: var(--muted);
+  font-weight: var(--w-text);
+  text-decoration: none;
+  opacity: 0;
+}
+.prose .anchor::before {
+  content: "#";
+}
+.prose :is(h2, h3):hover .anchor,
+.prose .anchor:focus-visible {
+  opacity: 1;
+}
+.prose .anchor:hover {
+  color: var(--accent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .prose .anchor {
+    transition: opacity 0.15s;
+  }
+}
+
+/* Callouts (> [!NOTE] … through _markup/render-blockquote.html): a quiet
+   ground with an icon and a title. Note and tip are plain, important adds an
+   accent hairline; warning and caution use --warn, caution with a hairline. */
+.prose .callout {
+  margin: 1.75rem 0;
+  padding: 0.85rem 1.15rem 1rem;
+  border-radius: 8px;
+  background: var(--mark);
+  font-size: 0.92em;
+  line-height: 1.6;
+}
+.prose .callout-important {
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+.prose .callout-caution {
+  box-shadow: inset 0 0 0 1px var(--warn);
+}
+.prose .callout p {
+  margin: 0 0 0.6rem;
+}
+.prose .callout > :last-child {
+  margin-bottom: 0;
+}
+.prose .callout-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+  font: 600 0.9rem/1.4 var(--font-ui);
+  color: var(--accent);
+}
+.prose :is(.callout-warning, .callout-caution) .callout-title {
+  color: var(--warn);
+}
+.callout-title svg {
+  flex: none;
+}
+.prose .callout-source {
+  margin-top: 0.6rem;
+  font: 500 0.85rem/1.5 var(--font-ui);
+  color: var(--muted);
+}
+/* Quotations read as text, not as an aside: ink, roman, the same 2px rule
+   as the quotes/ type. With a source they are a figure.quote (see below and
+   _markup/render-blockquote.html). */
+.prose blockquote {
+  padding-left: 1.25rem;
+  border-left: 2px solid var(--accent);
+  color: var(--ink);
+}
+.prose blockquote p {
+  margin-bottom: 0.75rem;
+}
+.prose blockquote > :last-child {
+  margin-bottom: 0;
+}
+.prose .quote blockquote {
+  margin: 0;
+  font: inherit;
+}
+
+/* Footnotes: endnotes under the text; on wide screens each note is also set
+   beside its reference (.sidenote, from _partials/sidenotes.html) and the
+   endnote folds away until something links to it. */
+.prose sup {
+  line-height: 0;
+}
+.footnote-ref {
+  padding: 0 0.15em;
+  font: 600 0.72em/0 var(--font-ui);
+  text-decoration: none;
+}
+.footnotes {
+  margin-top: 3rem;
+  font: var(--w-text) 0.95rem/1.6 var(--font-ui);
+}
+.footnotes hr {
+  width: 6rem;
+  margin: 0 0 1.25rem;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+.footnotes li p {
+  margin: 0 0 0.5rem;
+}
+.footnotes li:target {
+  background: var(--mark);
+  outline: 0.4rem solid var(--mark);
+}
+.footnote-backref {
+  text-decoration: none;
+}
+.sidenote {
+  display: none;
+}
+@media (min-width: 76rem) {
+  .prose .sidenote {
+    display: block;
+    float: right;
+    clear: right;
+    width: 12rem;
+    margin: 0.3rem -14rem 1rem 0;
+    font: var(--w-text) 0.88rem/1.5 var(--font-ui);
+    color: var(--muted);
+  }
+  .sn-num {
+    margin-right: 0.2em;
+    font-weight: 600;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .sn-p {
+    display: block;
+    margin-top: 0.5rem;
+  }
+  .sn-num + .sn-p {
+    display: inline;
+  }
+  .footnotes:not(:has(:target)) li.sn {
+    height: 0;
+    margin: 0;
+    overflow: hidden;
+    list-style: none;
+  }
+  .footnotes:not(:has(:target)):not(:has(li:not(.sn))) {
+    height: 0;
+    margin: 0;
+    overflow: hidden;
+  }
+}
+.prose figure {
+  margin-block: 2rem;
+}
+.prose figure:has(> svg) figcaption {
+  text-align: center;
+}
+.prose figure img {
+  display: block;
+  margin-inline: auto;
+  border-radius: 2px;
+}
+.prose figcaption {
+  margin-top: 0.6rem;
+  font: var(--w-text) 0.88rem/1.5 var(--font-ui);
+  color: var(--muted);
+}
+.prose iframe {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border: 0;
+  margin: 0 0 1.35rem;
+}
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font: var(--w-text) 0.95rem/1.5 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  display: block;
+  overflow-x: auto;
+}
+.prose th,
+.prose td {
+  text-align: left;
+  padding: 0.4rem 0.75rem 0.4rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+/* code */
+code,
+kbd,
+samp,
+pre {
+  font-family: var(--font-code);
+  font-variant-ligatures: none;
+}
+:not(pre) > code {
+  font-size: 0.78em;
+  background: var(--code-bg);
+  padding: 0.12em 0.32em;
+  border-radius: 3px;
+  overflow-wrap: anywhere;
+  hyphens: none;
+}
+.prose pre,
+.highlight pre {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  background: var(--code-bg);
+  color: var(--ink);
+  border-left: 2px solid var(--accent);
+  font-size: calc(0.9rem * var(--fs));
+  line-height: 1.65;
+  tab-size: 2;
+  hyphens: none;
+  scrollbar-color: var(--muted) var(--code-bg);
+  scrollbar-width: thin;
+}
+.prose > pre {
+  margin-bottom: 1.35rem;
+}
+/* Code inside a list item is usually something to copy (a URL, a command):
+   wrap it so none of it hides behind a scrollbar. */
+.prose li pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+pre code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+/* Fenced blocks come in a .code wrapper (_markup/render-codeblock.html) with
+   an optional file name and a copy button (_partials/code-copy.html). The
+   button is positioned over the block, so it never moves the layout. */
+.prose .code {
+  position: relative;
+  margin: 0 0 1.35rem;
+}
+.prose .code .highlight,
+.prose .code > pre {
+  margin: 0;
+}
+.code-file {
+  margin: 0;
+  padding: 0.45rem 6rem 0.45rem 1.25rem;
+  border-left: 2px solid var(--accent);
+  border-bottom: 1px solid var(--line);
+  background: var(--code-bg);
+  font: var(--w-text) calc(0.8rem * var(--fs)) / 1.4 var(--font-code);
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.prose .code-file {
+  margin: 0;
+}
+.copy {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.4rem;
+  min-width: 4.6rem;
+  padding: 0.2rem 0.55rem;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  background: var(--code-bg);
+  color: var(--muted);
+  font: 500 0.78rem/1.4 var(--font-ui);
+  cursor: pointer;
+}
+/* A 44px tap area without a bigger button. */
+.copy::after {
+  content: "";
+  position: absolute;
+  inset: -0.6rem -0.3rem;
+}
+.copy:hover {
+  border-color: var(--muted);
+  color: var(--ink);
+}
+/* Over the code itself, the button shows on hover and focus only (on touch
+   screens it is always there); in a file-name bar it always shows. */
+@media (hover: hover) {
+  .code:not(:has(.code-file)) .copy {
+    opacity: 0;
+  }
+  .code:hover .copy,
+  .code .copy:focus-visible {
+    opacity: 1;
+  }
+}
+
+/* Chroma, coloured from the tokens */
+.chroma .c,
+.chroma .ch,
+.chroma .cm,
+.chroma .c1,
+.chroma .cs,
+.chroma .cp,
+.chroma .cpf {
+  color: var(--muted);
+  font-style: italic;
+}
+.chroma .k,
+.chroma .kc,
+.chroma .kd,
+.chroma .kn,
+.chroma .kp,
+.chroma .kr,
+.chroma .kt,
+.chroma .ow,
+.chroma .nt {
+  color: var(--kw);
+}
+.chroma .s,
+.chroma .sa,
+.chroma .sb,
+.chroma .sc,
+.chroma .dl,
+.chroma .sd,
+.chroma .s2,
+.chroma .se,
+.chroma .sh,
+.chroma .si,
+.chroma .sx,
+.chroma .sr,
+.chroma .s1,
+.chroma .ss,
+.chroma .m,
+.chroma .mb,
+.chroma .mf,
+.chroma .mh,
+.chroma .mi,
+.chroma .il,
+.chroma .mo {
+  color: var(--str);
+}
+.chroma .nb,
+.chroma .bp,
+.chroma .nf,
+.chroma .fm,
+.chroma .na,
+.chroma .nc {
+  color: var(--accent);
+}
+.chroma .o,
+.chroma .p {
+  color: var(--muted);
+}
+.chroma .gp {
+  color: var(--muted);
+  user-select: none;
+}
+.chroma .go {
+  color: var(--muted);
+}
+.chroma .gd {
+  color: var(--str);
+}
+.chroma .gi {
+  color: var(--kw);
+}
+.chroma .gh,
+.chroma .gu {
+  color: var(--ink);
+  font-weight: 600;
+}
+.chroma .err {
+  color: inherit;
+}
+.chroma .hl {
+  display: block;
+  margin-inline: -0.6rem;
+  padding-inline: 0.6rem;
+  background: var(--mark);
+}
+
+/* ---------- stream: every type as a preview (home, sections, tags) ---------- */
+
+/* Each entry starts on a hairline with the same rhythm: meta line, title,
+   about 50 words of text in --muted (less glare than full ink), tags. */
+.stream {
+  display: grid;
+}
+.item {
+  min-width: 0;
+  padding-block: 2rem;
+  border-top: 1px solid var(--line);
+}
+.item:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+.item:last-child {
+  padding-bottom: 0;
+}
+.item-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15rem 0.75rem;
+  margin: 0 0 0.45rem;
+  font: 500 0.85rem/1.6 var(--font-ui);
+  color: var(--muted);
+}
+.item-kind,
+.item-topic {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.item-kind {
+  color: var(--accent);
+  text-decoration: none;
+}
+a.item-kind:hover {
+  text-decoration: underline;
+}
+.item-topic {
+  margin-left: -0.35rem;
+}
+.item-topic::before {
+  content: "· ";
+}
+.item-meta .lang-tag {
+  margin-left: 0;
+  align-self: center;
+}
+.item-meta .permalink {
+  color: var(--muted);
+  text-decoration: none;
+  font-variant-numeric: tabular-nums;
+}
+.item-meta .permalink:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.item h3 {
+  margin: 0;
+  font: 500 1.45rem/1.3 var(--font-read);
+  text-wrap: balance;
+}
+.item h3 a {
+  color: var(--head);
+  text-decoration: none;
+}
+.item h3 a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}
+/* Posts are the anchors; the small types are compact. */
+.item-compact {
+  padding-block: 1.25rem;
+}
+.item-compact h3 {
+  font-size: 1.2rem;
+  line-height: 1.35;
+}
+.item-lead h3 {
+  font-size: 1.75rem;
+  line-height: 1.22;
+  letter-spacing: -0.01em;
+}
+.item-lead .item-text {
+  margin-top: 0.55rem;
+  font-size: 1.1rem;
+}
+.has-thumb {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 12rem;
+  gap: 1.75rem;
+  align-items: start;
+}
+.item-thumb {
+  display: block;
+  margin-top: 0.3rem;
+}
+.item-thumb img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 4px;
+  outline: 1px solid var(--line);
+  outline-offset: -1px;
+  background: var(--mark);
+}
+.item h3 .host {
+  white-space: nowrap;
+}
+.nowrap {
+  white-space: nowrap;
+}
+.item h3 .by {
+  font: 500 0.9rem var(--font-ui);
+  color: var(--muted);
+}
+.item-text {
+  max-width: 34em;
+  margin: 0.4rem 0 0;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: var(--muted);
+  text-wrap: pretty;
+}
+.read-more {
+  font: 500 0.88rem var(--font-ui);
+  white-space: nowrap;
+}
+.item .prose {
+  max-width: 34em;
+  margin-top: 0.4rem;
+  font-size: 1.05rem;
+}
+.item .prose > :last-child,
+.item .quote {
+  margin-bottom: 0;
+}
+.item .quote + .item-text {
+  margin-top: 0.6rem;
+}
+.item .tags {
+  margin-top: 0.7rem;
+  font-size: 0.8rem;
+}
+
+/* quotations, in the stream and on their own page */
+.quote {
+  margin: 0 0 1.35rem;
+}
+.quote blockquote {
+  margin: 0;
+  padding-left: 1.25rem;
+  border-left: 2px solid var(--accent);
+  font: var(--w-text) 1.2rem/1.55 var(--font-read);
+  color: var(--ink);
+}
+.quote blockquote p {
+  margin: 0 0 0.75rem;
+}
+.quote blockquote > :last-child {
+  margin-bottom: 0;
+}
+.quote figcaption {
+  margin-top: 0.6rem;
+  padding-left: 1.25rem;
+  font: 500 0.92rem/1.5 var(--font-ui);
+  color: var(--muted);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: 500 0.85rem/1.6 var(--font-ui);
+}
+.tags a {
+  color: var(--muted);
+  text-decoration: none;
+}
+.tags a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* ways to follow: home intro and the end of every entry */
+.follow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  font: 500 0.95rem var(--font-ui);
+}
+.follow .alt {
+  color: var(--muted);
+}
+.entry-foot {
+  display: grid;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+.entry-foot .follow {
+  margin: 0;
+}
+.entry-foot .follow::before {
+  content: "Follow:";
+  color: var(--muted);
+}
+.sign + .entry-foot {
+  margin-top: 1.25rem;
+  padding-top: 0;
+  border-top: 0;
+}
+
+/* list pages: feed links, topic and tag indexes, pagination */
+.feeds,
+.archive-head .feeds {
+  margin: 0.75rem 0 0;
+  font: 500 0.9rem/1.6 var(--font-ui);
+  color: var(--muted);
+}
+.topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.25rem;
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  font: 500 0.95rem/1.6 var(--font-ui);
+}
+.topics span {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.pager-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1.5rem;
+  margin-top: 2.5rem;
+  font: 500 0.95rem var(--font-ui);
+  color: var(--muted);
+}
+.empty {
+  color: var(--muted);
+}
+.post-meta .kind {
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.link-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.5rem;
+  font: 500 0.95rem/1.6 var(--font-ui);
+  font-style: normal;
+}
+.link-meta span + span::before {
+  content: "· ";
+}
+.prose .tags,
+.prose .follow {
+  margin: 0;
+  padding: 0;
+}
+.til-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+.til-list a {
+  font: 500 1.15rem/1.35 var(--font-read);
+  color: var(--ink);
+  text-decoration: none;
+}
+.til-list a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.til-list time {
+  margin-left: 0.4rem;
+  font: 500 0.85rem var(--font-ui);
+  color: var(--muted);
+  white-space: nowrap;
+}
+.post-head h1 a {
+  color: var(--ink);
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px;
+}
+
+/* end of post */
+.sign {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+  font: var(--w-text) 0.95rem/1.5 var(--font-ui);
+  color: var(--muted);
+}
+.sign img {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
+}
+.sign p {
+  margin: 0;
+}
+
+.pager {
+  border-top: 1px solid var(--line);
+  padding-block: 2rem 1rem;
+}
+.pager ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem 2rem;
+}
+.pager li:last-child:not(:first-child) {
+  text-align: right;
+}
+.pager span {
+  display: block;
+  font: 500 0.85rem/1.6 var(--font-ui);
+  color: var(--muted);
+}
+.pager a {
+  font: 500 1.1rem/1.35 var(--font-read);
+  color: var(--ink);
+  text-decoration: none;
+}
+.pager a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* plain pages and 404 */
+.page-head {
+  padding-block: 2.5rem 2rem;
+}
+.lost {
+  padding-block: 3rem 5rem;
+}
+.lost h1 {
+  font: 500 clamp(2rem, 5vw, 3rem)/1.12 var(--font-read);
+  margin: 0 0 1rem;
+}
+.lost p {
+  margin: 0 0 1rem;
+}
+
+/* ---------- CV ---------- */
+
+.cv-head {
+  padding-block: 2rem 2.5rem;
+}
+.cv-head h1 {
+  font: 500 clamp(2rem, 4.4vw, 2.8rem)/1.1 var(--font-read);
+  letter-spacing: -0.01em;
+  margin: 0 0 0.4rem;
+}
+.cv-head .role {
+  font: 500 1.05rem/1.4 var(--font-ui);
+  color: var(--muted);
+  margin: 0 0 1.25rem;
+}
+.cv-head p {
+  margin: 0 0 1rem;
+}
+.cv-head .clients {
+  font: var(--w-text) 1rem/1.55 var(--font-ui);
+  color: var(--muted);
+}
+.contact {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+  align-content: start;
+  font: var(--w-text) 0.92rem/1.4 var(--font-ui);
+  color: var(--muted);
+}
+.contact a {
+  color: var(--ink);
+}
+
+.cv-block > h2 {
+  grid-column: 1 / -1;
+}
+
+.tl {
+  grid-column: 1 / -1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.tl > li {
+  display: grid;
+  grid-template-columns: var(--margin-col) minmax(0, var(--text-col));
+  gap: 0 var(--gutter);
+  position: relative;
+  padding-bottom: 2rem;
+}
+.tl > li::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--margin-col) + var(--gutter) / 2);
+  top: 0.55rem;
+  bottom: 0;
+  width: 1px;
+  background: var(--line);
+}
+.tl > li:last-child::before {
+  bottom: 1.5rem;
+}
+.tl > li::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--margin-col) + var(--gutter) / 2 - 4px);
+  top: 0.5rem;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--accent);
+}
+.tl > li.current::after {
+  background: var(--accent);
+}
+.tl .when {
+  font: 500 0.92rem/1.6 var(--font-ui);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.tl h3 {
+  margin: 0;
+  font: 600 1.2rem/1.35 var(--font-read);
+}
+.tl .org {
+  font: 500 0.95rem/1.5 var(--font-ui);
+  color: var(--muted);
+  margin: 0.1rem 0 0.5rem;
+}
+.tl .org strong,
+.tl .clientline strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.tl p {
+  margin: 0 0 0.5rem;
+}
+.tl .clientline {
+  font: var(--w-text) 1rem/1.5 var(--font-ui);
+  color: var(--muted);
+}
+.tl ul.notes {
+  margin: 0.25rem 0 0.6rem;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.2rem;
+}
+.tl .tl-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  font: var(--w-text) 0.92rem/1.5 var(--font-ui);
+}
+
+.selected {
+  grid-column: 1 / -1;
+  list-style: none;
+  margin: 0 0 1rem;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem 2rem;
+}
+.selected li {
+  display: grid;
+  gap: 0.2rem;
+  align-content: start;
+}
+.selected a {
+  font: 600 1.05rem/1.35 var(--font-read);
+}
+.selected span {
+  font: var(--w-text) 0.95rem/1.5 var(--font-ui);
+  color: var(--muted);
+}
+
+.facts {
+  grid-column: 1 / -1;
+  margin: 0 0 1rem;
+  display: grid;
+  grid-template-columns: var(--margin-col) minmax(0, var(--text-col));
+  gap: 0.6rem var(--gutter);
+}
+.facts dt {
+  font: 500 0.92rem/1.75 var(--font-ui);
+  color: var(--muted);
+  text-align: right;
+}
+.facts dd {
+  margin: 0;
+}
+
+/* ---------- perspectives: one moment from two sides (_shortcodes/) ---------- */
+
+.prose .perspectives {
+  margin: 2.5rem 0;
+}
+.perspectives-title {
+  margin: 0 0 1rem;
+  font: 600 1.15rem/1.35 var(--font-read);
+  text-wrap: balance;
+}
+.perspectives-sides {
+  display: grid;
+  gap: 1.75rem;
+}
+.side {
+  display: grid;
+  gap: 0.6rem;
+  align-content: start;
+}
+.prose .side-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font: 600 0.8rem/1.4 var(--font-ui);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+/* The marker tells the sides apart: accent for the first, ink for the second. */
+.side-label::before {
+  content: "";
+  flex: none;
+  width: 1rem;
+  height: 2px;
+  background: var(--accent);
+}
+.side:nth-child(2) .side-label::before {
+  background: var(--ink);
+}
+.side-body > :last-child {
+  margin-bottom: 0;
+}
+.prose .side figure {
+  margin: 0 0 0.9rem;
+}
+.prose .side a.zoom {
+  width: auto;
+}
+.prose .side figure img {
+  width: 100%;
+}
+.prose .side-body p {
+  font-size: calc(1.05rem * var(--scale));
+  line-height: 1.6;
+}
+
+/* Wide: side by side, labels on one row (subgrid) so the images' tops align. */
+@media (min-width: 48rem) {
+  .perspectives-sides {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto 1fr;
+    gap: 0.6rem 1.75rem;
+  }
+  .side {
+    grid-row: span 2;
+    grid-template-rows: subgrid;
+  }
+}
+/* Wider still: break out of the measure into the right margin (up to 60rem,
+   keeping 1rem from the viewport edge), so 16:9 screenshots stay readable. */
+@media (min-width: 64rem) {
+  .prose .perspectives {
+    clear: both;
+    width: min(60rem, 50vw + 13rem);
+  }
+}
+
+/* ---------- image viewer (assets/js/zoom.js) ---------- */
+
+/* On the page: the image links to its full-size file. A lens appears on hover
+   and keyboard focus; nothing changes size, so there is no layout shift. */
+a.zoom {
+  position: relative;
+  display: block;
+  width: fit-content;
+  margin-inline: auto;
+  cursor: zoom-in;
+}
+.hero a.zoom {
+  width: auto;
+}
+a.zoom::before,
+a.zoom::after {
+  content: "";
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+a.zoom::before {
+  background: var(--bg);
+  border: 1px solid var(--line);
+}
+a.zoom::after {
+  background: var(--ink);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M10.5 4a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13zM15.3 15.3 20 20M10.5 7.5v6M7.5 10.5h6' fill='none' stroke='currentColor' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E")
+    center / 1.1rem no-repeat;
+}
+a.zoom:focus-visible::before,
+a.zoom:focus-visible::after {
+  opacity: 1;
+}
+@media (hover: hover) {
+  a.zoom:hover::before,
+  a.zoom:hover::after {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  a.zoom::before,
+  a.zoom::after {
+    transition: opacity 0.15s;
+  }
+}
+
+/* The viewer: a modal <dialog> covering the viewport. */
+.zv {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  overflow: hidden;
+  overscroll-behavior: contain;
+  font: var(--w-text) 0.88rem/1.5 var(--font-ui);
+}
+.zv::backdrop {
+  background: var(--bg);
+}
+.zv-stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.zv-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: none;
+  transform-origin: 0 0;
+  cursor: zoom-in;
+  box-shadow: 0 0 0 1px var(--line);
+}
+.zv.is-zoomed .zv-img {
+  cursor: grab;
+}
+.zv.is-zoomed .zv-img:active {
+  cursor: grabbing;
+}
+.zv-img.zv-anim {
+  transition: transform 0.2s ease-out;
+}
+.zv-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--ink);
+  cursor: pointer;
+}
+.zv-btn:hover {
+  background: var(--mark);
+}
+.zv-btn[hidden] {
+  display: none;
+}
+.zv-tools {
+  position: absolute;
+  top: max(0.75rem, env(safe-area-inset-top, 0px));
+  right: max(0.75rem, env(safe-area-inset-right, 0px));
+  display: flex;
+  gap: 0.5rem;
+}
+.zv-prev,
+.zv-next {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+}
+.zv-prev {
+  left: max(0.75rem, env(safe-area-inset-left, 0px));
+}
+.zv-next {
+  right: max(0.75rem, env(safe-area-inset-right, 0px));
+}
+.zv-count {
+  position: absolute;
+  top: max(0.75rem, env(safe-area-inset-top, 0px));
+  left: max(0.75rem, env(safe-area-inset-left, 0px));
+  margin: 0;
+  padding: 0.6rem 0.25rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.zv-cap {
+  position: absolute;
+  left: 50%;
+  bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+  translate: -50% 0;
+  width: max-content;
+  max-width: min(38rem, calc(100% - 1.5rem));
+  margin: 0;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--muted);
+  text-align: center;
+}
+.zv-cap[hidden] {
+  display: none;
+}
+/* Zoomed in, the controls get out of the way of the image a little. */
+.zv.is-zoomed .zv-cap,
+.zv.is-zoomed .zv-count {
+  opacity: 0.85;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .zv[open] {
+    animation: zv-in 0.15s ease-out;
+  }
+  .zv[open]::backdrop {
+    animation: zv-in 0.15s ease-out;
+  }
+}
+@keyframes zv-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ---------- language and front-matter notices ---------- */
+
+/* "ES" beside an entry in another language: in lists and in its header. */
+.lang-tag {
+  display: inline-block;
+  justify-self: start;
+  margin-left: 0.4rem;
+  padding: 0 0.3rem;
+  border: 1px solid var(--muted);
+  border-radius: 3px;
+  font: 600 0.7rem/1.45 var(--font-ui);
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  vertical-align: 0.12em;
+  white-space: nowrap;
+}
+.post-meta .lang-tag {
+  margin-left: 0;
+}
+/* Link to the entry in another language, worded in that language. */
+.post-meta .translation {
+  justify-self: start;
+  margin-top: 0.35rem;
+  color: var(--accent);
+}
+/* "This replaces my 2022 post, …" */
+.prose .notice-line {
+  font: var(--w-text) 0.95rem/1.55 var(--font-ui);
+  color: var(--muted);
+}
+
+/* ---------- Mastodon replies (_partials/replies.html, assets/js/replies.js) ---------- */
+
+.replies {
+  margin-top: 2.5rem;
+  hyphens: manual;
+  font: var(--w-text) 0.95rem/1.55 var(--font-ui);
+}
+.prose .replies h2 {
+  margin: 0 0 0.6rem;
+  font: 600 1.15rem/1.3 var(--font-read);
+}
+.replies-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.25rem;
+  margin: 0;
+}
+.replies-reply {
+  font-weight: 500;
+}
+.replies-load {
+  min-height: 2.5rem;
+  padding: 0 0.9rem;
+  border: 0;
+  border-radius: 6px;
+  background: var(--mark);
+  color: var(--ink);
+  font: 500 0.92rem var(--font-ui);
+  cursor: pointer;
+}
+.replies-load:hover {
+  background: var(--ink);
+  color: var(--bg);
+}
+.replies-load:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+.replies-load[hidden] {
+  display: none;
+}
+.prose .replies-note,
+.prose .replies-status {
+  margin: 0.5rem 0 0;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+.replies-status:empty {
+  display: none;
+}
+.prose .reply-list {
+  list-style: none;
+  margin: 1.25rem 0 0;
+  padding: 0;
+}
+.prose .reply {
+  margin: 0;
+  padding: 1rem 0;
+  border-top: 1px solid var(--line);
+}
+.reply[data-depth="1"] {
+  margin-left: 1.25rem;
+}
+.reply[data-depth="2"] {
+  margin-left: 2.5rem;
+}
+.reply[data-depth="3"] {
+  margin-left: 3.75rem;
+}
+.prose .reply-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+}
+.reply-avatar {
+  display: block;
+  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--mark);
+}
+.reply-author {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.4rem;
+  min-width: 0;
+  color: var(--ink);
+  text-decoration: none;
+}
+.reply-author span {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.reply-author:hover strong {
+  color: var(--accent);
+}
+.reply-date {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+.reply-body {
+  margin: 0.4rem 0 0 3.25rem;
+  overflow-wrap: anywhere;
+}
+.prose .reply-body p {
+  margin: 0 0 0.5rem;
+}
+.reply-body summary {
+  cursor: pointer;
+  color: var(--muted);
+}
+
+/* ---------- search (/search/ and the 404 page) ---------- */
+
+.search-link svg,
+.search-form svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+.search-form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 30rem;
+  margin-top: 1.25rem;
+  padding: 0.3rem 0.3rem 0.3rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--muted);
+}
+.search-form:focus-within {
+  border-color: var(--accent);
+  outline: 1px solid var(--accent);
+}
+.search-form svg {
+  flex: none;
+}
+.search-form input {
+  flex: 1;
+  min-width: 0;
+  height: 2.5rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: var(--w-text) 1.05rem var(--font-ui);
+  caret-color: var(--accent);
+}
+.search-form input:focus {
+  outline: none;
+}
+.search-form input::-webkit-search-cancel-button {
+  cursor: pointer;
+}
+.search-form button {
+  flex: none;
+  height: 2.5rem;
+  padding: 0 0.9rem;
+  border: 0;
+  border-radius: 6px;
+  background: var(--mark);
+  color: var(--ink);
+  font: 500 0.92rem var(--font-ui);
+  cursor: pointer;
+}
+.search-form button:hover {
+  background: var(--ink);
+  color: var(--bg);
+}
+.lost .search-form {
+  margin-block: 1.5rem;
+}
+/* One line, so the results below never move as it fills in. */
+.search-status {
+  min-height: 1.6em;
+  margin: 0.9rem 0 0;
+  font: 500 0.9rem/1.6 var(--font-ui);
+  color: var(--muted);
+}
+.results .result-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 0.5rem;
+  margin: 0;
+  font: 500 0.85rem/1.6 var(--font-ui);
+  font-variant-numeric: tabular-nums;
+}
+.results .lang-tag {
+  margin-left: 0;
+}
+.results mark {
+  background: var(--mark);
+  color: var(--ink);
+  border-radius: 2px;
+}
+
+/* ---------- a feed opened in a browser (assets/feed/feed.xsl) ---------- */
+
+.feed-page .archive-head p:not(.label) {
+  max-width: 34rem;
+}
+.feed-how {
+  margin-bottom: 2.5rem;
+  padding: 1.25rem 1.25rem 1rem;
+  border-radius: 10px;
+  background: var(--mark);
+  font: var(--w-text) 1rem/1.6 var(--font-ui);
+}
+.feed-how h2,
+.feed-latest {
+  margin: 0 0 0.75rem;
+  font: 600 1.25rem/1.3 var(--font-read);
+}
+.feed-how ol {
+  margin: 0;
+  padding-left: 1.25rem;
+}
+.feed-how li + li {
+  margin-top: 0.75rem;
+}
+.feed-url {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+}
+.feed-url input {
+  flex: 1;
+  min-width: 0;
+  height: 2.5rem;
+  padding: 0 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--ink);
+  font: var(--w-text) 0.9rem var(--font-code);
+}
+.feed-copy {
+  flex: none;
+  height: 2.5rem;
+  padding: 0 0.9rem;
+  border: 0;
+  border-radius: 6px;
+  background: var(--ink);
+  color: var(--bg);
+  font: 500 0.92rem var(--font-ui);
+  cursor: pointer;
+}
+.feed-copy[hidden] {
+  display: none;
+}
+.feed-other {
+  margin: 1rem 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+/* ---------- series (_partials/series-nav.html, series/term.html) ---------- */
+
+/* "Part 2 of 4 in <series>" above the text; the name jumps to the list. */
+.prose .series-line {
+  margin: 0 0 1.75rem;
+  font: 500 0.92rem/1.5 var(--font-ui);
+  color: var(--muted);
+}
+/* The list of parts at the end, the current one marked. */
+.series {
+  margin-top: 3rem;
+  padding: 1.25rem 1.25rem 1rem;
+  border-radius: 10px;
+  background: var(--mark);
+  font: var(--w-text) 1rem/1.5 var(--font-ui);
+  scroll-margin-top: 1.5rem;
+}
+.prose .series h2 {
+  margin: 0 0 0.75rem;
+  font: 600 1.15rem/1.3 var(--font-read);
+}
+.prose .series ol {
+  margin: 0;
+  padding-left: 1.6rem;
+}
+.prose .series li {
+  margin: 0.35rem 0 0;
+  padding-left: 0.2rem;
+}
+.series li::marker {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.series li[aria-current] {
+  font-weight: 600;
+  color: var(--ink);
+}
+.series li[aria-current]::marker {
+  color: var(--accent);
+}
+.series-parts .part-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 0.5rem;
+  margin: 0;
+  font: 500 0.85rem/1.6 var(--font-ui);
+  color: var(--muted);
+}
+.series-parts .part-meta span {
+  color: var(--accent);
+  font-weight: 600;
+}
+.series-parts .lang-tag {
+  margin-left: 0;
+}
+
+/* ---------- keyboard shortcuts (assets/js/keys.js, _partials/keys-help.html) ---------- */
+
+kbd {
+  display: inline-block;
+  min-width: 1.6em;
+  padding: 0.05em 0.4em;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  background: var(--mark);
+  color: var(--ink);
+  font: 500 0.82em/1.4 var(--font-code);
+  text-align: center;
+}
+.keys-dialog {
+  width: min(26rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  padding: 1.25rem 1.25rem 1rem;
+  border: 0;
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--ink);
+  box-shadow: 0 24px 60px -16px color-mix(in srgb, var(--ink) 40%, transparent);
+  font: var(--w-text) 0.95rem/1.5 var(--font-ui);
+  overscroll-behavior: contain;
+}
+.keys-dialog::backdrop {
+  background: color-mix(in srgb, var(--ink) 35%, transparent);
+}
+.keys-dialog h2 {
+  margin: 0 0 1rem;
+  font: 600 1.2rem/1.3 var(--font-read);
+}
+.keys-dialog table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.keys-dialog th,
+.keys-dialog td {
+  padding: 0.35rem 0;
+  border-top: 1px solid var(--line);
+  vertical-align: baseline;
+  text-align: left;
+}
+.keys-dialog th {
+  width: 5.5rem;
+  padding-right: 1rem;
+  font-weight: var(--w-text);
+  white-space: nowrap;
+}
+.keys-dialog p {
+  margin: 1rem 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+.keys-close-form {
+  float: right;
+  margin: -0.5rem -0.5rem 0 0;
+}
+.keys-close {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+}
+.keys-close:hover {
+  background: var(--mark);
+  color: var(--ink);
+}
+.keys-close svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .keys-dialog[open] {
+    animation: pop-in 0.14s ease-out;
+  }
+}
+/* "Keyboard shortcuts ?" in the footer: fine pointers only (the script), and
+   not once they are turned off. */
+.keys-hint {
+  margin-top: 0.75rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+}
+.keys-hint:hover {
+  color: var(--accent);
+}
+.keys-hint[hidden],
+[data-keys="off"] .keys-hint {
+  display: none;
+}
+
+/* ---------- narrow screens ---------- */
+
+@media (max-width: 760px) {
+  :root {
+    --base: 1.125rem;
+  }
+  .prose {
+    hyphens: auto;
+  }
+  .prose h2 {
+    font-size: calc(1.55rem * var(--scale));
+  }
+  .dek {
+    font-size: calc(1.15rem * var(--scale));
+  }
+  .row,
+  .tl > li,
+  .facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .site-head .row {
+    gap: 0.6rem;
+  }
+  .site-bar {
+    display: contents;
+  }
+  .site-nav {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .site-tools {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: end;
+    align-self: center;
+    margin-right: -0.5rem;
+    padding-left: 0;
+    border-left: 0;
+  }
+  .aa,
+  .search-link {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+  .palettes label,
+  .seg label {
+    min-height: 2.75rem;
+  }
+  .label {
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+  }
+  .lost .label,
+  .feed-page .label {
+    display: none;
+  }
+  /* The portrait beside the lead sentence, the rest below both. */
+  .intro {
+    grid-template-columns: 3.25rem minmax(0, 1fr);
+    column-gap: 1rem;
+    align-items: start;
+    padding-block: 0.75rem 2rem;
+  }
+  .intro .who img {
+    width: 3.25rem;
+    height: 3.25rem;
+  }
+  .intro-text {
+    display: contents;
+  }
+  .intro h1 {
+    grid-column: 2;
+    font-size: 1.25rem;
+  }
+  .intro-text > :not(h1) {
+    grid-column: 1 / -1;
+  }
+  /* The sections fold into one line under "Latest". */
+  .home-side {
+    position: static;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 1rem;
+    margin-bottom: 1.25rem;
+  }
+  .home-side .label {
+    margin: 0;
+  }
+  .sections ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.9rem;
+    margin: 0;
+  }
+  .has-thumb {
+    grid-template-columns: minmax(0, 1fr) 6rem;
+    gap: 1rem;
+  }
+  .item-lead h3 {
+    font-size: 1.45rem;
+  }
+  .year h2 {
+    margin-bottom: 1rem;
+  }
+  .post-head {
+    padding-block: 1rem 1.5rem;
+  }
+  /* One wrapping line: Spanish dates are long. */
+  .post-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.1rem 1rem;
+    margin-bottom: 0.75rem;
+  }
+  .post-meta > * {
+    white-space: nowrap;
+  }
+  .post-meta .translation {
+    margin-top: 0;
+  }
+  .hero {
+    margin-bottom: 1.75rem;
+  }
+  .hero img {
+    aspect-ratio: 16 / 9;
+  }
+  .margin .toc {
+    display: none;
+  }
+  .toc-button {
+    position: fixed;
+    z-index: 5;
+    right: var(--side-r);
+    bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+    display: block;
+    min-height: 2.75rem;
+    padding: 0 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--bg);
+    color: var(--ink);
+    box-shadow: 0 6px 18px -6px color-mix(in srgb, var(--ink) 35%, transparent);
+    font: 500 0.92rem/1 var(--font-ui);
+    cursor: pointer;
+  }
+  .toc-sheet:popover-open {
+    position: fixed;
+    inset: auto var(--side-r) max(1rem, env(safe-area-inset-bottom, 0px)) var(--side);
+    display: block;
+    width: auto;
+    max-height: min(70dvh, 34rem);
+    overflow-y: auto;
+    margin: 0;
+    padding: 1rem 1.1rem 0.6rem;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--ink);
+    box-shadow: 0 16px 40px -12px color-mix(in srgb, var(--ink) 35%, transparent);
+    font: var(--w-text) 1rem/1.4 var(--font-ui);
+    overscroll-behavior: contain;
+  }
+  .prose .toc-sheet h2 {
+    margin: 0 0 0.25rem;
+    font: 600 0.88rem/1.4 var(--font-ui);
+  }
+  .prose .toc-sheet ul {
+    gap: 0;
+    margin: 0;
+    padding: 0;
+  }
+  .prose .toc-sheet li {
+    margin: 0;
+  }
+  .toc-sheet a {
+    display: block;
+    padding-block: 0.65rem;
+  }
+  /* No popover support: the list shows inline at the top, as before. */
+  @supports not selector(:popover-open) {
+    .toc-sheet {
+      display: block;
+      margin: 0 0 2rem;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      background: var(--mark);
+      font: var(--w-text) 0.95rem/1.5 var(--font-ui);
+    }
+  }
+  .prose pre,
+  .highlight pre {
+    margin-inline: calc(-1 * var(--side)) calc(-1 * var(--side-r));
+    padding-inline: var(--side) var(--side-r);
+    border-left: 0;
+    border-top: 2px solid var(--accent);
+  }
+  /* A wrapped block bleeds as a whole: file name, code and button. */
+  .prose .code {
+    margin-inline: calc(-1 * var(--side)) calc(-1 * var(--side-r));
+  }
+  .prose .code .copy {
+    right: 0.75rem;
+  }
+  .prose .code pre {
+    margin-inline: 0;
+  }
+  .code-file {
+    padding-inline: var(--side) 6rem;
+    border-left: 0;
+    border-top: 2px solid var(--accent);
+  }
+  .code-file + .highlight pre {
+    border-top: 0;
+  }
+  /* inside a list the block keeps the item's indent instead of bleeding */
+  .prose li .code {
+    margin-inline: 0;
+  }
+  .prose li pre,
+  .prose li .highlight pre {
+    margin-inline: 0;
+    padding-inline: 1rem;
+    border-top: 0;
+    border-left: 2px solid var(--accent);
+  }
+  .prose li .code-file {
+    padding-left: 1rem;
+    border-top: 0;
+    border-left: 2px solid var(--accent);
+  }
+  .pager ul {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pager li:last-child:not(:first-child) {
+    text-align: left;
+  }
+  .cv-head {
+    padding-block: 0.5rem 2rem;
+  }
+  .contact {
+    margin-bottom: 1.25rem;
+  }
+  .tl > li {
+    padding-left: 1.5rem;
+    padding-bottom: 1.75rem;
+  }
+  .tl > li::before {
+    left: 0.25rem;
+  }
+  .tl > li::after {
+    left: calc(0.25rem - 4px);
+  }
+  .tl .when,
+  .facts dt {
+    text-align: left;
+  }
+  .facts dd {
+    margin-bottom: 0.6rem;
+  }
+  .selected {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---------- print (the CV printed to PDF) ---------- */
+
+@media print {
+  @page {
+    margin: 16mm 14mm;
+  }
+  body {
+    font-size: 10.5pt;
+  }
+  .site-head nav,
+  .site-tools,
+  .aa,
+  .reading,
+  .toc-button,
+  .toc-sheet,
+  .copy,
+  .prose .anchor,
+  .follow,
+  .pager-list,
+  .site-foot,
+  .skip,
+  .toc,
+  .pager {
+    display: none;
+  }
+  .todo {
+    outline: 0;
+    background: none;
+  }
+  .tl > li {
+    break-inside: avoid;
+    padding-bottom: 0.9rem;
+  }
+  a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+}
+
+/* ---------- about ---------- */
+
+.about-who img {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+}

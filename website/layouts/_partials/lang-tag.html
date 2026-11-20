@@ -1,0 +1,6 @@
+{{- /* "ES" next to an entry that isn't in the site language, in lists and
+       the entry header. Context: page. */ -}}
+{{- $l := partial "lang.html" . }}
+{{- if ne $l.lang site.Language.Lang -}}
+<span class="lang-tag" lang="{{ site.Language.Lang }}"><span aria-hidden="true">{{ $l.t.tag }}</span><span class="visually-hidden">{{ $l.t.inLanguage }}</span></span>
+{{- end -}}

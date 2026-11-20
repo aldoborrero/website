@@ -1,0 +1,24 @@
+{{- /* Sidenotes from Markdown footnotes. Context: rendered content (string).
+       Each footnote is copied next to its first reference as a
+       <span class="sidenote" aria-hidden="true">, which the CSS floats into
+       the space right of the measure on wide screens. The endnote list
+       stays as Hugo writes it (same ids, same links): it is what screen
+       readers use, what narrow screens show, and what a reference link or a
+       #fn: URL jumps to. Its items get class "sn" so wide screens can fold
+       them away. Notes with block content (lists, code) stay endnotes. */ -}}
+{{- $c := . }}
+{{- range findRE `(?s)<li id="fn:[^"]+">.*?</li>` $c }}
+  {{- $id := replaceRE `(?s)^<li id="fn:([^"]+)">.*` "$1" . }}
+  {{- $body := replaceRE `(?s)^<li id="fn:[^"]+">\s*|\s*</li>$` "" . }}
+  {{- $body = replaceRE `(?s)&#160;<a href="#fnref[^"]*" class="footnote-backref"[^>]*>.*?</a>` "" $body }}
+  {{- if not (findRE `<(ul|ol|pre|div|table|blockquote|figure|h[1-6])[\s>]` $body) }}
+    {{- with index (findRE (printf `<sup id="fnref:%s">.*?</sup>` (replaceRE `([.*+?^$()\[\]{}|\\])` `\$1` $id)) $c 1) 0 }}
+      {{- $num := replaceRE `(?s)^.*>([^<>]+)</a></sup>$` "$1" . }}
+      {{- $text := $body | replaceRE `<p>` `<span class="sn-p">` | replaceRE `</p>` `</span>` | replaceRE `<a ` `<a tabindex="-1" ` }}
+      {{- $side := printf `%s<span class="sidenote" aria-hidden="true"><span class="sn-num">%s</span> %s</span>` . $num $text }}
+      {{- $c = replace $c . $side 1 }}
+      {{- $c = replace $c (printf `<li id="fn:%s">` $id) (printf `<li id="fn:%s" class="sn">` $id) 1 }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- return $c }}

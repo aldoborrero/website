@@ -1,0 +1,97 @@
+{{- $here := . }}
+<header class="site-head" {{ partial "chrome-lang.html" . }}>
+  <div class="row">
+    <a class="brand" href="/">{{ site.Title }}</a>
+    <div class="site-bar">
+    <nav class="site-nav" aria-label="Main">
+      {{- $writing := or (eq .Section "posts") (eq .RelPermalink "/posts/") }}
+      <a href="/posts/"{{ if eq .RelPermalink "/posts/" }} aria-current="page"{{ else if $writing }} aria-current="true"{{ end }}>Writing</a>
+      {{- with site.GetPage "/til" }}{{ if .RegularPages }}
+      <a href="/til/"{{ if eq $here.Section "til" }} aria-current="{{ if eq $here.RelPermalink "/til/" }}page{{ else }}true{{ end }}"{{ end }}>TIL</a>{{ end }}{{ end }}
+      <a href="/about/"{{ if eq .RelPermalink "/about/" }} aria-current="page"{{ end }}>About</a>
+      <a href="/atom.xml">Feed</a>
+    </nav>
+    <div class="site-tools">
+    {{- /* Reading settings: palette, light/dark, text size and font, in a
+           popover. Choices live in localStorage and are applied before first
+           paint by the script in head.html. Without JS the button stays
+           hidden and the page keeps the defaults. */}}
+    <button type="button" class="aa" popovertarget="reading" aria-label="Reading settings" hidden><span aria-hidden="true">Aa</span></button>
+    <div id="reading" class="reading" popover role="dialog" aria-labelledby="reading-h">
+      <h2 id="reading-h">Reading settings</h2>
+      <fieldset class="palettes">
+        <legend>Palette</legend>
+        {{- range partial "palettes.html" . }}
+        <label><input type="radio" name="palette" value="{{ .id }}"><span class="swatch" data-palette="{{ .id }}" aria-hidden="true">Aa</span>{{ .name }}</label>
+        {{- end }}
+      </fieldset>
+      <fieldset class="seg">
+        <legend>Mode</legend>
+        <div>
+          <label><input type="radio" name="theme" value="light">Light</label>
+          <label><input type="radio" name="theme" value="dark">Dark</label>
+        </div>
+      </fieldset>
+      <fieldset class="seg">
+        <legend>Text size</legend>
+        <div>
+          <label><input type="radio" name="size" value="s">Small</label>
+          <label><input type="radio" name="size" value="m">Medium</label>
+          <label><input type="radio" name="size" value="l">Large</label>
+        </div>
+      </fieldset>
+      <fieldset class="seg">
+        <legend>Font</legend>
+        <div>
+          <label class="serif"><input type="radio" name="font" value="serif">Serif</label>
+          <label class="sans"><input type="radio" name="font" value="sans">Sans</label>
+        </div>
+      </fieldset>
+      <fieldset class="seg">
+        <legend>Keyboard shortcuts</legend>
+        <div>
+          <label><input type="radio" name="keys" value="on">On</label>
+          <label><input type="radio" name="keys" value="off">Off</label>
+        </div>
+      </fieldset>
+    </div>
+    <a class="search-link" href="/search/" aria-label="Search"{{ if eq .RelPermalink "/search/" }} aria-current="page"{{ end }}><svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.25"/><path d="m12.5 12.5 4.5 4.5"/></svg></a>
+    </div>
+    </div>
+    <script>
+      (function () {
+        var root = document.documentElement;
+        var panel = document.getElementById("reading");
+        var btn = panel.previousElementSibling;
+        if (!panel.showPopover) return;
+        var meta = document.querySelector('meta[name="theme-color"]');
+        // Each setting: its <html> data attribute and the value that means "no
+        // attribute" (null: always set; palette and theme come from the server).
+        var keys = { palette: null, theme: null, size: "m", font: "serif", keys: "on" };
+        function current(k) { return root.dataset[k] || keys[k]; }
+        function sync() {
+          for (var k in keys) {
+            var r = panel.querySelector('input[name="' + k + '"][value="' + current(k) + '"]');
+            if (r) r.checked = true;
+          }
+          if (meta) meta.content = getComputedStyle(root).getPropertyValue("--bg").trim();
+        }
+        panel.addEventListener("change", function (e) {
+          var k = e.target.name, v = e.target.value;
+          if (v === keys[k]) delete root.dataset[k]; else root.dataset[k] = v;
+          try { localStorage.setItem(k, v); } catch (err) {}
+          sync();
+        });
+        // Below the button, right-aligned with it; scrolls with the page.
+        panel.addEventListener("beforetoggle", function (e) {
+          if (e.newState !== "open") return;
+          var r = btn.getBoundingClientRect();
+          panel.style.top = r.bottom + scrollY + 8 + "px";
+          panel.style.right = Math.max(16, root.clientWidth - r.right) + "px";
+        });
+        sync();
+        btn.hidden = false;
+      })();
+    </script>
+  </div>
+</header>

@@ -1,0 +1,13 @@
+{{- /* The entries a feed carries. Context: dict "page" (the list page) and
+       "lang" ("" for every language, or en / es for the language feeds). */ -}}
+{{- $p := .page }}
+{{- $pages := $p.RegularPages -}}
+{{- if $p.IsHome }}{{ $pages = partial "stream-pages.html" $p }}{{ else if eq $p.Kind "term" }}{{ $pages = $p.Pages }}{{ end -}}
+{{- with .lang }}
+  {{- $want := . }}{{ $sel := slice }}
+  {{- range $pages }}{{ if eq (partial "lang.html" .).lang $want }}{{ $sel = $sel | append . }}{{ end }}{{ end }}
+  {{- $pages = $sel }}
+{{- end }}
+{{- $limit := site.Config.Services.RSS.Limit -}}
+{{- if ge $limit 1 }}{{ $pages = first $limit $pages }}{{ end -}}
+{{- return $pages }}

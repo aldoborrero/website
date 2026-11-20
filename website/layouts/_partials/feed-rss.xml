@@ -1,0 +1,35 @@
+{{- /* RSS 2.0 with full text. Context: dict "page", "lang" ("" or a language),
+       "format" (the output format, for the self link). Each item carries its
+       language in dc:language. */ -}}
+{{- $p := .page -}}
+{{- $pages := partial "feed-pages.html" . -}}
+{{- printf "<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\"?>" | safeHTML }}
+{{ printf "<?xml-stylesheet href=%q type=\"text/xsl\"?>" (partialCached "feed-xsl.html" .).RelPermalink | safeHTML }}
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>{{ partial "feed-title.html" . }}</title>
+    <link>{{ $p.Permalink }}</link>
+    <description>{{ $p.Description | default site.Params.description }}</description>
+    <language>{{ .lang | default site.Language.Lang }}</language>
+    {{- with $pages }}
+    <lastBuildDate>{{ (index . 0).Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</lastBuildDate>
+    {{- end }}
+    {{- with $p.OutputFormats.Get .format }}
+    {{ printf "<atom:link href=%q rel=\"self\" type=%q />" .Permalink .MediaType | safeHTML }}
+    {{- end }}
+    {{- range $pages }}
+    <item>
+      <title>{{ (partial "kind.html" .).title }}</title>
+      <link>{{ .Permalink }}</link>
+      <pubDate>{{ .Date.Format "Mon, 02 Jan 2006 15:04:05 -0700" | safeHTML }}</pubDate>
+      <author>{{ site.Params.author }}</author>
+      <guid>{{ .Permalink }}</guid>
+      <dc:language>{{ (partial "lang.html" .).lang }}</dc:language>
+      {{- range .GetTerms "tags" }}
+      <category>{{ .LinkTitle }}</category>
+      {{- end }}
+      <description>{{ partial "feed-body.html" . | transform.XMLEscape | safeHTML }}</description>
+    </item>
+    {{- end }}
+  </channel>
+</rss>

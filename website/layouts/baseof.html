@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="{{ (partial "lang.html" .).lang }}" data-palette="{{ site.Params.palette }}" data-theme="{{ (partialCached "mode.html" .).mode }}">
+<head>
+{{ partial "head.html" . }}
+</head>
+<body>
+<a class="skip" href="#main" {{ partial "chrome-lang.html" . }}>Skip to content</a>
+<div class="page">
+{{ partial "header.html" . }}
+<main id="main">
+{{ block "main" . }}{{ end }}
+</main>
+{{ partial "footer.html" . }}
+{{- /* Image viewer: only on pages whose content has a zoomable image (the image
+       render hook sets the flag), and on lists, where entries may carry one;
+       there it loads only if the page really has a link to open. */}}
+{{- if or (.Store.Get "zoom") (not .IsPage) }}
+{{- $js := resources.Get "js/zoom.js" | js.Build (dict "minify" true "format" "esm" "target" "es2020") | fingerprint }}
+<script type="module">if(document.querySelector("a[data-zoom]"))import("{{ $js.RelPermalink }}")</script>
+{{- end }}
+{{- /* Copy buttons: on pages with a code block, and on lists, where entries
+       may carry one (the script finds nothing otherwise). */}}
+{{- if or (.Store.Get "code") (not .IsPage) }}{{ partial "code-copy.html" . }}{{ end }}
+{{- /* Keyboard shortcuts and their help dialog ("?"). */}}
+{{ partial "keys-help.html" . }}
+{{- /* Cloudflare Web Analytics: no cookies and nothing stored on the device,
+       so no consent banner. Only in production builds (`just build`, CI) and
+       only once params.cfAnalyticsToken is set: `just serve`, builds without
+       a token and forks send nothing. */}}
+{{- with site.Params.cfAnalyticsToken }}{{ if hugo.IsProduction }}
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{{ dict "token" . | jsonify }}'></script>
+{{- end }}{{ end }}
+</div>
+</body>
+</html>

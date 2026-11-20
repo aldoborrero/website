@@ -1,0 +1,4 @@
+{{- /* Feed links for a list page (section or tag). */ -}}
+{{- with .OutputFormats.Get "atom" }}
+<p class="feeds">Subscribe: <a href="{{ .RelPermalink }}" type="application/atom+xml">Atom feed</a>{{ with $.OutputFormats.Get "rss" }}, <a href="{{ .RelPermalink }}" type="application/rss+xml">RSS</a>{{ end }}</p>
+{{- end }}

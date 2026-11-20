@@ -1,0 +1,15 @@
+{{ define "main" }}
+<header class="archive-head row">
+  <div></div>
+  <div>
+    <h1>Tags</h1>
+    {{- with .Pages }}
+    <ul class="topics">
+      {{- range .ByTitle }}<li><a href="{{ .RelPermalink }}">#{{ .LinkTitle }}</a> <span>{{ len .Pages }}</span></li>{{ end }}
+    </ul>
+    {{- else }}
+    <p class="empty">No tags yet. Everything is listed under <a href="/posts/">Writing</a>.</p>
+    {{- end }}
+  </div>
+</header>
+{{ end }}

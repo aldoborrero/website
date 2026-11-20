@@ -1,0 +1,6 @@
+{{- /* Site chrome (header, footer, pager, follow list) is always in the site
+       language. On an entry in another language, returns the lang attribute
+       that marks a piece of chrome as such; otherwise nothing. Context: page. */ -}}
+{{- $out := "" }}
+{{- if ne (partial "lang.html" .).lang site.Language.Lang }}{{ $out = printf `lang="%s"` site.Language.Lang }}{{ end }}
+{{- return safeHTMLAttr $out }}

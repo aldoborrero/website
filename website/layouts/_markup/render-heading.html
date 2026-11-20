@@ -1,0 +1,9 @@
+{{- /* Headings: h2 and h3 get a "#" link to themselves, shown on hover and
+       keyboard focus (theme.css). The link carries the page path too, so it
+       still works where an entry is shown inside a list. Feeds drop it
+       (_partials/feed-body.html). */ -}}
+<h{{ .Level }} id="{{ .Anchor }}"
+  {{- range $k, $v := .Attributes }}{{ if ne $k "id" }}{{ printf " %s=%q" $k (string $v) | safeHTMLAttr }}{{ end }}{{ end }}>
+  {{- .Text }}
+  {{- if in (slice 2 3) .Level }}<a class="anchor" href="{{ .Page.RelPermalink }}#{{ .Anchor }}" aria-label="{{ (partial "lang.html" .Page).t.anchor }}"></a>{{ end -}}
+</h{{ .Level }}>

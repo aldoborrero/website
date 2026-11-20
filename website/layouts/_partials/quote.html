@@ -1,0 +1,8 @@
+{{- /* The quotation and its source. Context: a page in quotes/. */ -}}
+<figure class="quote">
+  <blockquote>{{ .RenderString (dict "display" "block") (.Params.quote | default "") }}</blockquote>
+  <figcaption>
+    {{- with .Params.sourceUrl }}<a href="{{ . }}">{{ $.Params.source }}</a>{{ else }}{{ .Params.source }}{{ end }}
+    {{- with .Params.context }}, {{ . | $.RenderString }}{{ end -}}
+  </figcaption>
+</figure>

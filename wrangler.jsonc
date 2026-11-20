@@ -5,8 +5,8 @@
   "name": "aldoborrero-website",
   "compatibility_date": "2026-11-16",
   "assets": {
-    // Output of the site build (see justfile `build`).
-    "directory": "./website/public",
+    // Output of `nix build .#site -o result-site` (justfile `build`).
+    "directory": "./result-site",
     "not_found_handling": "404-page",
   },
   // Domains are owned by tofu, so wrangler must not touch routes.

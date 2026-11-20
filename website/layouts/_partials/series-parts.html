@@ -1,0 +1,12 @@
+{{- /* The parts of a series in reading order. Context: the series' term page.
+       Order is seriesOrder when the parts set it (all of them, or the build
+       fails), otherwise the date. Returns a page collection. */ -}}
+{{- $pages := .Pages.ByDate }}
+{{- $ordered := where $pages "Params.seriesOrder" "!=" nil }}
+{{- if $ordered }}
+  {{- if ne (len $ordered) (len $pages) }}
+    {{- errorf "series %q: set seriesOrder on every part or on none (%d of %d have it)" .LinkTitle (len $ordered) (len $pages) }}
+  {{- end }}
+  {{- $pages = sort $pages "Params.seriesOrder" }}
+{{- end }}
+{{- return $pages }}

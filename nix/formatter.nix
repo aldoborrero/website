@@ -80,8 +80,6 @@ let
       excludes = [
         # sops-encrypted: reformatting would invalidate the MAC
         "secrets/**"
-        # hugo-generated assets
-        "website/resources/_gen/**"
         ".claude/**"
         ".agents/**"
       ];

@@ -22,14 +22,16 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
 
-      # Formatting (treefmt), tfsec and the devshell build.
+      # Formatting (treefmt), tfsec, the devshell, the site build (pkgs-site),
+      # no content HTML comments and internal links (offline).
       - name: Run flake check
         run: nix flake check --print-build-logs
 
   # Builds the site and deploys it to the Cloudflare Worker: production on
   # main, a preview version (pr-<number>) on pull requests.
-  # Disabled until the site builds again (blog engine choice pending): set the
-  # repository variable DEPLOY_ENABLED=true to turn it on.
+  # The site is `nix build .#site -o result-site`, the directory wrangler.jsonc
+  # deploys. Disabled until the cutover from Cloudflare Pages: set the repository
+  # variable DEPLOY_ENABLED=true to turn it on.
   deploy:
     name: Deploy
     needs: check
@@ -50,7 +52,7 @@ jobs:
             experimental-features = nix-command flakes
 
       - name: Build site
-        run: nix develop --command just build
+        run: nix build .#site -o result-site --print-build-logs
 
       - name: Deploy to production
         if: github.event_name == 'push'

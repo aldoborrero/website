@@ -2,6 +2,7 @@
 author: Aldo Borrero
 date: 2023-01-15
 title: 'Setting up my machines: nix style'
+slug: setting-up-my-machines-nix-style
 aliases:
   - /posts/setting-up-my-machines-nix-style/
 ---

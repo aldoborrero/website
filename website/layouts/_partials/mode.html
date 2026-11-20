@@ -1,0 +1,17 @@
+{{- /* The default mode (params.mode, "light" or "dark"), rendered on <html
+       data-theme> so readers without JS get it too, and the default
+       palette's --bg in that mode, read from tokens.css, for the theme-color
+       meta. A reader's choice in the "Aa" panel overrides it (head.html).
+       Returns dict "mode" and "bg". */ -}}
+{{- $mode := site.Params.mode | default "light" -}}
+{{- if not (in (slice "light" "dark") $mode) -}}
+  {{- errorf "params.mode %q must be \"light\" or \"dark\"" $mode -}}
+{{- end -}}
+{{- $p := site.Params.palette -}}
+{{- $re := printf `(?ms)^\[data-palette="%s"\] \{.*?\}` $p -}}
+{{- if eq $mode "dark" }}{{ $re = printf `(?ms)^\[data-theme="dark"\]\[data-palette="%s"\],[^{]*\{.*?\}` $p }}{{ end -}}
+{{- $bg := "" -}}
+{{- with findRE $re (resources.Get "css/tokens.css").Content 1 -}}
+  {{- with findRESubmatch `--bg:\s*(#[0-9a-fA-F]{6})` (index . 0) 1 }}{{ $bg = index (index . 0) 1 }}{{ end -}}
+{{- end -}}
+{{- return dict "mode" $mode "bg" $bg -}}

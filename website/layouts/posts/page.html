@@ -1,0 +1,97 @@
+{{ define "main" }}
+{{- $t := (partial "lang.html" .).t }}
+<article data-pagefind-body data-pagefind-meta="lang:{{ (partial "lang.html" .).lang }}">
+  <header class="post-head row">
+    <div class="post-meta" data-pagefind-ignore data-pagefind-meta="type:Post">
+      {{ partial "entry-meta.html" (dict "page" . "reading" true) }}
+    </div>
+    <div>
+      <h1 data-pagefind-meta="title">{{ .Title }}</h1>
+      {{ with .Description }}<p class="dek">{{ . }}</p>{{ end }}
+    </div>
+  </header>
+
+  {{- /* A post that opens with an image gets it as a full-width hero. */}}
+  {{- $content := partial "content.html" . }}
+  {{- $hero := index (findRE `(?s)^\s*<figure class="figure">.*?</figure>` $content 1) 0 }}
+  {{- with $hero }}
+  {{- $content = replace $content . "" 1 }}
+  <div class="hero">{{ . | replaceRE `^\s*<figure class="figure">|</figure>$` "" | replaceRE "100vw, 38rem" "100vw, 60rem" | safeHTML }}</div>
+  {{- end }}
+
+  {{- $toc := .Fragments.Headings }}
+  {{- $h2 := 0 }}{{ range .Fragments.HeadingsMap }}{{ if eq .Level 2 }}{{ $h2 = add $h2 1 }}{{ end }}{{ end }}
+  <div class="post-body row">
+    <aside class="margin" data-pagefind-ignore>
+      {{- if ge $h2 2 }}
+      <nav class="toc" aria-labelledby="toc-h">
+        <h2 id="toc-h">{{ $t.contents }}</h2>
+        {{ .TableOfContents | replaceRE `^<nav id="TableOfContents">\s*|\s*</nav>$` "" | safeHTML }}
+      </nav>
+      {{- /* Marks the section being read (aria-current="location") in both
+             contents lists, and closes the mobile sheet once a link is
+             chosen. Without JS the lists are simply static. */}}
+      <script type="module">
+        const links = new Map();
+        for (const a of document.querySelectorAll(".toc a, .toc-sheet a")) {
+          const id = decodeURIComponent(a.hash.slice(1));
+          links.set(id, [...(links.get(id) || []), a]);
+        }
+        const heads = [...document.querySelectorAll(".prose h2[id]")].filter((h) => links.has(h.id));
+        let current = [], queued = 0;
+        const update = () => {
+          queued = 0;
+          let head = null;
+          for (const h of heads) { if (h.getBoundingClientRect().top < innerHeight * 0.3) head = h; else break; }
+          const as = (head && links.get(head.id)) || [];
+          if (as === current) return;
+          for (const a of current) a.removeAttribute("aria-current");
+          for (const a of as) a.setAttribute("aria-current", "location");
+          current = as;
+        };
+        addEventListener("scroll", () => { queued ||= requestAnimationFrame(update); }, { passive: true });
+        update();
+        const sheet = document.getElementById("toc-sheet");
+        sheet.addEventListener("click", (e) => { if (e.target.closest("a") && sheet.hidePopover) sheet.hidePopover(); });
+      </script>
+      {{- end }}
+    </aside>
+    <div class="prose">
+      {{- if ge $h2 2 }}
+      {{- /* Narrow screens: a small "Contents" button fixed at the bottom
+             opens the list as a sheet from any scroll position (popover; no
+             JS needed). Where popovers are unsupported, the sheet simply
+             shows inline here and the button stays hidden. */}}
+      <button type="button" class="toc-button" data-pagefind-ignore popovertarget="toc-sheet">{{ $t.contents }}</button>
+      <nav id="toc-sheet" class="toc-sheet" data-pagefind-ignore popover aria-labelledby="toc-sheet-h">
+        <h2 id="toc-sheet-h">{{ $t.contents }}</h2>
+        {{ .TableOfContents | replaceRE `^<nav id="TableOfContents">\s*|\s*</nav>$` "" | safeHTML }}
+      </nav>
+      {{- end }}
+      {{ partial "series-nav.html" (dict "page" . "where" "top") }}
+      {{ partial "notices.html" . }}
+      {{ partial "sidenotes.html" (string $content) | safeHTML }}
+      {{ partial "series-nav.html" (dict "page" . "where" "end") }}
+      <footer class="sign" data-pagefind-ignore>
+        <img src="/images/author.jpg" alt="" width="48" height="48" loading="lazy">
+        <p>{{ printf $t.sign site.Params.author (printf `<a href="%s">Mastodon</a>` (.Params.mastodon | default site.Params.mastodon)) | safeHTML }}</p>
+      </footer>
+      {{ partial "replies.html" . }}
+      <footer class="entry-foot" data-pagefind-ignore>
+        {{ partial "tags.html" . }}
+        {{ partial "follow.html" . }}
+      </footer>
+    </div>
+  </div>
+
+  {{- with or .NextInSection .PrevInSection }}
+  <nav class="pager row" data-pagefind-ignore aria-label="More posts" {{ partial "chrome-lang.html" $ }}>
+    <div></div>
+    <ul>
+      {{- with $.PrevInSection }}<li><span>Older</span><a href="{{ .RelPermalink }}" rel="prev" {{ partial "lang-attr.html" . }}>{{ .Title }}</a></li>{{ end }}
+      {{- with $.NextInSection }}<li><span>Newer</span><a href="{{ .RelPermalink }}" rel="next" {{ partial "lang-attr.html" . }}>{{ .Title }}</a></li>{{ end }}
+    </ul>
+  </nav>
+  {{- end }}
+</article>
+{{ end }}

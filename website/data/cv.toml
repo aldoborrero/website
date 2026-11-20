@@ -1,0 +1,106 @@
+# Data for /about/. Text is Markdown; [[...]] still renders as a highlighted
+# gap, but nothing uses it right now.
+
+name = "Aldo Borrero"
+role = "Consultant at Numtide: Nix, DevOps and AI"
+summary = "I build infrastructure and tooling with Nix. My background is in banking and Ethereum, and before Numtide I co-founded the consultancy 41North."
+clients = "Clients have included ING, AVG, Worldreader, Ara, Bayer, MyEtherWallet, Manifold Finance, Golem Base (Arkiv), Binarly and PortalDeFi."
+
+contact = [
+  "[github.com/aldoborrero](https://github.com/aldoborrero)",
+  "[@aldo@fosstodon.org](https://fosstodon.org/@aldo)",
+]
+
+[[experience]]
+current = true
+when = "2022 – now"
+title = "Consultant"
+org = "[Numtide](https://numtide.com), Nix consultancy"
+text = "Nix, DevOps and AI work for Numtide's clients."
+# placeholder: describe the Golem Base and PortalDeFi work
+notes = [
+  "**Golem Base** (now Arkiv): work around Optimism.",
+  "**Binarly**: their Kubernetes infrastructure.",
+  "**PortalDeFi**.",
+]
+
+[[experience]]
+when = "2020 – 2022"
+title = "Co-founder"
+org = "[41North](https://41north.dev)"
+text = "A consultancy I co-founded, focused mainly on blockchain clients: node infrastructure and MEV, including a private MEV relay. Closed in 2022."
+clients = "Clients included **Manifold Finance**, whose first version we designed."
+links = [
+  "[github.com/41north](https://github.com/41north)",
+  "[ethw](https://github.com/aldoborrero/ethw)",
+]
+
+[[experience]]
+when = "2018 – 2019"
+title = "Lead engineer, EthVM"
+org = "[MyEtherWallet](https://www.myetherwallet.com)"
+text = "Led [EthVM](https://github.com/EthVM/EthVM), MyEtherWallet's open-source processing engine and block explorer for Ethereum."
+
+[[experience]]
+when = "2015 – 2018"
+title = "Full-stack developer, mostly Android"
+org = "[Mobile Jazz](https://web.archive.org/web/20160911033954mp_/https://mobilejazz.com/)"
+clients = "Client work for **AVG** (the antivirus), **Worldreader**, **Ara** (the Catalan newspaper), **Bayer**, and an app for people with anaphylaxis."
+
+[[experience]]
+when = "2014 – 2015"
+title = "Back-end and web developer"
+org = "**ING**"
+text = "Back end of the core banking platform, and web front ends with Backbone.js."
+
+# placeholder: organisation, project, description
+[[experience]]
+when = "2009"
+title = "Student developer"
+org = "[Google Summer of Code](https://summerofcode.withgoogle.com)"
+
+[[selected]]
+name = "ccq"
+url = "https://github.com/aldoborrero/ccq"
+text = "Search and browse Claude Code conversation history from the terminal. Rust, 2026."
+
+[[selected]]
+name = "herdr-supervisor"
+url = "https://github.com/aldoborrero/herdr-supervisor"
+text = "Durable supervision for coding agents: isolated worktrees, SQLite state and NATS coordination. Rust, 2026."
+
+[[selected]]
+name = "pi-agent-kit"
+url = "https://github.com/aldoborrero/pi-agent-kit"
+text = "The skills I use with coding agents, published. TypeScript, 2026."
+
+[[selected]]
+name = "cc-skills-nix"
+url = "https://github.com/aldoborrero/cc-skills-nix"
+text = "Agent skills for Nix projects: numtide/blueprint and friends. 2026."
+
+[[selected]]
+name = "templates"
+url = "https://github.com/aldoborrero/templates"
+text = "Nix flake templates for starting new projects. 2024."
+
+[[selected]]
+name = "use-nix-action"
+url = "https://github.com/aldoborrero/use-nix-action"
+text = "GitHub Action that installs Nix and loads direnv in CI runners. 2024."
+
+[[selected]]
+name = "freecad.nix"
+url = "https://github.com/aldoborrero/freecad.nix"
+text = "FreeCAD weekly builds and extensions, packaged for Nix. 2026."
+
+[[selected]]
+name = "hashi-homelab"
+url = "https://github.com/aldoborrero/hashi-homelab"
+text = "Nomad, Consul and Vault recipes for a home cluster. 2022."
+
+
+[[facts]]
+term = "Tools"
+# placeholder: order not confirmed
+text = "Nix and NixOS, Rust, Go, Python, Kotlin and Java on Android"

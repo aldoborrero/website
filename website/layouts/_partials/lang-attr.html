@@ -1,0 +1,6 @@
+{{- /* lang="…" for a page shown inside site-language context (a list, the
+       pager) when the page is in another language; otherwise nothing.
+       Context: page. */ -}}
+{{- $out := "" }}
+{{- with (partial "lang.html" .).lang }}{{ if ne . site.Language.Lang }}{{ $out = printf `lang="%s"` . }}{{ end }}{{ end }}
+{{- return safeHTMLAttr $out }}

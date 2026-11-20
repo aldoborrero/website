@@ -1,0 +1,31 @@
+{{- /* Keyboard shortcuts: the help dialog ("?") and the module behind them
+       (assets/js/keys.js). The dialog sits in a <template>, so it does
+       nothing without JS; the script clones it on first use. Site chrome,
+       so English on every page. */ -}}
+<template id="keys-help">
+  <dialog class="keys-dialog" aria-labelledby="keys-h" lang="en">
+    <form method="dialog" class="keys-close-form"><button class="keys-close" aria-label="Close">
+      <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="m5 5 10 10M15 5 5 15"/></svg>
+    </button></form>
+    <h2 id="keys-h">Keyboard shortcuts</h2>
+    <table>
+      <tbody>
+        <tr><th scope="row"><kbd>/</kbd></th><td>Search</td></tr>
+        <tr><th scope="row"><kbd>j</kbd> <kbd>k</kbd></th><td>Next and previous entry in a list</td></tr>
+        <tr><th scope="row"><kbd>n</kbd> <kbd>p</kbd></th><td>Newer and older post, on a post</td></tr>
+        <tr><th scope="row"><kbd>c</kbd></th><td>Contents of a long post</td></tr>
+        <tr><th scope="row"><kbd>a</kbd></th><td>Reading settings</td></tr>
+        <tr><th scope="row"><kbd>t</kbd></th><td>Light or dark</td></tr>
+        <tr><th scope="row"><kbd>g</kbd> <kbd>h</kbd></th><td>Go to the home page</td></tr>
+        <tr><th scope="row"><kbd>g</kbd> <kbd>p</kbd></th><td>Go to Writing</td></tr>
+        <tr><th scope="row"><kbd>g</kbd> <kbd>t</kbd></th><td>Go to TIL</td></tr>
+        <tr><th scope="row"><kbd>g</kbd> <kbd>a</kbd></th><td>Go to About</td></tr>
+        <tr><th scope="row"><kbd>?</kbd></th><td>This list</td></tr>
+        <tr><th scope="row"><kbd>Esc</kbd></th><td>Close what is open</td></tr>
+      </tbody>
+    </table>
+    <p>Shortcuts don't work while you type in a field. Turn them off under Keyboard shortcuts in reading settings (<kbd>a</kbd>, or the Aa button).</p>
+  </dialog>
+</template>
+{{- $js := resources.Get "js/keys.js" | js.Build (dict "minify" true "format" "esm" "target" "es2020") | fingerprint }}
+<script type="module" src="{{ $js.RelPermalink }}"></script>
