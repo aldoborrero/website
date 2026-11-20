@@ -28,8 +28,8 @@ notes = [
 when = "2020 – 2022"
 title = "Co-founder"
 org = "[41North](https://41north.dev)"
-text = "A consultancy I co-founded, focused mainly on blockchain clients. Closed in 2022."
-clients = "Clients included **Manifold Finance**."
+text = "A consultancy I co-founded, focused mainly on blockchain clients: node infrastructure and MEV, including a private MEV relay. Closed in 2022."
+clients = "Clients included **Manifold Finance**, whose first version we designed."
 links = [
   "[github.com/41north](https://github.com/41north)",
   "[ethw](https://github.com/aldoborrero/ethw)",
