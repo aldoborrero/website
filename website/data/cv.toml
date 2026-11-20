@@ -4,7 +4,7 @@
 name = "Aldo Borrero"
 role = "Consultant at Numtide: Nix, DevOps and AI"
 summary = "I build infrastructure and tooling with Nix. My background is in banking and Ethereum, and before Numtide I co-founded the consultancy 41North."
-clients = "Clients have included ING, AVG, WorldReader, MyEtherWallet, Golem Base (Arkiv) and PortalDeFi."
+clients = "Clients have included ING, AVG, WorldReader, MyEtherWallet, Golem Base (Arkiv), Binarly and PortalDeFi."
 
 contact = [
   "[github.com/aldoborrero](https://github.com/aldoborrero)",
@@ -17,6 +17,12 @@ when = "2022 – now"
 title = "Consultant"
 org = "[Numtide](https://numtide.com), Nix consultancy"
 text = "Nix, DevOps and AI work for Numtide's clients."
+# placeholder: describe the Golem Base and PortalDeFi work
+notes = [
+  "**Golem Base** (now Arkiv): work around Optimism.",
+  "**Binarly**: their Kubernetes infrastructure.",
+  "**PortalDeFi**.",
+]
 
 # placeholder: confirm description
 [[experience]]
@@ -24,8 +30,6 @@ when = "2020 – 2022"
 title = "Co-founder"
 org = "[41North](https://41north.dev), a consultancy founded with one partner"
 text = "Ethereum infrastructure. Closed in 2022."
-# placeholder: confirm these were 41North clients
-clients = "Clients: **Golem Base (Arkiv)**, **PortalDeFi**"
 links = [
   "[github.com/41north](https://github.com/41north)",
   "[ethw](https://github.com/aldoborrero/ethw)",
