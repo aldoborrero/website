@@ -4,7 +4,7 @@
 name = "Aldo Borrero"
 role = "Consultant at Numtide: Nix, DevOps and AI"
 summary = "I build infrastructure and tooling with Nix. My background is in banking and Ethereum, and before Numtide I co-founded the consultancy 41North."
-clients = "Clients have included ING, AVG, WorldReader, MyEtherWallet, Manifold Finance, Golem Base (Arkiv), Binarly and PortalDeFi."
+clients = "Clients have included ING, AVG, WorldReader, Ara, Bayer, MyEtherWallet, Manifold Finance, Golem Base (Arkiv), Binarly and PortalDeFi."
 
 contact = [
   "[github.com/aldoborrero](https://github.com/aldoborrero)",
@@ -40,11 +40,11 @@ links = [
 when = "2018 – 2019"
 org = "[MyEtherWallet](https://www.myetherwallet.com)"
 
-# placeholder: role, description; confirm AVG and WorldReader belong here
+# placeholder: role
 [[experience]]
 when = "2015 – 2018"
 org = "[Mobile Jazz](https://web.archive.org/web/20160911033954mp_/https://mobilejazz.com/)"
-clients = "Clients: **AVG**, **WorldReader**"
+clients = "Client work for **AVG** (the antivirus), **WorldReader**, **Ara** (the Catalan newspaper), **Bayer**, and an app for people with anaphylaxis."
 
 # placeholder: role, description
 [[experience]]
