@@ -1,7 +1,8 @@
 <footer class="site-foot row" {{ partial "chrome-lang.html" . }}>
   <p>© 2022–{{ now.Year }} {{ site.Params.author }}</p>
   <div>
-    <p>Built with Nix and Hugo, served from Cloudflare.</p>
+    {{- /* /about/ has its own "About this site" section. */}}
+    {{ if ne .Type "about" }}<p>Built with Nix and Hugo, served from Cloudflare.</p>{{ end }}
     <ul>
       <li><a href="https://github.com/{{ site.Params.github }}">GitHub</a></li>
       <li><a rel="me" href="{{ site.Params.mastodon }}">Mastodon</a></li>
