@@ -40,9 +40,9 @@ links = [
 when = "2018 – 2019"
 org = "[MyEtherWallet](https://www.myetherwallet.com)"
 
-# placeholder: role
 [[experience]]
 when = "2015 – 2018"
+title = "Full-stack developer, mostly Android"
 org = "[Mobile Jazz](https://web.archive.org/web/20160911033954mp_/https://mobilejazz.com/)"
 clients = "Client work for **AVG** (the antivirus), **WorldReader**, **Ara** (the Catalan newspaper), **Bayer**, and an app for people with anaphylaxis."
 
