@@ -47,10 +47,11 @@ title = "Full-stack developer, mostly Android"
 org = "[Mobile Jazz](https://web.archive.org/web/20160911033954mp_/https://mobilejazz.com/)"
 clients = "Client work for **AVG** (the antivirus), **WorldReader**, **Ara** (the Catalan newspaper), **Bayer**, and an app for people with anaphylaxis."
 
-# placeholder: role, description
 [[experience]]
 when = "2014 – 2015"
+title = "Back-end and web developer"
 org = "**ING**"
+text = "Back end of the core banking platform, and web front ends with Backbone.js."
 
 # placeholder: organisation, project, description
 [[experience]]
