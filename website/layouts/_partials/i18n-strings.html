@@ -1,0 +1,8 @@
+{{- /* i18n/<lang>.toml as a flat dict (key: its "other" value). Context: the
+       language code. Called through partialCached, once per language. */ -}}
+{{- $f := printf "i18n/%s.toml" . }}
+{{- if not (fileExists $f) }}{{ errorf "lang %q: no %s, so no strings for it (there is en.toml and es.toml)" . $f }}{{ end }}
+{{- $raw := resources.FromString (printf "i18n-%s.toml" .) (os.ReadFile $f) | transform.Unmarshal }}
+{{- $s := dict }}
+{{- range $k, $v := $raw }}{{ $s = merge $s (dict $k $v.other) }}{{ end }}
+{{- return $s }}

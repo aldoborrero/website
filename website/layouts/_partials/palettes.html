@@ -1,0 +1,13 @@
+{{- /* The palettes defined in assets/css/tokens.css, in file order, as a slice
+       of dict id name; the default (params.palette) must be one of them. Read
+       from the CSS so that adding a palette means editing tokens.css only. */ -}}
+{{- $css := (resources.Get "css/tokens.css").Content -}}
+{{- $out := slice -}}
+{{- range findRESubmatch `(?ms)^\[data-palette="([a-z0-9-]+)"\] \{[^}]*?--palette-name:\s*"([^"]+)"` $css -}}
+  {{- $out = $out | append (dict "id" (index . 1) "name" (index . 2)) -}}
+{{- end -}}
+{{- $ids := apply $out "index" "." "id" -}}
+{{- if not (in $ids site.Params.palette) -}}
+  {{- errorf "params.palette %q is not a palette in tokens.css (%s)" site.Params.palette (delimit $ids ", ") -}}
+{{- end -}}
+{{- return $out -}}

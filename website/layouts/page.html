@@ -1,0 +1,50 @@
+{{ define "main" }}
+{{- /* TILs, notes, links and quotes: one entry with its own permalink. */}}
+{{- $k := partial "kind.html" . }}
+<article class="entry entry-{{ .Section }}" data-pagefind-body data-pagefind-meta="lang:{{ (partial "lang.html" .).lang }}">
+  <header class="post-head row">
+    <div class="post-meta" data-pagefind-ignore data-pagefind-meta="type:{{ $k.label }}">
+      {{- with site.GetPage .Section }}<a class="kind" href="{{ .RelPermalink }}" {{ partial "chrome-lang.html" $ }}>{{ $k.label }}</a>{{ end }}
+      {{- with and (eq .Section "til") .Params.topic }}<span>{{ . }}</span>{{ end }}
+      {{ partial "entry-meta.html" (dict "page" . "reading" false) }}
+    </div>
+    <div>
+      {{- if eq .Section "links" }}
+      <h1 data-pagefind-meta="title"><a href="{{ .Params.link }}">{{ .Title }}</a></h1>
+      <p class="dek link-meta">
+        {{- with .Params.by }}<span>By {{ . }}</span>{{ end }}
+        {{- with .Params.link }}<span class="host">{{ (urls.Parse .).Host }}</span>{{ end }}
+        {{- with .Params.via }}<span>via {{ with $.Params.viaUrl }}<a href="{{ . }}">{{ $.Params.via }}</a>{{ else }}{{ $.Params.via }}{{ end }}</span>{{ end -}}
+      </p>
+      {{- else }}
+      <h1 data-pagefind-meta="title">{{ $k.title }}</h1>
+      {{- with .Description }}<p class="dek">{{ . }}</p>{{ end }}
+      {{- end }}
+    </div>
+  </header>
+  <div class="post-body row">
+    <aside class="margin"></aside>
+    <div class="prose">
+      {{ partial "series-nav.html" (dict "page" . "where" "top") }}
+      {{ partial "notices.html" . }}
+      {{- if eq .Section "quotes" }}{{ partial "quote.html" . }}{{ end }}
+      {{ partial "sidenotes.html" (string (partial "content.html" .)) | safeHTML }}
+      {{ partial "series-nav.html" (dict "page" . "where" "end") }}
+      {{ partial "replies.html" . }}
+      <footer class="entry-foot" data-pagefind-ignore>
+        {{ partial "tags.html" . }}
+        {{ partial "follow.html" . }}
+      </footer>
+    </div>
+  </div>
+  {{- with or .NextInSection .PrevInSection }}
+  <nav class="pager row" data-pagefind-ignore aria-label="More" {{ partial "chrome-lang.html" $ }}>
+    <div></div>
+    <ul>
+      {{- with $.PrevInSection }}<li><span>Older</span><a href="{{ .RelPermalink }}" rel="prev" {{ partial "lang-attr.html" . }}>{{ (partial "kind.html" .).title }}</a></li>{{ end }}
+      {{- with $.NextInSection }}<li><span>Newer</span><a href="{{ .RelPermalink }}" rel="next" {{ partial "lang-attr.html" . }}>{{ (partial "kind.html" .).title }}</a></li>{{ end }}
+    </ul>
+  </nav>
+  {{- end }}
+</article>
+{{ end }}

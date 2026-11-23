@@ -1,0 +1,5 @@
+{{- /* The site's stylesheet (tokens + theme), minified and fingerprinted in
+       production. Used by head.html and the feed stylesheet (feed-xsl.html). */ -}}
+{{- $css := slice (resources.Get "css/tokens.css") (resources.Get "css/theme.css") | resources.Concat "css/site.css" }}
+{{- if hugo.IsProduction }}{{ $css = $css | minify | fingerprint }}{{ end }}
+{{- return $css }}

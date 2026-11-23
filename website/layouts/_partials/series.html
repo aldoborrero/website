@@ -1,0 +1,12 @@
+{{- /* The series an entry belongs to (front matter `series: <name>`, one per
+       entry). Context: page. Returns dict "term" (the series page), "parts"
+       (in order), "n" (this entry's part number), "total"; or an empty dict. */ -}}
+{{- $out := dict }}
+{{- with .GetTerms "series" }}
+  {{- if gt (len .) 1 }}{{ errorf "%s: an entry belongs to one series at most" $.File.Path }}{{ end }}
+  {{- $term := index . 0 }}
+  {{- $parts := partial "series-parts.html" $term }}
+  {{- $n := 0 }}{{ range $i, $p := $parts }}{{ if eq $p $ }}{{ $n = add $i 1 }}{{ end }}{{ end }}
+  {{- $out = dict "term" $term "parts" $parts "n" $n "total" (len $parts) }}
+{{- end }}
+{{- return $out }}

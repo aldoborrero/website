@@ -1,0 +1,2 @@
+{{- /* Atom 1.0 with full text, beside every RSS feed at atom.xml. */ -}}
+{{- partial "feed-atom.xml" (dict "page" . "lang" "" "format" "atom") -}}

@@ -1,0 +1,9 @@
+{{- /* The search box: on /search/ (which runs the search as you type) and on
+       the 404 page (a plain form that opens /search/?q=). Context: dict "id"
+       (the input's id) and "autofocus" (bool). */ -}}
+<form class="search-form" action="/search/" method="get" role="search">
+  <label for="{{ .id }}" class="visually-hidden">Search the site</label>
+  <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.25"/><path d="m12.5 12.5 4.5 4.5"/></svg>
+  <input id="{{ .id }}" name="q" type="search" autocomplete="off" spellcheck="false" enterkeyhint="search"{{ if .autofocus }} autofocus{{ end }}>
+  <button type="submit">Search</button>
+</form>

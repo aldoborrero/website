@@ -1,0 +1,26 @@
+{{ define "main" }}
+{{- /* /series/<name>/: the parts of one series in reading order. */}}
+{{- $parts := partial "series-parts.html" . }}
+<header class="archive-head row">
+  <div></div>
+  <div>
+    <h1>{{ .LinkTitle }}</h1>
+    <p>A series in {{ len $parts }} {{ cond (eq (len $parts) 1) "part" "parts" }}. <a href="/series/">All series</a>.</p>
+    {{ partial "feeds.html" . }}
+  </div>
+</header>
+<div class="row">
+  <div></div>
+  <div>
+    <ol class="entries series-parts">
+    {{- range $i, $p := $parts }}
+      <li {{ partial "lang-attr.html" . }}>
+        <p class="part-meta" lang="en"><span>Part {{ add $i 1 }}</span><time datetime="{{ .Date.Format "2006-01-02" }}" {{ partial "lang-attr.html" . }}>{{ partial "date.html" (dict "date" .Date "l" (partial "lang.html" .)) }}</time>{{ partial "lang-tag.html" . }}</p>
+        <h2><a href="{{ .RelPermalink }}">{{ (partial "kind.html" .).title }}</a></h2>
+        {{- with .Description }}<p>{{ . }}</p>{{ else }}{{ with index (findRE `(?s)<p>.*?</p>` (partial "content.html" .) 1) 0 | plainify | htmlUnescape | strings.TrimSpace }}<p>{{ . | truncate 150 }}</p>{{ end }}{{ end }}
+      </li>
+    {{- end }}
+    </ol>
+  </div>
+</div>
+{{ end }}

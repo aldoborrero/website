@@ -1,0 +1,8 @@
+{{- /* An entry's rendered content without HTML comments. Drafts keep notes
+       for the author in <!-- … --> (sources, open questions); none of that
+       may reach a page, a feed or the search index, so every template takes
+       content from here instead of .Content. A comment shown as code is
+       escaped (&lt;!--) and stays. `nix flake check` (checks/no-comments)
+       fails if one gets through. Context: page. Returns HTML. */ -}}
+{{- $html := replaceRE `(?s)<!--.*?-->` "" (string .Content) }}
+{{- return safeHTML $html }}

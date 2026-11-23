@@ -2,6 +2,7 @@
 author: Aldo Borrero
 date: 2022-11-22
 title: Welcome to my blog
+slug: welcome-to-my-blog
 aliases:
   - /posts/welcome-to-my-blog/
 ---

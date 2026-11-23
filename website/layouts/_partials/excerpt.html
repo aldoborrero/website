@@ -1,0 +1,12 @@
+{{- /* The preview text of an entry in a list: its description, or else the
+       text of its first paragraphs (never code, which sits outside <p>).
+       Draft placeholders ([ALDO: …]) are dropped. Returns dict "text" (plain
+       text, about 30 words) and "cut" (true when shortened). Context: page. */ -}}
+{{- $src := .Description }}
+{{- if not $src }}
+  {{- $src = delimit (findRE `(?s)<p>.*?</p>` (partial "content.html" .) 4) " " }}
+{{- end }}
+{{- $text := $src | plainify | htmlUnescape | replaceRE `(?s)\[ALDO:.*?\]` "" | replaceRE `\s+` " " | strings.TrimSpace }}
+{{- $short := $text | truncate 180 | htmlUnescape | replaceRE `\s+…$` "…" }}
+{{- $out := dict "text" $short "cut" (ne $short $text) }}
+{{- return $out }}

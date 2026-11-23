@@ -1,0 +1,109 @@
+{{ define "main" }}
+{{- /* /search/: Pagefind, run in the browser over the index that the site
+       build writes to /pagefind/ (nix/packages/site). Nothing loads until
+       there is something to search: typing, or ?q= from a link or the 404
+       form. Results show the entry's type, date and an excerpt. */}}
+<header class="archive-head row">
+  <div></div>
+  <div>
+    <h1>{{ .Title }}</h1>
+    {{ partial "search-form.html" (dict "id" "q" "autofocus" false) }}
+    <p class="search-status" role="status"></p>
+  </div>
+</header>
+<div class="row">
+  <div></div>
+  <div>
+    <ol class="entries results"></ol>
+    <noscript><p class="empty">Search runs in your browser and needs JavaScript. Every post is listed under <a href="/posts/">Writing</a>, and every tag under <a href="/tags/">Tags</a>.</p></noscript>
+  </div>
+</div>
+<script type="module">
+  const form = document.querySelector(".search-form");
+  const input = form.elements.q;
+  const status = document.querySelector(".search-status");
+  const list = document.querySelector(".results");
+  const say = (text) => { status.textContent = text; };
+
+  // Pagefind loads the index for the page's language (en). Each other
+  // language is merged in from the same bundle; mergeIndex skips a path equal
+  // to the primary one, hence the absolute URL.
+  let ready;
+  const load = () => (ready ||= (async () => {
+    const pf = await import("/pagefind/pagefind.js");
+    await pf.options({ excerptLength: 28 });
+    const entry = await (await fetch("/pagefind/pagefind-entry.json")).json();
+    for (const lang of Object.keys(entry.languages)) {
+      if (lang !== document.documentElement.lang) await pf.mergeIndex(new URL("/pagefind/", location.href).href, { language: lang });
+    }
+    return pf;
+  })());
+
+  const item = (r) => {
+    const li = document.createElement("li");
+    const lang = r.meta.lang;
+    if (lang && lang !== document.documentElement.lang) li.lang = lang;
+    const meta = document.createElement("p");
+    meta.className = "result-meta";
+    meta.textContent = [r.meta.type, r.meta.date].filter(Boolean).join(" · ");
+    if (lang === "es") {
+      const tag = document.createElement("span");
+      tag.className = "lang-tag";
+      tag.lang = "en";
+      tag.innerHTML = '<span aria-hidden="true">ES</span><span class="visually-hidden">In Spanish</span>';
+      meta.append(tag);
+    }
+    const h = document.createElement("h2");
+    const a = document.createElement("a");
+    a.href = r.url;
+    a.textContent = r.meta.title || r.url;
+    h.append(a);
+    // The excerpt is Pagefind's text from the site's own pages: escaped, with
+    // <mark> around the matches.
+    const p = document.createElement("p");
+    p.innerHTML = r.excerpt;
+    li.append(meta, h, p);
+    return li;
+  };
+
+  let latest = "";
+  const run = async () => {
+    const q = input.value.trim();
+    latest = q;
+    const url = new URL(location.href);
+    if (q) url.searchParams.set("q", q); else url.searchParams.delete("q");
+    history.replaceState(null, "", url);
+    if (!q) { list.replaceChildren(); say(""); return; }
+    let pf;
+    try { pf = await load(); } catch {
+      ready = undefined;
+      say("Search couldn't load its index. Try again in a moment, or browse every post under Writing.");
+      return;
+    }
+    const search = await pf.debouncedSearch(q, {}, 150);
+    if (search === null || q !== latest) return;
+    // Pagefind 1.6 also returns loose matches ("comillas" finding ".com").
+    // A result stays when one of its highlighted words starts like a word of
+    // the query (its first letters, leaving room for plurals and stems).
+    const all = await Promise.all(search.results.slice(0, 60).map((r) => r.data()));
+    if (q !== latest) return;
+    const words = (s) => s.toLowerCase().match(/[\p{L}\p{N}]+/gu) || [];
+    const stems = words(q).map((t) => t.slice(0, Math.max(3, t.length - 3)));
+    const hit = (r) => [...r.excerpt.matchAll(/<mark>(.*?)<\/mark>/g)].some(([, m]) => words(m).some((w) => stems.some((s) => w.startsWith(s))));
+    const matched = all.filter(hit);
+    const results = matched.slice(0, 20);
+    const n = matched.length;
+    say(n ? `${n} ${n === 1 ? "result" : "results"} for “${q}”${n > 20 ? ", showing the first 20" : ""}.` : `Nothing found for “${q}”. Try fewer or different words.`);
+    list.replaceChildren(...results.map(item));
+  };
+
+  form.addEventListener("submit", (e) => { e.preventDefault(); run(); });
+  input.addEventListener("input", run);
+  input.addEventListener("focus", () => load().catch(() => {}), { once: true });
+  // Focus the box on desktop (the "/" shortcut lands here); not on touch
+  // screens, where focusing pops up the keyboard over the page.
+  if (matchMedia("(pointer: fine)").matches) input.focus();
+  const q = new URLSearchParams(location.search).get("q");
+  if (q) { input.value = q; run(); }
+</script>
+{{ end }}

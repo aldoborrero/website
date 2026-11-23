@@ -1,5 +1,6 @@
 ---
 title: "Sending entire flakes with nix flake archive command"
+slug: sending-entire-flakes-with-nix-flake-archive-command
 date: 2023-11-06T17:38:13+01:00
 ---
 

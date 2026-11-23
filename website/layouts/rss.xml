@@ -1,0 +1,4 @@
+{{- /* RSS 2.0 with full text. /index.xml carries every entry of every type,
+       each section's index.xml its own entries, each tag's index.xml its tag.
+       The language feeds (/en/index.xml, /es/index.xml) are feedrss*.xml. */ -}}
+{{- partial "feed-rss.xml" (dict "page" . "lang" "" "format" "rss") -}}

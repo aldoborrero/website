@@ -1,0 +1,2 @@
+{{- /* Every entry of every type, newest first: the home stream and /index.xml. */ -}}
+{{- return where site.RegularPages "Section" "in" (slice "posts" "til" "notes" "links" "quotes") -}}

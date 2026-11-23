@@ -1,0 +1,121 @@
+# Strings the theme writes inside an entry, in the entry's language (front
+# matter `lang`, default en). Read by _partials/lang.html, not by Hugo's T,
+# because T only knows the site language and this is one English site whose
+# entries may be in Spanish. Placeholders are printf verbs (%s, %d).
+# Site chrome (nav, "Aa" panel, footer, pager) stays English everywhere.
+
+# Shown in the stream next to an entry in this language, and in links to it.
+[tag]
+other = "EN"
+[inLanguage]
+other = "In English"
+# Link from a translation to the entry in this language (written in it).
+[readIn]
+other = "Read in English"
+[ogLocale]
+other = "en_GB"
+
+# Dates: "%d %s %d" is day, month name, year.
+[months]
+other = "January February March April May June July August September October November December"
+[monthsShort]
+other = "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec"
+[dateFormat]
+other = "%d %s %d"
+[dateFormatShort]
+other = "%d %s %d"
+[monthYearFormat]
+other = "%s %d"
+
+[readingTime]
+other = "%d minute read"
+[updated]
+other = "Updated"
+[contents]
+other = "Contents"
+[tags]
+other = "Tags"
+[anchor]
+other = "Link to this section"
+[openImage]
+other = "Open image"
+[copy]
+other = "Copy"
+[copied]
+other = "Copied"
+[cantCopy]
+other = "Can't copy"
+# "%s" is the author's name, the link is Mastodon.
+[sign]
+other = "Written by %s. Replies welcome on %s."
+
+# Callout titles (GitHub alert syntax).
+[note]
+other = "Note"
+[tip]
+other = "Tip"
+[important]
+other = "Important"
+[warning]
+other = "Warning"
+[caution]
+other = "Caution"
+
+# Titles built for entries without one ("Note, 17 November 2026").
+[untitledNote]
+other = "Note, %s"
+[untitledQuote]
+other = "A quote from %s"
+[someone]
+other = "someone"
+
+# Front-matter notices (_partials/notices.html). "post" for posts, "entry"
+# for the other types.
+[outdatedPost]
+other = "This post is out of date"
+[outdatedEntry]
+other = "This entry is out of date"
+[outdatedBody]
+other = "I wrote it in %s, and parts of it may no longer hold."
+[newerPost]
+other = "There's a newer version of this post"
+[newerEntry]
+other = "There's a newer version of this entry"
+# "%s" is the year, then the linked title.
+[replacesPost]
+other = "This replaces my %s post, %s."
+[replacesEntry]
+other = "This replaces my %s entry, %s."
+
+# Lists: link after a shortened entry.
+[readMore]
+other = "Read more"
+
+# Mastodon replies at the end of an entry with `mastodon:` (_partials/replies.html).
+[replies]
+other = "Replies"
+[replyOnMastodon]
+other = "Reply on Mastodon"
+[loadReplies]
+other = "Load replies"
+[loadingReplies]
+other = "Loading replies…"
+# "%s" is the Mastodon server, e.g. fosstodon.org.
+[repliesNote]
+other = "Replies come from %s and load only when you ask."
+[noReplies]
+other = "No replies yet."
+[repliesError]
+other = "Couldn't load the replies. They're still on Mastodon."
+[oneReply]
+other = "1 reply"
+[manyReplies]
+other = "%d replies"
+
+# Series (front matter `series:`, _partials/series-nav.html). seriesPart:
+# part number, number of parts, the linked series name.
+[seriesPart]
+other = "Part %d of %d in %s"
+# "%s" is the linked series name.
+[seriesTitle]
+other = "Series: %s"

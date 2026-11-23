@@ -1,0 +1,16 @@
+{{- /* One moment seen from two sides (for example what the child sees and
+       what the parent does). Use with {{% %}} so the sides are Markdown:
+         {{% perspectives title="Time's up" %}}
+         {{% side label="Leo sees" %}} … {{% /side %}}
+         {{% side label="You do" %}} … {{% /side %}}
+         {{% /perspectives %}}
+       The title is an h3 in raw HTML, so it stays out of the contents list.
+       Side by side on wide screens, stacked (first side first) on narrow. */ -}}
+<section class="perspectives">
+{{ with .Get "title" }}<h3 class="perspectives-title">{{ $.Page.RenderString . }}</h3>{{ end }}
+<div class="perspectives-sides">
+
+{{ .Inner }}
+
+</div>
+</section>

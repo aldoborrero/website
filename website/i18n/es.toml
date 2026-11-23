@@ -1,0 +1,102 @@
+# Strings for entries with `lang: es`. Keys and placeholders as in en.toml.
+
+[tag]
+other = "ES"
+[inLanguage]
+other = "In Spanish"
+[readIn]
+other = "Leer en castellano"
+[ogLocale]
+other = "es_ES"
+
+[months]
+other = "enero febrero marzo abril mayo junio julio agosto septiembre octubre noviembre diciembre"
+[monthsShort]
+other = "ene feb mar abr may jun jul ago sept oct nov dic"
+[dateFormat]
+other = "%d de %s de %d"
+[dateFormatShort]
+other = "%d %s %d"
+[monthYearFormat]
+other = "%s de %d"
+
+[readingTime]
+other = "%d min de lectura"
+[updated]
+other = "Actualizado"
+[contents]
+other = "Índice"
+[tags]
+other = "Etiquetas"
+[anchor]
+other = "Enlace a esta sección"
+[openImage]
+other = "Abrir imagen"
+[copy]
+other = "Copiar"
+[copied]
+other = "Copiado"
+[cantCopy]
+other = "No se pudo copiar"
+[sign]
+other = "Escrito por %s. Puedes responder en %s."
+
+[note]
+other = "Nota"
+[tip]
+other = "Consejo"
+[important]
+other = "Importante"
+[warning]
+other = "Advertencia"
+[caution]
+other = "Precaución"
+
+[untitledNote]
+other = "Nota, %s"
+[untitledQuote]
+other = "Una cita de %s"
+[someone]
+other = "alguien"
+
+[outdatedPost]
+other = "Este artículo está desactualizado"
+[outdatedEntry]
+other = "Esta entrada está desactualizada"
+[outdatedBody]
+other = "Lo escribí en %s y puede que parte de lo que cuenta ya no sea válido."
+[newerPost]
+other = "Hay una versión más reciente de este artículo"
+[newerEntry]
+other = "Hay una versión más reciente de esta entrada"
+[replacesPost]
+other = "Sustituye a mi artículo de %s, %s."
+[replacesEntry]
+other = "Sustituye a mi entrada de %s, %s."
+
+[readMore]
+other = "Seguir leyendo"
+
+[replies]
+other = "Respuestas"
+[replyOnMastodon]
+other = "Responder en Mastodon"
+[loadReplies]
+other = "Cargar respuestas"
+[loadingReplies]
+other = "Cargando respuestas…"
+[repliesNote]
+other = "Las respuestas vienen de %s y solo se cargan si lo pides."
+[noReplies]
+other = "Todavía no hay respuestas."
+[repliesError]
+other = "No se pudieron cargar las respuestas. Siguen en Mastodon."
+[oneReply]
+other = "1 respuesta"
+[manyReplies]
+other = "%d respuestas"
+
+[seriesPart]
+other = "Parte %d de %d de la serie %s"
+[seriesTitle]
+other = "Serie: %s"

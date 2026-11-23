@@ -1,0 +1,7 @@
+{{- /* The stylesheet that shows a feed as a page in a browser
+       (assets/feed/feed.xsl), with the site's CSS filled in. Every feed
+       points to it in an xml-stylesheet instruction (feed-rss.xml,
+       feed-atom.xml). Returns the resource. */ -}}
+{{- $css := partialCached "site-css.html" . }}
+{{- $xsl := resources.Get "feed/feed.xsl" | resources.ExecuteAsTemplate "feed.xsl" (dict "css" $css.RelPermalink) | fingerprint }}
+{{- return $xsl }}

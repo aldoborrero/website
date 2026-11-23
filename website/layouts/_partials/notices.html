@@ -1,0 +1,44 @@
+{{- /* Notices from front matter, shown at the top of an entry's text, in the
+       entry's language. Context: page. Returns HTML.
+         supersededBy: /posts/2026-…   banner linking the newer entry
+         status: outdated              warning callout ("out of date"), with
+         statusNote: "…"               an optional sentence of your own after it
+         supersedes: /posts/2022-…     a line linking the entry this replaces
+       Paths are content paths (as for GetPage, e.g. /posts/001-how-to-…); the
+       build fails if one doesn't resolve, or on an unknown status. The
+       callouts are rendered as Markdown alerts, so they look and read like
+       any other callout (_markup/render-blockquote.html). */ -}}
+{{- $l := partial "lang.html" . }}{{ $t := $l.t }}
+{{- $post := eq .Section "posts" }}
+{{- $out := "" }}
+{{- with .Params.supersededBy }}
+  {{- $p := $.GetPage . }}
+  {{- if not $p }}{{ errorf "%s: supersededBy %q does not resolve to a page" $.File.Path . }}{{ end }}
+  {{- $md := printf "> [!IMPORTANT] %s\n> %s, %s." (cond $post $t.newerPost $t.newerEntry) (partial "inline/notice-link.html" (dict "page" $p "from" $l)) (partial "date.html" (dict "date" $p.Date "l" $l)) }}
+  {{- $out = printf "%s%s" $out ($.RenderString (dict "display" "block") $md) }}
+{{- end }}
+{{- with .Params.status }}
+  {{- if ne . "outdated" }}{{ errorf "%s: status %q is unknown (the only one is \"outdated\")" $.File.Path . }}{{ end }}
+  {{- $months := split $t.months " " }}
+  {{- $when := printf $t.monthYearFormat (index $months (sub ($.Date.Format "1" | int) 1)) ($.Date.Format "2006" | int) }}
+  {{- $body := printf $t.outdatedBody $when }}
+  {{- with $.Params.statusNote }}{{ $body = printf "%s %s" $body (. | replaceRE `\s*\n\s*` " ") }}{{ end }}
+  {{- $md := printf "> [!WARNING] %s\n> %s" (cond $post $t.outdatedPost $t.outdatedEntry) $body }}
+  {{- $out = printf "%s%s" $out ($.RenderString (dict "display" "block") $md) }}
+{{- else }}
+  {{- with .Params.statusNote }}{{ errorf "%s: statusNote needs status: outdated" $.File.Path }}{{ end }}
+{{- end }}
+{{- with .Params.supersedes }}
+  {{- $p := $.GetPage . }}
+  {{- if not $p }}{{ errorf "%s: supersedes %q does not resolve to a page" $.File.Path . }}{{ end }}
+  {{- $line := printf (cond $post $t.replacesPost $t.replacesEntry) ($p.Date.Format "2006") (partial "inline/notice-link.html" (dict "page" $p "from" $l)) }}
+  {{- $out = printf `%s<p class="notice-line">%s</p>` $out $line }}
+{{- end }}
+{{- return safeHTML $out }}
+
+{{- define "_partials/inline/notice-link.html" -}}
+{{- /* A link to another entry by its title; marked with its language when it
+       differs from the entry linking to it. */ -}}
+{{- $tl := (partial "lang.html" .page).lang -}}
+<a href="{{ .page.RelPermalink }}"{{ if ne $tl .from.lang }} hreflang="{{ $tl }}" lang="{{ $tl }}"{{ end }}>{{ (partial "kind.html" .page).title }}</a>
+{{- end -}}

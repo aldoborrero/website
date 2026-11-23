@@ -1,0 +1,19 @@
+{{ define "main" }}
+{{- /* /about/: a short bio, how to follow, disclosures and a colophon, as
+       prose (content/about.md). Context: page. */ -}}
+<article>
+  <header class="post-head row">
+    <div class="post-meta about-who">
+      <img src="/images/author.jpg" alt="Portrait of {{ site.Params.author }}" width="96" height="96">
+    </div>
+    <div>
+      <h1>{{ .Title }}</h1>
+      {{ with .Description }}<p class="dek">{{ . }}</p>{{ end }}
+    </div>
+  </header>
+  <div class="post-body row">
+    <aside class="margin"></aside>
+    <div class="prose">{{ partial "content.html" . }}</div>
+  </div>
+</article>
+{{ end }}

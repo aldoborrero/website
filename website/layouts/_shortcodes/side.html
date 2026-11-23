@@ -1,0 +1,10 @@
+{{- /* One side of a perspectives block: a label, then Markdown (text, zero to
+       two images). See perspectives.html. */ -}}
+<div class="side">
+<p class="side-label">{{ .Get "label" }}</p>
+<div class="side-body">
+
+{{ .Inner }}
+
+</div>
+</div>

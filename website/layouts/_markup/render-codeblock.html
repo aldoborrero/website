@@ -1,0 +1,11 @@
+{{- /* Fenced code blocks: highlighted by Chroma as before (hl_lines and the
+       other highlighting options work as usual), inside a .code wrapper that
+       can carry a file name from the fence: ```nix {file="flake.nix"}. The
+       copy button is added by _partials/code-copy.html (JS), so it never
+       shows up in feeds or without JS. */ -}}
+{{- .Page.Store.Set "code" true }}
+{{- $hl := transform.HighlightCodeBlock . }}
+<div class="code">
+{{- with .Attributes.file }}<p class="code-file">{{ . }}</p>{{ end }}
+{{ $hl.Wrapped | replaceRE ` file="[^"]*"` "" | safeHTML }}
+</div>

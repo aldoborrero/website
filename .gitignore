@@ -7,11 +7,13 @@ result-*
 .envrc.local
 
 # toolchain caches (see nix/devshell.nix)
-.go/
 .cache/
 
 # hugo
 website/public/
+website/resources/
+website/static/fonts/
+website/static/pagefind/
 .hugo_build.lock
 
 # terraform / opentofu
@@ -21,3 +23,7 @@ website/public/
 
 # agent skills: restored from skills-lock.json with `just skills`
 .claude/skills/
+website/assets/fonts/
+
+# lychee (just check-links)
+.lycheecache

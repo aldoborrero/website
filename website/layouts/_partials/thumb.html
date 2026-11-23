@@ -1,0 +1,18 @@
+{{- /* A post's thumbnail for lists, cut to 4:3: the `image:` from its front
+       matter (entry-image.html), else the image it opens with (the hero,
+       shown full width on the post), else nothing. Returns dict "small" and
+       "large" (320 and 640 px wide), or false. Context: page. */ -}}
+{{- $res := partial "entry-image.html" . }}
+{{- if and (not $res) (findRE `^\s*<figure class="figure">` (partial "content.html" .) 1) }}
+  {{- with findRESubmatch `^\s*!\[[^\]]*\]\(\s*([^\s)]+)` .RawContent 1 }}
+    {{- $u := urls.Parse (index (index . 0) 1) }}
+    {{- if not $u.IsAbs }}
+      {{- with $.Resources.Get $u.Path }}{{ $res = . }}{{ else }}{{ with resources.Get (strings.TrimPrefix "/" $u.Path) }}{{ $res = . }}{{ end }}{{ end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
+{{- $out := false }}
+{{- with $res }}{{ if in (slice "jpeg" "png" "webp") .MediaType.SubType }}
+  {{- $out = dict "small" (.Fill "320x240 webp") "large" (.Fill "640x480 webp") }}
+{{- end }}{{ end }}
+{{- return $out }}

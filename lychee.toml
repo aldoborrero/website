@@ -1,0 +1,31 @@
+# External link check of the built site: `just check-links` and the weekly
+# .github/workflows/links.yml. Internal links and anchors are checked offline
+# by `nix flake check` (nix/checks/links.nix), so the site itself is skipped
+# here. Paths come from the command line (--root-dir needs an absolute path).
+
+# Cache results in .lycheecache for a day, so reruns only retry what failed.
+cache = true
+max_cache_age = "1d"
+cache_exclude_status = "429, 500..=599"
+
+# Gentle on other people's servers: few requests at a time, spaced out per
+# host, a couple of retries for flaky ones.
+max_concurrency = 8
+host_concurrency = 2
+host_request_interval = "500ms"
+max_retries = 2
+retry_wait_time = 5
+timeout = 20
+
+# 429 means "slow down", not "gone".
+accept = ["200..=299", "429"]
+
+exclude = [
+  # this site: checked offline by nix flake check
+  '^https://aldoborrero\.com/',
+  # refuse automated requests, so every link would read as broken
+  '^https?://(www\.)?(twitter|x)\.com/',
+  '^https?://(www\.)?linkedin\.com/',
+  # the analytics beacon (only with params.cfAnalyticsToken)
+  '^https://static\.cloudflareinsights\.com/',
+]
